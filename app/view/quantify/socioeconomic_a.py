@@ -160,7 +160,7 @@ def population_profiles():
 def population_profiles_r(q_id):
 
     c = PopulationProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in PopulationProfiles.__table__.c._data]
 
 
     if c is None:
@@ -259,7 +259,7 @@ def sex_distribution_profiles():
 def sex_distribution_profiles_r(q_id):
 
     c = SexDistributionProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in SexDistributionProfiles.__table__.c._data]
 
 
     if c is None:
@@ -358,7 +358,7 @@ def labor_population_profiles():
 def labor_population_profiles_r(q_id):
 
     c = LaborPopulationProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in LaborPopulationProfiles.__table__.c._data]
 
 
     if c is None:
@@ -457,7 +457,7 @@ def economic_profiles():
 def economic_profiles_r(q_id):
 
     c = EconomicProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in EconomicProfiles.__table__.c._data]
 
 
     if c is None:
@@ -556,7 +556,7 @@ def economic_index_profiles():
 def economic_index_profiles_r(q_id):
 
     c = EconomicIndexProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in EconomicIndexProfiles.__table__.c._data]
 
 
     if c is None:
@@ -655,7 +655,7 @@ def living_standard_of_residents():
 def living_standard_of_residents_r(q_id):
 
     c = LivingStandardOfResidents.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in LivingStandardOfResidents.__table__.c._data]
 
 
     if c is None:
@@ -754,7 +754,7 @@ def consumer_spending_residents():
 def consumer_spending_residents_r(q_id):
 
     c = ConsumerSpendingResidents.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in ConsumerSpendingResidents.__table__.c._data]
 
 
     if c is None:
@@ -853,7 +853,7 @@ def trade_profiles():
 def trade_profiles_r(q_id):
 
     c = TradeProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in TradeProfiles.__table__.c._data]
 
 
     if c is None:
@@ -952,7 +952,7 @@ def reserve_profiles():
 def reserve_profiles_r(q_id):
 
     c = ReserveProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in ReserveProfiles.__table__.c._data]
 
 
     if c is None:
@@ -1051,7 +1051,7 @@ def loan_profiles():
 def loan_profiles_r(q_id):
 
     c = LoanProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in LoanProfiles.__table__.c._data]
 
 
     if c is None:
@@ -1150,7 +1150,7 @@ def healthy_profiles():
 def healthy_profiles_r(q_id):
 
     c = HealthyProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in HealthyProfiles.__table__.c._data]
 
 
     if c is None:
@@ -1249,7 +1249,7 @@ def birth_death_rate():
 def birth_death_rate_r(q_id):
 
     c = BirthDeathRate.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in BirthDeathRate.__table__.c._data]
 
 
     if c is None:
@@ -1348,7 +1348,7 @@ def birth_profiles():
 def birth_profiles_r(q_id):
 
     c = BirthProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in BirthProfiles.__table__.c._data]
 
 
     if c is None:
@@ -1447,7 +1447,7 @@ def age_profiles():
 def age_profiles_r(q_id):
 
     c = AgeProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in AgeProfiles.__table__.c._data]
 
 
     if c is None:
@@ -1546,7 +1546,7 @@ def entry_exit_profiles():
 def entry_exit_profiles_r(q_id):
 
     c = EntryExitProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in EntryExitProfiles.__table__.c._data]
 
 
     if c is None:
@@ -1645,7 +1645,7 @@ def tourism_income_spend_profiles():
 def tourism_income_spend_profiles_r(q_id):
 
     c = TourismIncomeSpendProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in TourismIncomeSpendProfiles.__table__.c._data]
 
 
     if c is None:
@@ -1744,7 +1744,7 @@ def tourism_project_income_spend_profiles():
 def tourism_project_income_spend_profiles_r(q_id):
 
     c = TourismProjectIncomeSpendProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in TourismProjectIncomeSpendProfiles.__table__.c._data]
 
 
     if c is None:
@@ -1843,7 +1843,7 @@ def passenger_transport_project_income_spend_profiles():
 def passenger_transport_project_income_spend_profiles_r(q_id):
 
     c = PassengerTransportProjectIncomeSpendProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in PassengerTransportProjectIncomeSpendProfiles.__table__.c._data]
 
 
     if c is None:
@@ -1942,7 +1942,7 @@ def foreign_debt_profiles():
 def foreign_debt_profiles_r(q_id):
 
     c = ForeignDebtProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in ForeignDebtProfiles.__table__.c._data]
 
 
     if c is None:
@@ -2041,7 +2041,7 @@ def environmental_resources_profiles():
 def environmental_resources_profiles_r(q_id):
 
     c = EnvironmentalResourcesProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in EnvironmentalResourcesProfiles.__table__.c._data]
 
 
     if c is None:
@@ -2140,7 +2140,7 @@ def power_generation_profiles():
 def power_generation_profiles_r(q_id):
 
     c = PowerGenerationProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in PowerGenerationProfiles.__table__.c._data]
 
 
     if c is None:
@@ -2239,7 +2239,7 @@ def education_profiles():
 def education_profiles_r(q_id):
 
     c = EducationProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in EducationProfiles.__table__.c._data]
 
 
     if c is None:
@@ -2338,7 +2338,7 @@ def fuel_cost_profiles():
 def fuel_cost_profiles_r(q_id):
 
     c = FuelCostProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in FuelCostProfiles.__table__.c._data]
 
 
     if c is None:
@@ -2437,7 +2437,7 @@ def transport_profiles():
 def transport_profiles_r(q_id):
 
     c = TransportProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in TransportProfiles.__table__.c._data]
 
 
     if c is None:
@@ -2536,7 +2536,7 @@ def investment_profiles():
 def investment_profiles_r(q_id):
 
     c = InvestmentProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in InvestmentProfiles.__table__.c._data]
 
 
     if c is None:
@@ -2635,7 +2635,7 @@ def assistance_profiles():
 def assistance_profiles_r(q_id):
 
     c = AssistanceProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in AssistanceProfiles.__table__.c._data]
 
 
     if c is None:
@@ -2734,7 +2734,7 @@ def mineral_profiles():
 def mineral_profiles_r(q_id):
 
     c = MineralProfiles.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in MineralProfiles.__table__.c._data]
 
 
     if c is None:
@@ -2833,7 +2833,7 @@ def agriculture_investment_country():
 def agriculture_investment_country_r(q_id):
 
     c = AgricultureInvestmentCountry.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in AgricultureInvestmentCountry.__table__.c._data]
 
 
     if c is None:
@@ -2932,7 +2932,7 @@ def foreign_investment_agriculture_forestry_fisheries_place():
 def foreign_investment_agriculture_forestry_fisheries_place_r(q_id):
 
     c = ForeignInvestmentAgricultureForestryFisheriesPlace.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in ForeignInvestmentAgricultureForestryFisheriesPlace.__table__.c._data]
 
 
     if c is None:
@@ -3031,7 +3031,7 @@ def foreign_investment_agriculture_forestry_fisheries():
 def foreign_investment_agriculture_forestry_fisheries_r(q_id):
 
     c = ForeignInvestmentAgricultureForestryFisheries.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in ForeignInvestmentAgricultureForestryFisheries.__table__.c._data]
 
 
     if c is None:
@@ -3130,7 +3130,7 @@ def fdi_investment_country():
 def fdi_investment_country_r(q_id):
 
     c = FDIInvestmentCountry.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in FDIInvestmentCountry.__table__.c._data]
 
 
     if c is None:
@@ -3229,7 +3229,7 @@ def agricultural_foreign_investment_country():
 def agricultural_foreign_investment_country_r(q_id):
 
     c = AgriculturalForeignInvestmentCountry.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in AgriculturalForeignInvestmentCountry.__table__.c._data]
 
 
     if c is None:
@@ -3328,7 +3328,7 @@ def foreign_direct_investment():
 def foreign_direct_investment_r(q_id):
 
     c = ForeignDirectInvestment.query.filter_by(id=q_id).first()
-    fields = [i for i in CountryProfiles.__table__.c._data]
+    fields = [i for i in ForeignDirectInvestment.__table__.c._data]
 
 
     if c is None:

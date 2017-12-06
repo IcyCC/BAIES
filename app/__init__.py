@@ -29,5 +29,13 @@ def create_app(config_name):
     return app
 
 
+SPECIAL_ARGS=[
+    'page',
+    'token',
+    'password'
+]
+
+
 def check_args(f,s):
-    return set(f)>set(s)
+
+    return set(f+SPECIAL_ARGS) > set(s)

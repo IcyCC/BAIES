@@ -59,7 +59,7 @@ class AnonymousUser(AnonymousUserMixin):
     permissions = Permission.QUALITATIVE_R
 
     def can(self, permissions):
-        return self.permissions & permissions == permissions
+        return permissions & self.permissions  == permissions
 
 
 login_manager.anonymous_user = AnonymousUser
@@ -122,9 +122,6 @@ def permission_required_d(permission):
         return decorated_function
     return decorator
 
-def permission_required(permission):
-    if not current_user.can(permission):
-        return jsonify(status="fail", data=[], reason="no permission")
 
 
 @login_manager.user_loader
