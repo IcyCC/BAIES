@@ -45,8 +45,11 @@ def {{ Table.__tablename__ }}():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -81,8 +84,11 @@ def {{ Table.__tablename__ }}_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -92,8 +98,11 @@ def {{ Table.__tablename__ }}_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 

@@ -15,8 +15,13 @@ class Permission:
     QUALITATIVE_R = 0x04
     QUALITATIVE_W = 0x08
 
-    USER = 0x10
-    SYSTEM = 0x20
+    USER_R = 0x10
+    USER_W = 0x20
+
+    SYSTEM_R = 0x40
+    SYSTEM_W = 0X80
+
+
 
 
 

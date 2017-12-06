@@ -5,6 +5,8 @@ from app.model.quantify.agriculture_products import *
 from app import check_args,SPECIAL_ARGS
 from app.model.user import Permission
 from flask_login import current_user
+import sqlalchemy
+
 
 @quantify_blueprint.route("/AgriculturalProductionValueProfiles" , methods=['GET', 'POST'])
 def agricultural_production_value_profiles():
@@ -51,8 +53,11 @@ def agricultural_production_value_profiles():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -87,8 +92,11 @@ def agricultural_production_value_profiles_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -98,8 +106,11 @@ def agricultural_production_value_profiles_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -150,8 +161,11 @@ def agricultural_production_profiles():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -186,8 +200,11 @@ def agricultural_production_profiles_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -197,8 +214,11 @@ def agricultural_production_profiles_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -249,8 +269,11 @@ def grain_production_profiles():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -285,8 +308,11 @@ def grain_production_profiles_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -296,8 +322,11 @@ def grain_production_profiles_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -348,8 +377,11 @@ def other_crop_production_profiles():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -384,8 +416,11 @@ def other_crop_production_profiles_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -395,8 +430,11 @@ def other_crop_production_profiles_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -447,8 +485,11 @@ def meat_production_profiles():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -483,8 +524,11 @@ def meat_production_profiles_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -494,8 +538,11 @@ def meat_production_profiles_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -546,8 +593,11 @@ def animal_husbandry_profiles():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -582,8 +632,11 @@ def animal_husbandry_profiles_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -593,8 +646,11 @@ def animal_husbandry_profiles_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -645,8 +701,11 @@ def aquatic_products_profiles():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -681,8 +740,11 @@ def aquatic_products_profiles_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -692,8 +754,11 @@ def aquatic_products_profiles_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -744,8 +809,11 @@ def plant_profiles():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -780,8 +848,11 @@ def plant_profiles_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -791,8 +862,11 @@ def plant_profiles_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -843,8 +917,11 @@ def animal_husbandry_aquatic_products():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -879,8 +956,11 @@ def animal_husbandry_aquatic_products_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -890,8 +970,11 @@ def animal_husbandry_aquatic_products_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -942,8 +1025,11 @@ def agricultural_products_trade_profiles():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -978,8 +1064,11 @@ def agricultural_products_trade_profiles_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -989,8 +1078,11 @@ def agricultural_products_trade_profiles_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1041,8 +1133,11 @@ def kind_agricultural_products_trade_money_profiles():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1077,8 +1172,11 @@ def kind_agricultural_products_trade_money_profiles_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1088,8 +1186,11 @@ def kind_agricultural_products_trade_money_profiles_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1140,8 +1241,11 @@ def kind_agricultural_products_num_money_profiles():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1176,8 +1280,11 @@ def kind_agricultural_products_num_money_profiles_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1187,8 +1294,11 @@ def kind_agricultural_products_num_money_profiles_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1239,8 +1349,11 @@ def agriculture_foreign_investment_stock():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1275,8 +1388,11 @@ def agriculture_foreign_investment_stock_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1286,8 +1402,11 @@ def agriculture_foreign_investment_stock_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1338,8 +1457,11 @@ def agriculture_foreign_investment_stock_structure():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1374,8 +1496,11 @@ def agriculture_foreign_investment_stock_structure_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1385,8 +1510,11 @@ def agriculture_foreign_investment_stock_structure_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1437,8 +1565,11 @@ def agriculture_foreign_investment_fluent():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1473,8 +1604,11 @@ def agriculture_foreign_investment_fluent_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1484,8 +1618,11 @@ def agriculture_foreign_investment_fluent_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1536,8 +1673,11 @@ def agriculture_foreign_investment_import():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1572,8 +1712,11 @@ def agriculture_foreign_investment_import_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1583,8 +1726,11 @@ def agriculture_foreign_investment_import_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1635,8 +1781,11 @@ def agriculture_foreign_investment_used_structure():
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1671,8 +1820,11 @@ def agriculture_foreign_investment_used_structure_r(q_id):
             if hasattr(c, k):
                 setattr(c, k, v)
 
-        db.session.add(c)
-        db.session.commit()
+        try:
+            db.session.add(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
@@ -1682,8 +1834,11 @@ def agriculture_foreign_investment_used_structure_r(q_id):
             return jsonify(status="fail", data=[], reason="no permission")
 
 
-        db.session.delete(c)
-        db.session.commit()
+        try:
+            db.session.delete(c)
+            db.session.commit()
+        except sqlalchemy.exc.OperationalError as e:
+            return jsonify(status="fail", reason=e, data=[])
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
