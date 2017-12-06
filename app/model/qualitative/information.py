@@ -9,6 +9,7 @@ class Post(db.Model):
     id = db.Column(db.Integer,primary_key=True,autoincrement=True,index=True)
     title = db.Column(db.String(255))
     body = db.Column(db.Text)
+    kind = db.Column(db.String(64))
     timestamp = db.Column(db.DateTime, default=datetime.now())
 
     user_id = db.Column(db.Integer, nullable=False, index=True)
@@ -18,6 +19,7 @@ class Post(db.Model):
             'id':self.id,
             'title':self.title,
             'body':self.body,
+            'kind':self.kind,
             'timestamp':self.timestamp,
             'user_id':self.user_id
         }
