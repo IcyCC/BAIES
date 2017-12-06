@@ -6,6 +6,10 @@ app = create_app('development')
 manager = Manager(app)
 migrate = Migrate(app, db)
 
+@app.route("/")
+def index():
+    return "<h1>Welcome baies</h1>"
+
 def make_shell_context():
     return dict(app=app, db=db)
 
