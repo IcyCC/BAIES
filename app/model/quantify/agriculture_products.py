@@ -1,5 +1,6 @@
 from app import db
 
+# 农产品信息
 
 class AgricultureMixin:
     id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)

@@ -1,6 +1,7 @@
 from app import db
 from app.model.comm import ActionMixin
 
+# 社会经济信息
 
 class SocioeconomicMixin:
 

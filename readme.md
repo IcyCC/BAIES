@@ -14,6 +14,34 @@
 
 定量数据
 
+## Model
+
+* log.py 日志系统的表
+* information.py 定性系统的表
+* agriculture_products.py 定量系统农产品的表
+* socioeconomic.py 定量系统社会经济的表
+* user/\_\_init__.py 用户系统的表 以及权限
+
+### 权限
+
+```python
+
+
+    QUANTIFY_R = 0x01 # 定量信息读
+    QUANTIFY_W = 0x02 # 定量信息写
+
+    QUALITATIVE_R = 0x04 # 定性信息读
+    QUALITATIVE_W = 0x08 # 定性信息写
+
+    USER_R = 0x10 # 用户信息读
+    USER_W = 0x20 # 用户信息写
+
+    SYSTEM_R = 0x40 # 系统信息读
+    SYSTEM_W = 0X80 # 系统信息写
+
+
+``` 
+
 ## CURD API 范式
 
 ### /{Prefix}/{表名}
@@ -63,7 +91,7 @@ eg: /user/Role/２
 > 修改id资源
 
 * method: PUT
-* args: 数据表字段ｋ-ｖ
+* args: 数据表字段k-v
 * return: {
     status: "success" or "fail",
     reason: 成功时为空,失败见原因参考表,
@@ -72,7 +100,7 @@ eg: /user/Role/２
 
 > 删除id资源
 
-* method: ＤＥLETE
+* method: DELETE
 * args: 数据表字段ｋ-ｖ
 * return: {
     status: "success" or "fail",
@@ -88,7 +116,7 @@ eg: /user/Role/２
 
 > 登陆一个用户
 
-* method: ＰＯＳＴ
+* method: POST
 * args: username,password
 * return: {
     status: "success" or "fail",
@@ -100,7 +128,7 @@ eg: /user/Role/２
 
 > 登出一个用户
 
-* method: ＧＥＴ
+* method: GET
 * args: 
 * return: {
     status: "success" or "fail",
@@ -115,12 +143,14 @@ eg: /user/Role/２
 
 * "error args": GET方法时 数据表无此字段
 * "error form args": POST方法时，数据表无此字段
-* "no this id thing": 带ｉｄ查询时无此ｉｄ的数据条目
+* "no this id thing": 带id查询时无此id的数据条目
+* ....　数据库写入失败会给出详细的异常
 
 ### User
 
 * "no this user or password error": 没有此用户名或者密码错误
 * "no permission": 权限不足
+
 
 ## Example
 
@@ -228,3 +258,26 @@ Postman-Token: 9e1431a6-a261-c5fd-b745-f69d09e34ff0
 men=23&women=23&country=zsh
 
 ```
+
+### 运维相关
+
+> 管理员账号  密码账号　admin
+
+#### 启动(开发环境)
+
+```commandline
+
+python BAIES.py runserver -h 0.0.0.0 -p 5000 
+
+```
+程序运行在5000 端口
+
+#### 数据库表结构修改迁移
+
+```commandline
+
+python BAIES.py db migrate -m　"日志" 
+python BAIES.py Upgrade
+
+```
+

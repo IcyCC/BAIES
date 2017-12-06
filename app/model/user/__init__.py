@@ -9,17 +9,17 @@ class Permission:
     # PERMISSION 0b0000000000
     # 权限依次
 
-    QUANTIFY_R = 0x01
-    QUANTIFY_W = 0x02
+    QUANTIFY_R = 0x01 # 定量信息读
+    QUANTIFY_W = 0x02 # 定量信息写
 
-    QUALITATIVE_R = 0x04
-    QUALITATIVE_W = 0x08
+    QUALITATIVE_R = 0x04 # 定性信息读
+    QUALITATIVE_W = 0x08 # 定性信息写
 
-    USER_R = 0x10
-    USER_W = 0x20
+    USER_R = 0x10 # 用户信息读
+    USER_W = 0x20 # 用户信息写
 
-    SYSTEM_R = 0x40
-    SYSTEM_W = 0X80
+    SYSTEM_R = 0x40 # 系统信息读
+    SYSTEM_W = 0X80 # 系统信息写
 
 
 
