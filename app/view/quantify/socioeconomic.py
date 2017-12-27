@@ -97,7 +97,7 @@ def country_profiles_r(q_id):
         if not current_user.can(Permission.QUANTIFY_W):
             return jsonify(status="fail", data=[], reason="no permission")
 
-        db.session.delete(c)
-        db.session.commit()
+            db.session.delete(c)
+            db.session.commit()
 
         return jsonify(status="success", reason="", data=[c.to_json()])
