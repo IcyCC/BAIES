@@ -42,6 +42,176 @@
 
 ``` 
 
+## 定量OLAP 的api
+
+### 简单信息
+#### /quantify/{country,socioeconomic_table,socioeconomic_index,agriculture_table,agriculture_index}
+
+> 国家管理
+
+* method: GET
+* 获取所有
+* args: 
+* return: {
+    status: "success" or "fail",
+    reason: 成功时为空,失败见原因参考表,
+    data:[] 请求的数据,永远为一个list
+}
+
+---
+
+* method: POST
+* 新增一个
+* form: model的字段
+* return: {
+    status: "success" or "fail",
+    reason: 成功时为空,失败见原因参考表,
+    data:[] 请求的数据,永远为一个list
+}
+
+---
+
+* method: PUT
+* 修改一个
+* form: model的字段 (全)
+* return: {
+    status: "success" or "fail",
+    reason: 成功时为空,失败见原因参考表,
+    data:[] 请求的数据,永远为一个list
+}
+
+---
+
+* method: DELETE
+* 删除一个
+* args: 删除内容的id (全)
+* return: {
+    status: "success" or "fail",
+    reason: 成功时为空,失败见原因参考表,
+    data:[] 请求的数据,永远为一个list
+}
+
+### 数据信息
+
+> 原则 一切提交的关系字段依据是name, id只用作删除和更新的凭据
+
+#### /quantify/{agriculture_facts, socioeconomic_facts}
+
+* method: GET
+* 获取所有
+* args: 
+```angular2html
+(
+    "tablename",
+    "country",
+    "index",
+    "start_time",
+    "end_time",
+    "batch",
+    "kind"(农业信息独占)
+)
+```
+* return: {
+    status: "success" or "fail",
+    reason: 成功时为空,失败见原因参考表,
+    data:[] 请求的数据,永远为一个list
+}
+
+---
+
+* method: POST
+* 提交
+* args: batch(存在此arg说明为批量提交)
+* form(单个提交): 
+```angular2html
+"tablename": "A"
+"country": "CN",
+"id": 1,
+"index": "a",
+"time": "2010-1-1 22:22:22",
+"value": 2.2
+```
+* json_body(批量提交):
+```angular2html
+{
+	"tablename": "A",
+	"note": "test_batch",
+	"data":[
+	      {
+            "country": "CN",
+            "id": 1,
+            "index": "a",
+            "time": "2010-1-1 22:22:22",
+            "value": 2.2
+        },
+        {
+            "country": "CN",
+            "id": 2,
+            "index": "b",
+            "time": "2010-1-1 22:22:22",
+            "value": 2.2
+        }
+	]
+}
+```
+
+* return: {
+    status: "success" or "fail",
+    reason: 成功时为空,失败见原因参考表,
+    data:[] 请求的数据,永远为一个list
+}
+
+---
+
+* method: PUT
+* 批量更新 未加入字段写默认值
+* args: 
+* json_body(批量提交):
+```angular2html
+{
+	"tablename": "A",
+	"note": "test_batch",
+	"data":[
+	      {
+            "country": "CN",
+            "id": 1,
+            "index": "a",
+            "time": "2010-1-1 22:22:22",
+            "value": 2.2
+        },
+        {
+            "country": "CN",
+            "id": 2,
+            "index": "b",
+            "time": "2010-1-1 22:22:22",
+            "value": 2.2
+        }
+	]
+}
+* return: {
+    status: "success" or "fail",
+    reason: 成功时为空,失败见原因参考表,
+    data:[] 请求的数据,永远为一个list
+}
+
+---
+
+* method: DELETE
+* 删除
+* form(批量提交):
+```angular2html
+{
+    list:[1,2,3],
+    note:""
+}
+```
+* return: {
+    status: "success" or "fail",
+    reason: 成功时为空,失败见原因参考表,
+    data:[] 请求的数据,永远为一个list
+}
+
+
 ## CURD API 范式(适用于定性数据,用户,日志)
 
 ### /{Prefix}/{表名}
