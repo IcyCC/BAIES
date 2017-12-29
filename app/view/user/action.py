@@ -1,9 +1,13 @@
-from flask import request, jsonify, current_app
+import os
+from flask import request, jsonify, current_app,url_for
 from app import db
 from . import user_blueprint
 from app.model.user import *
 from app import check_args
 from flask_login import current_user,login_user, logout_user,login_required
+from werkzeug.utils import secure_filename
+from BAIES import app
+
 
 
 @user_blueprint.route("/login",methods=["POST","GET"])
@@ -38,6 +42,13 @@ def logout():
         return jsonify(status="success", reason="", data=[])
 
 
-
-
+@user_blueprint.route("/upload", methods=["POST"])
+def upload():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file:
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return jsonify(status="success", reason="", data=url_for("static",filename="upload/"+filename))
+        return jsonify(status="fail", reason="Unknow", data="")
 

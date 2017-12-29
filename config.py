@@ -5,6 +5,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SQLALCHEMY_COMMIT_TEARDOWN = True
+    UPLOAD_FOLDER = basedir+'/app/static/upload'
 
     @staticmethod
     def init_app(app):
@@ -19,6 +20,7 @@ class DevelopmentConfig(Config):
     CONFIG_NAME = "dev"
     SQLALCHEMY_ECHO = True
     SECRET_KEY = 'hard to guess string'
+
 
 
 class RunConfig(Config):

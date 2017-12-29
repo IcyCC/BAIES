@@ -15,7 +15,8 @@ ALLOW_ARGS = (
     "index",
     "start_time",
     "end_time",
-    "batch"
+    "batch",
+    "kind"
 )
 
 def check_args(father,son):
@@ -45,9 +46,9 @@ def agriculture_facts():
         if request.args.get("batch") is None:
 
             fact, detail = AgricultureFacts.insert_data(tablename=request.form.get("tablename"),
-                                                        country_name=request.form.get("country_name"),
+                                                        country_name=request.form.get("country"),
                                                         time=request.form.get("time"),
-                                                        index_name=request.form.get("index_name"),
+                                                        index_name=request.form.get("index"),
                                                         value=request.form.get("value"),
                                                         kind=request.form.get("kind"))
 
