@@ -54,7 +54,7 @@ def agriculture_facts():
             if fact is None:
                 return jsonify(status="fail", reason=detail, data=[])
             PostLog.log(user_id=current_user.id, target=request.form.get("tablename"), detail=str(fact.to_json()),
-                        note=request.form.get("note"))
+                        note=request.form.get("note",""))
             return jsonify(status="success", reason="", data=[fact.to_json()])
 
         else:
@@ -74,7 +74,7 @@ def agriculture_facts():
                                                             kind=item.get("kind"))
                 if fact is None:
                     return jsonify(status="fail", reason="some"+detail, data=[])
-                PostLog.log(current_user.id, detail=str(fact.to_json()), note=body.get("note"), target=body.get("tablename"))
+                PostLog.log(current_user.id, detail=str(fact.to_json()), note=body.get("note",""), target=body.get("tablename"))
             return jsonify(status="success", reason="", data=[])
 
     if request.method == "PUT":
@@ -95,24 +95,23 @@ def agriculture_facts():
 
             if fact is None:
                 return jsonify(status="fail", reason="some" + detail, data=[])
-            PutLog.log(current_user.id, pre=str(pre_fact.to_json()), past=str(fact.to_json()), note=body.get("note"),
+            PutLog.log(current_user.id, pre=str(pre_fact.to_json()), past=str(fact.to_json()), note=body.get("note",""),
                        target=body.get("tablename"))
         return jsonify(status="success", reason="", data=[])
 
     if request.method == "DELETE":
 
         list_str = request.form.get("list")
-        tablename = request.form.get("tablename")
-        note = request.form.get("tablename","")
+        note = request.form.get("note","")
 
-        if list_str is None or tablename is None:
+        if list_str is None:
             return jsonify(status="fail", reason="list or tablename cant`t be empty", data=[])
 
         fact_ids = json.loads(list_str)
         deleted_facts = list()
 
         for id in fact_ids:
-            fact = AgricultureFacts.filter_by(id = id).first()
+            fact = AgricultureFacts.query.filter_by(id=id).first()
             if fact is None:
                 return jsonify(status="fail", reason="no id :{} fact".format(str(id)), data=[])
             deleted_facts.append(fact)
@@ -121,9 +120,9 @@ def agriculture_facts():
             db.session.delete(fact)
             db.session.commit()
 
-            DeleteLog.log(current_user.id, target=tablename, detail=str(fact.to_json()),note=note)
+            DeleteLog.log(current_user.id, target=fact.index.table.name, detail=str(fact.to_json()),note=note)
 
-        return jsonify(status="success", reason="", data=[f for f in deleted_facts])
+        return jsonify(status="success", reason="", data=[f.to_json() for f in deleted_facts])
 
 
 
@@ -143,7 +142,7 @@ def agriculture_table():
 
     if request.method == "DELETE":
 
-        table = AgricultureTable.filter_by(id=request.args.get("id")).first()
+        table = AgricultureTable.query.filter_by(id=request.args.get("id")).first()
         db.session.delete(table)
         db.session.commit()
         return jsonify(status="success", reason="", data=[table.to_json()])
@@ -165,13 +164,13 @@ def agriculture_index():
         return jsonify(status="success", reason="", data=[index.to_json()])
 
     if request.method == "PUT":
-        index = AgricultureIndexes.filter_by(id=request.form.get("id")).first()
+        index = AgricultureIndexes.query.filter_by(id=request.form.get("id")).first()
 
         return jsonify(status="success", reason="", data=[index.to_json()])
 
     if request.method == "DELETE":
 
-        index = AgricultureIndexes.filter_by(id=request.args.get("id")).first()
+        index = AgricultureIndexes.query.filter_by(id=request.args.get("id")).first()
         db.session.delete(index)
         db.session.commit()
         return jsonify(status="success", reason="", data=[index.to_json()])

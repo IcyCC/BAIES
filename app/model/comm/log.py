@@ -56,7 +56,7 @@ class DeleteLog(db.Model):
     note = db.Column(db.String(1024), default="")
     @staticmethod
     def log(user_id, target, detail, note):
-        p = PutLog(user_id=user_id, target=target, detail=detail, note=note)
+        p = DeleteLog(user_id=user_id, target=target, detail=str(detail), note=note)
         db.session.add(p)
         db.session.commit()
 
