@@ -149,7 +149,7 @@ class SocioeconomicFacts(db.Model):
         if id is None or country_name is None or index_name is None:
             return None, "some filed is empty"
 
-        fact = SocioeconomicFacts.query.filter_by(id=id).fisrt()
+        fact = SocioeconomicFacts.query.filter_by(id=id).first()
 
         if fact is None:
             return None, "no such fact"

@@ -1,6 +1,7 @@
 import re
 from app.model.quantify import socioeconomic,agriculture_products
 from app.model.qualitative import information
+from app.model.comm.log import *
 from app.model import user
 from jinja2 import Template
 
@@ -42,18 +43,6 @@ class Generator:
 
 if __name__ == '__main__':
 
-    e = Extractor("/home/suchang/Code/Proj/BAIES/app/model/quantify/socioeconomic.py")
-    g = Generator("/home/suchang/Code/Proj/BAIES/app/view/quantify/socioeconomic_a.py")
-    g.gen(e.parser(), "quantify_blueprint",table=socioeconomic, permisson="QUANTIFY")
-
-    e = Extractor("/home/suchang/Code/Proj/BAIES/app/model/quantify/agriculture_products.py")
-    g = Generator("/home/suchang/Code/Proj/BAIES/app/view/quantify/agriculture_products_a.py")
-    g.gen(e.parser(), "quantify_blueprint",table=agriculture_products, permisson="QUANTIFY")
-
-    e = Extractor("/home/suchang/Code/Proj/BAIES/app/model/user/__init__.py")
-    g = Generator("/home/suchang/Code/Proj/BAIES/app/view/user/user.py")
-    g.gen(e.parser(), "user_blueprint", table=user, permisson="USER")
-
-    e = Extractor("/home/suchang/Code/Proj/BAIES/app/model/qualitative/information.py")
-    g = Generator("/home/suchang/Code/Proj/BAIES/app/view/qualitative/information.py")
-    g.gen(e.parser(), "qualitative_blueprint",table=information, permisson="QUALITATIVE")
+    e = Extractor("/home/suchang/Code/Proj/BAIES/app/model/comm/log.py")
+    g = Generator("/home/suchang/Code/Proj/BAIES/app/view/user/log.py")
+    g.gen(e.parser(), "user_blueprint",table=information, permisson="QUALITATIVE")

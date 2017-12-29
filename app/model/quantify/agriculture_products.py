@@ -162,6 +162,29 @@ class AgricultureFacts(db.Model):
 
         return s, ""
 
+    @staticmethod
+    def update(id=None,country_name=None, time=None, index_name=None, value=None, kind_name=None):
+
+        if id is None or country_name is None or index_name is None:
+            return None, "some filed is empty"
+
+        fact = AgricultureFacts.query.filter_by(id=id).fisrt()
+
+        if fact is None:
+            return None, "no such fact"
+        index = AgricultureFacts.query.filter_by(name=index_name).first()
+        country = Country.query.filter_by(name=country_name).first()
+        kind = AgricultureKind.query.filter_by(name=kind_name).first()
+
+        fact.country_id = country.id
+        fact.time = time
+        fact.index_id = index.id
+        fact.value = value
+        fact.kind_id = kind.id
+        db.session.add(fact)
+        db.session.commit()
+        return fact, ""
+
     @classmethod
     def find(cls, tablename=None, index=None, kind=None ,country=None, start_time=None, end_time=None):
         query = cls.query
