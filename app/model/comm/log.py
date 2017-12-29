@@ -31,7 +31,7 @@ class PutLog(db.Model):
     def to_json(self):
         return {
             'id':self.id,
-            'timestamp':self.timestamp,
+            'timestamp':self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'user_id':self.user_id,
             'target':self.target,
             'pre':self.pre,
@@ -55,15 +55,15 @@ class DeleteLog(db.Model):
 
     note = db.Column(db.String(1024), default="")
     @staticmethod
-    def log(user_id, target, pre ,past, note):
-        p = PutLog(user_id=user_id, target=target, pre=str(pre), past=str(past), note=note)
+    def log(user_id, target, detail, note):
+        p = PutLog(user_id=user_id, target=target, detail=detail, note=note)
         db.session.add(p)
         db.session.commit()
 
     def to_json(self):
         return {
             'id': self.id,
-            'timestamp': self.timestamp,
+            'timestamp': self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'user_id': self.user_id,
             'target': self.target,
             'pre': self.pre,
@@ -96,7 +96,7 @@ class PostLog(db.Model):
     def to_json(self):
         return {
             'id': self.id,
-            'timestamp': self.timestamp,
+            'timestamp': self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'user_id': self.user_id,
             'target': self.target,
             'detail': self.detail,

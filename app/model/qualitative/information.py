@@ -28,6 +28,6 @@ class Post(db.Model):
             'en_body': self.en_body,
             'en_kind': self.en_kind,
             'kind':self.kind,
-            'timestamp':self.timestamp,
+            'timestamp':self.time if self.time is None else self.time.strftime("%Y-%m-%d %H:%M:%S"),
             'user_id':self.user_id
         }

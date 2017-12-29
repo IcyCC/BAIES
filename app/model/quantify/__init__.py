@@ -2,6 +2,147 @@ from app import db
 from app.model.comm import ActionMixin
 from flask import jsonify
 from sqlalchemy.sql.expression import and_
+from sqlalchemy.orm import foreign, remote
+
+class SocioeconomicTable(db.Model):
+    __tablename__ = "socioeconomic_tables"
+
+    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
+    name = db.Column(db.String(255), index=True, nullable=False)
+    cn_alis = db.Column(db.String(255))
+    en_alis = db.Column(db.String(255))
+
+
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "cn_alis": self.cn_alis,
+            "en_alis": self.en_alis,
+            "indexes": str([i.to_json() for i in self.indexes])
+        }
+
+
+class AgricultureTable(db.Model):
+    __tablename__ = "agriculture_tables"
+
+    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
+    name = db.Column(db.String(255), index=True, nullable=False)
+    cn_alis = db.Column(db.String(255))
+    en_alis = db.Column(db.String(255))
+
+
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "cn_alis": self.cn_alis,
+            "en_alis": self.en_alis,
+            "indexes": str([i.to_json() for i in self.indexes])
+        }
+
+
+class Country(db.Model):
+    __tablename__ = "countrys"
+
+    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
+    name = db.Column(db.String(255), index=True, nullable=False)
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+        }
+
+
+class AgricultureKind(db.Model):
+    __tablename__ = "agriculture_kinds"
+
+    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
+    name = db.Column(db.String(255), index=True, nullable=False)
+
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+        }
+
+
+
+class SocioeconomicIndexes(db.Model):
+    __tablename__ = "socioeconomic_indexes"
+
+    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
+    name = db.Column(db.String(255), index=True, nullable=False)
+    unit = db.Column(db.String(255), default="no")
+
+    table_id = db.Column(db.Integer, index=True)
+
+    cn_alis = db.Column(db.String(255))
+    en_alis = db.Column(db.String(255))
+
+    table = db.relationship('SocioeconomicTable', primaryjoin=foreign(table_id) == remote(SocioeconomicTable.id),
+                              backref='indexes', lazy='joined')
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "unit": self.unit,
+            "table": self.table.name,
+            "cn_alis": self.cn_alis,
+            "en_alis": self.en_alis
+        }
+
+    def fact_to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "unit": self.unit,
+            "table_id": self.table_id,
+            "cn_alis": self.cn_alis,
+            "en_alis": self.en_alis
+        }
+
+
+class AgricultureIndexes(db.Model):
+    __tablename__ = "agriculture_indexes"
+
+    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
+    name = db.Column(db.String(255), index=True, nullable=False)
+    unit = db.Column(db.String(255), default="no")
+
+    table_id = db.Column(db.Integer, index=True)
+
+    table = db.relationship('AgricultureTable', primaryjoin=foreign(table_id) == remote(table_id),
+                              backref='table', lazy='joined')
+
+    cn_alis = db.Column(db.String(255))
+    en_alis = db.Column(db.String(255))
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "unit": self.unit,
+            "table": self.table.name,
+            "cn_alis": self.cn_alis,
+            "en_alis": self.en_alis
+        }
+
+    def fact_to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "unit": self.unit,
+            "table_id": self.table_id,
+            "cn_alis": self.cn_alis,
+            "en_alis": self.en_alis
+        }
+
 
 
 class SocioeconomicFacts(db.Model):
@@ -9,23 +150,32 @@ class SocioeconomicFacts(db.Model):
     __tablename__ = "socioeconomic_facts"
 
     id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
-    country_id = db.Column(db.Integer, db.ForeignKey("countrys.id"))
+    country_id = db.Column(db.Integer,index=True)
     time = db.Column(db.DateTime, index=True)
 
     time_stamp = db.Column(db.DateTime, index=True)
 
-    index_id = db.Column(db.Integer, db.ForeignKey('socioeconomic_indexes.id'))
+    index_id = db.Column(db.Integer, index=True)
     value = db.Column(db.Float)
+
+    index = db.relationship('SocioeconomicIndexes', primaryjoin=(foreign(index_id) == remote(SocioeconomicIndexes.id)),
+                            backref='facts', lazy='joined')
+
+
+    country = db.relationship('Country',
+                              primaryjoin=foreign(country_id) == remote(Country.id),
+                              backref='country', lazy='joined')
+
 
     def to_json(self):
 
         return {
             "id": self.id,
             "country": self.country.name,
-            "time": self.time,
+            "time": self.time if self.time is None else self.time.strftime("%Y-%m-%d %H:%M:%S"),
             "value": self.value,
             "index": self.index.fact_to_json(),
-            "time_stamp": self.time_stamp
+            "time_stamp": self.time_stamp if self.time_stamp is None else self.time_stamp.strftime("%Y-%m-%d %H:%M:%S")
         }
 
     @staticmethod
@@ -33,7 +183,7 @@ class SocioeconomicFacts(db.Model):
 
         if tablename is None or country_name is None or index_name is None:
             return None, "some filed is empty"
-        index = SocioeconomicIndexes.query.join(SocioeconomicTable).\
+        index = SocioeconomicIndexes.query.join(SocioeconomicTable, SocioeconomicTable.id == SocioeconomicIndexes.table_id).\
             filter(and_(
                         SocioeconomicIndexes.name == index_name,
                         SocioeconomicTable.name == tablename)).first()
@@ -104,13 +254,13 @@ class SocioeconomicFacts(db.Model):
             table = SocioeconomicTable.query.filter_by(name=tablename).first()
             if table is None:
                 return []
-            query = query.join(SocioeconomicIndexes).filter(SocioeconomicIndexes.table_id == table.id)
+            query = query.join(SocioeconomicIndexes, SocioeconomicIndexes.id == cls.index_id).filter(SocioeconomicIndexes.table_id == table.id)
 
         if country is not None:
-            query = query.join(Country).filter(Country.name == country)
+            query = query.join(Country, Country.id == cls.country_id).filter(Country.name == country)
 
         if index is not None:
-            query = query.join(SocioeconomicIndexes).filter(SocioeconomicIndexes.name == index)
+            query = query.join(SocioeconomicIndexes, SocioeconomicIndexes.id == cls.index_id).filter(SocioeconomicIndexes.name == index)
 
         if start_time is not None:
             query = query.filter(cls.time > start_time)
@@ -129,21 +279,32 @@ class AgricultureFacts(db.Model):
     __tablename__ = "agriculture_facts"
 
     id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
-    country_id = db.Column(db.Integer, db.ForeignKey("countrys.id"))
+    country_id = db.Column(db.Integer, index=True)
     time = db.Column(db.DateTime, index=True)
 
     time_stamp = db.Column(db.DateTime, index=True)
-    kind_id = db.Column(db.Integer, db.ForeignKey("agriculture_kinds.id"))
+    kind_id = db.Column(db.Integer, index=True)
 
-    index_id = db.Column(db.Integer,  db.ForeignKey('agriculture_indexes.id'))
+    index_id = db.Column(db.Integer, index=True)
     value = db.Column(db.Float, index=True)
+
+    index = db.relationship('AgricultureIndexes', primaryjoin=foreign(index_id) == remote(AgricultureIndexes.id),
+                            backref='facts', lazy='joined')
+
+    country = db.relationship('Country',
+                               primaryjoin=foreign(country_id) == remote(Country.id),
+                               backref='facts', lazy='joined')
+
+
+    kind = db.relationship('AgricultureKind', primaryjoin=foreign(kind_id) == remote(AgricultureKind.id),
+                           lazy='joined', backref='facts')
 
     def to_json(self):
         return {
             "id": self.id,
             "country": self.country.name,
-            "time": self.time,
-            "time_stamp": self.time_stamp,
+            "time": self.time if self.time is None else self.time.strftime("%Y-%m-%d %H:%M:%S"),
+            "time_stamp": self.time_stamp if self.time_stamp is None else self.time_stamp.strftime("%Y-%m-%d %H:%M:%S"),
             "kind": self.kind.name,
             "index": self.index.fact_to_json(),
             "value": self.value
@@ -200,16 +361,16 @@ class AgricultureFacts(db.Model):
             table = AgricultureIndexes.query.filter_by(name=tablename).first()
             if table is None:
                 return []
-            query = query.join(AgricultureIndexes).filter(AgricultureIndexes.table_id == table.id)
+            query = query.join(AgricultureIndexes, AgricultureKind.id == cls.kind_id).filter(AgricultureIndexes.table_id == table.id)
 
         if country is not None:
-            query = query.join(Country).filter(Country.name == country)
+            query = query.join(Country, Country.id == cls.country_id).filter(Country.name == country)
 
         if index is not None:
-            query = query.join(AgricultureIndexes).filter(AgricultureIndexes.name == index)
+            query = query.join(AgricultureIndexes, AgricultureIndexes.id == cls.index_id).filter(AgricultureIndexes.name == index)
 
         if kind is not None:
-            query = query.join(AgricultureKind).filter(AgricultureKind.name == kind)
+            query = query.join(AgricultureKind, AgricultureKind.id == cls.kind_id).filter(AgricultureKind.name == kind)
 
         if start_time is not None:
             query = query.filter(cls.time > start_time)
@@ -218,148 +379,3 @@ class AgricultureFacts(db.Model):
             query = query.filter(cls.time < end_time)
 
         return query.all()
-
-class SocioeconomicIndexes(db.Model):
-
-    __tablename__ = "socioeconomic_indexes"
-
-    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
-    name = db.Column(db.String(255), index=True, nullable=False)
-    unit = db.Column(db.String(255), default="no")
-
-    table_id = db.Column(db.Integer, db.ForeignKey("socioeconomic_tables.id"))
-
-    cn_alis = db.Column(db.String(255))
-    en_alis = db.Column(db.String(255))
-
-    facts = db.relationship('SocioeconomicFacts', primaryjoin=(SocioeconomicFacts.index_id ==id) ,backref='index', lazy='joined')
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "unit": self.unit,
-            "table": self.table.name,
-            "cn_alis": self.cn_alis,
-            "en_alis": self.en_alis
-        }
-
-    def fact_to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "unit": self.unit,
-            "table_id": self.table_id,
-            "cn_alis": self.cn_alis,
-            "en_alis": self.en_alis
-        }
-
-class AgricultureIndexes(db.Model):
-
-    __tablename__ = "agriculture_indexes"
-
-    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
-    name = db.Column(db.String(255), index=True, nullable=False)
-    unit = db.Column(db.String(255), default="no")
-
-    table_id = db.Column(db.Integer, db.ForeignKey("agriculture_tables.id"))
-
-    cn_alis = db.Column(db.String(255))
-    en_alis = db.Column(db.String(255))
-
-    facts = db.relationship('AgricultureFacts',primaryjoin=(AgricultureFacts.index_id ==id), backref='index', lazy='joined')
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "unit": self.unit,
-            "table": self.table.name,
-            "cn_alis": self.cn_alis,
-            "en_alis": self.en_alis
-        }
-
-    def fact_to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "unit": self.unit,
-            "table_id": self.table_id,
-            "cn_alis": self.cn_alis,
-            "en_alis": self.en_alis
-        }
-
-
-
-class SocioeconomicTable(db.Model):
-    __tablename__ = "socioeconomic_tables"
-
-    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
-    name = db.Column(db.String(255), index=True, nullable=False)
-    cn_alis = db.Column(db.String(255))
-    en_alis = db.Column(db.String(255))
-
-    indexes = db.relationship('SocioeconomicIndexes' ,backref='table', lazy='joined')
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "cn_alis": self.cn_alis,
-            "en_alis": self.en_alis,
-            "indexes": str([i.to_json() for i in self.indexes])
-        }
-
-class AgricultureTable(db.Model):
-    __tablename__ = "agriculture_tables"
-
-    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
-    name = db.Column(db.String(255), index=True, nullable=False)
-    cn_alis = db.Column(db.String(255))
-    en_alis = db.Column(db.String(255))
-
-    indexes = db.relationship('AgricultureIndexes', backref='table', lazy='joined')
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "cn_alis": self.cn_alis,
-            "en_alis": self.en_alis,
-            "indexes": str([i.to_json() for i in self.indexes])
-        }
-
-
-class Country(db.Model):
-
-    __tablename__= "countrys"
-
-    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
-    name = db.Column(db.String(255), index=True, nullable=False)
-
-    agriculture_facts = db.relationship('AgricultureFacts', backref='countries', lazy='joined')
-
-    socioeconomic_facts = db.relationship('SocioeconomicFacts',
-                                          backref='country', lazy='joined')
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-        }
-
-
-class AgricultureKind(db.Model):
-
-    __tablename__ = "agriculture_kinds"
-
-    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
-    name = db.Column(db.String(255), index=True, nullable=False)
-
-    facts = db.relationship('AgricultureFacts', lazy='joined',backref='kind')
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-        }

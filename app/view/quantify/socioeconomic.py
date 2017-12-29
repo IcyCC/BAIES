@@ -57,6 +57,7 @@ def socioeconomic_facts():
         else:
             body = request.json
             data = body.get("data")
+
             for item in data:
 
                 # body:
@@ -69,7 +70,7 @@ def socioeconomic_facts():
                                                               value=item.get("value"))
                 if fact is None:
                     return jsonify(status="fail", reason="some"+detail, data=[])
-            PostLog.log(current_user.id, detail=str(body.get("data")), note=body.get("note"), target=body.get("tablename"))
+                PostLog.log(current_user.id, detail=str(fact.to_json()), note=body.get("note"), target=body.get("tablename"))
             return jsonify(status="success", reason="", data=[])
 
     if request.method == "PUT":
@@ -79,6 +80,7 @@ def socioeconomic_facts():
 
             # body:
             # {tablename:"", data:[], note: ""}
+            pre_fact = SocioeconomicFacts.filter_by(id=item.id).fist()
 
             fact, detail = SocioeconomicFacts.update(id=item.id,
                                                      country_name=item.country,
@@ -88,17 +90,36 @@ def socioeconomic_facts():
 
             if fact is None:
                 return jsonify(status="fail", reason="some" + detail, data=[])
-            PostLog.log(current_user.id, detail=str(fact.to_json()), note=body.get("note"), target=body.get("tablename"))
+            PutLog.log(current_user.id, pre=str(pre_fact.to_json()), past=str(fact.to_json()), note=body.get("note"), target=body.get("tablename"))
         return jsonify(status="success", reason="", data=[])
 
     if request.method == "DELETE":
-        list_str = request.args.get("list")
-        if list_str is None:
-            return jsonify(status="fail", reason="list cant`t be empty", data=[])
+
+        list_str = request.form.get("list")
+        tablename = request.form.get("tablename")
+        note = request.form.get("tablename","")
+
+        if list_str is None or tablename is None:
+            return jsonify(status="fail", reason="list or tablename cant`t be empty", data=[])
+
         fact_ids = json.loads(list_str)
         deleted_facts = list()
+
         for id in fact_ids:
-            fact = SocioeconomicFacts.filter()
+            fact = SocioeconomicFacts.filter_by(id = id).first()
+            if fact is None:
+                return jsonify(status="fail", reason="no id :{} fact".format(str(id)), data=[])
+            deleted_facts.append(fact)
+
+        for fact in deleted_facts:
+            db.session.delete(fact)
+            db.session.commit()
+
+            DeleteLog.log(current_user.id, target=tablename, detail=str(fact.to_json()),note=note)
+
+        return jsonify(status="success", reason="", data=[f for f in deleted_facts])
+
+
 
 
 @quantify_blueprint.route("/socioeconomic_table", methods=['GET', 'POST'])
@@ -132,7 +153,8 @@ def socioeconomic_index():
         index = SocioeconomicIndexes(name=request.form.get("name"),
                                      cn_alis=request.form.get("cn_alis"),
                                      en_alis=request.form.get("en_alis"),
-                                     unit=request.form.get("unit"))
+                                     unit=request.form.get("unit"),
+                                     table_id=request.form.get("table_id"))
 
         return jsonify(status="success", reason="", data=[index.to_json()])
 
