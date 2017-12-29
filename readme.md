@@ -42,7 +42,7 @@
 
 ``` 
 
-## CURD API 范式
+## CURD API 范式(适用于定性数据,用户,日志)
 
 ### /{Prefix}/{表名}
 eg: /user/Role

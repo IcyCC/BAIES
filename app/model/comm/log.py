@@ -9,7 +9,7 @@ from datetime import datetime
 class PutLog(db.Model):
 
     # 更改的log
-    __tablename__ = "put_log"
+    __tablename__ = "put_logs"
 
     id = db.Column(db.Integer, primary_key=True, index=True)
     timestamp = db.Column(db.DateTime, default=datetime.now())
@@ -18,11 +18,14 @@ class PutLog(db.Model):
     pre = db.Column(db.String(1024), nullable=False) # 修改前
     past = db.Column(db.String(1024), nullable=False) # 修改后
 
+    note = db.Column(db.String(1024), default="")
+    status = db.Column(db.Integer, default=2) # 0 不显示通过，1不显示未通过，2显示
+
     @staticmethod
-    def log(user_id, target, pre, past):
-        p = PutLog(user_id=user_id, target=target, pre=str(pre), past=str(past))
-        db.Session.add(p)
-        db.Session.commit()
+    def log(user_id, target, pre, past, note):
+        p = PutLog(user_id=user_id, target=target, pre=str(pre), past=str(past),note=note)
+        db.session.add(p)
+        db.session.commit()
 
 
     def to_json(self):
@@ -32,14 +35,15 @@ class PutLog(db.Model):
             'user_id':self.user_id,
             'target':self.target,
             'pre':self.pre,
-            'past':self.past
+            'past':self.past,
+            'status': self.status
         }
 
 
 class DeleteLog(db.Model):
 
     # 删除的log
-    __tablename__ = "delete_log"
+    __tablename__ = "delete_logs"
 
     id = db.Column(db.Integer, primary_key=True, index=True)
     timestamp = db.Column(db.DateTime, default=datetime.now())
@@ -47,11 +51,14 @@ class DeleteLog(db.Model):
     target = db.Column(db.String(255), nullable=False)
     detail = db.Column(db.String(1024),nullable=False) #　详细信息
 
+    status = db.Column(db.Integer, default=2) # 0 不显示通过，1不显示未通过，2显示
+
+    note = db.Column(db.String(1024), default="")
     @staticmethod
-    def log(user_id, target, pre ,past):
-        p = PutLog(user_id=user_id, target=target, pre=str(pre), past=str(past))
-        db.Session.add(p)
-        db.Session.commit()
+    def log(user_id, target, pre ,past, note):
+        p = PutLog(user_id=user_id, target=target, pre=str(pre), past=str(past), note=note)
+        db.session.add(p)
+        db.session.commit()
 
     def to_json(self):
         return {
@@ -60,26 +67,31 @@ class DeleteLog(db.Model):
             'user_id': self.user_id,
             'target': self.target,
             'pre': self.pre,
-            'past': self.past
+            'past': self.past,
+            'status': self.status
         }
 
 
-class PostLog(db.Column):
+class PostLog(db.Model):
 
     # 兴增的log
-    __tablename__ = "post_log"
+    __tablename__ = "post_logs"
 
     id = db.Column(db.Integer, primary_key=True, index=True)
     timestamp = db.Column(db.DateTime, default=datetime.now())
     user_id = db.Column(db.Integer, nullable=False)
     target = db.Column(db.String(255), nullable=False)
-    detail = db.Column(db.String(1024),nullable=False)
+    detail = db.Column(db.String(1024), nullable=False)
+
+    status = db.Column(db.Integer, default=2) # 0 不显示通过，1不显示未通过，2显示
+
+    note = db.Column(db.String(1024), default="")
 
     @staticmethod
-    def log(user_id, target, pre ,past):
-        p = PutLog(user_id=user_id, target=target, pre=str(pre), past=str(past))
-        db.Session.add(p)
-        db.Session.commit()
+    def log(user_id, target, detail, note):
+        p = PostLog(user_id=user_id, target=target, detail=detail, note=note)
+        db.session.add(p)
+        db.session.commit()
 
     def to_json(self):
         return {
@@ -87,8 +99,8 @@ class PostLog(db.Column):
             'timestamp': self.timestamp,
             'user_id': self.user_id,
             'target': self.target,
-            'pre': self.pre,
-            'past': self.past
+            'detail': self.detail,
+            'status': self.status
         }
 
 

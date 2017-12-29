@@ -61,6 +61,7 @@ class User(db.Model, UserMixin):
 
 class AnonymousUser(AnonymousUserMixin):
 
+    id = -1
     permissions = Permission.QUALITATIVE_R
 
     def can(self, permissions):
