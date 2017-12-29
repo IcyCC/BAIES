@@ -2,7 +2,9 @@ from app import db
 from flask import request
 from functools import wraps
 from datetime import datetime
-
+from sqlalchemy.sql.expression import and_
+from sqlalchemy.orm import foreign, remote
+from app.model.user import User
 # 用户日志
 
 
@@ -21,6 +23,8 @@ class PutLog(db.Model):
     note = db.Column(db.String(1024), default="")
     status = db.Column(db.Integer, default=2) # 0 不显示通过，1不显示未通过，2显示
 
+    user = db.relationship('User', primaryjoin=foreign(user_id) == remote(User.id),
+                           lazy='joined', backref='posts')
     @staticmethod
     def log(user_id, target, pre, past, note):
         p = PutLog(user_id=user_id, target=target, pre=str(pre), past=str(past),note=note)
@@ -50,6 +54,9 @@ class DeleteLog(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     target = db.Column(db.String(255), nullable=False)
     detail = db.Column(db.String(1024),nullable=False) #　详细信息
+
+    user = db.relationship('User', primaryjoin=foreign(user_id) == remote(User.id),
+                           lazy='joined', backref='posts')
 
     status = db.Column(db.Integer, default=2) # 0 不显示通过，1不显示未通过，2显示
 
@@ -84,6 +91,8 @@ class PostLog(db.Model):
     detail = db.Column(db.String(1024), nullable=False)
 
     status = db.Column(db.Integer, default=2) # 0 不显示通过，1不显示未通过，2显示
+    user = db.relationship('User', primaryjoin=foreign(user_id) == remote(User.id),
+                           lazy='joined', backref='posts')
 
     note = db.Column(db.String(1024), default="")
 

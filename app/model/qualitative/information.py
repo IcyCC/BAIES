@@ -1,6 +1,9 @@
 from app import db
 from app.model.comm import ActionMixin
 from datetime import datetime
+from app.model.user import User
+from sqlalchemy.sql.expression import and_
+from sqlalchemy.orm import foreign, remote
 
 # 定性信息
 
@@ -18,6 +21,9 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.now())
 
     user_id = db.Column(db.Integer, nullable=False, index=True)
+
+    user = db.relationship('User', primaryjoin=foreign(user_id) == remote(User.id),
+                           lazy='joined', backref='posts')
 
     def to_json(self):
         return {
