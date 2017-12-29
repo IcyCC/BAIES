@@ -1,7 +1,7 @@
 from flask import request, jsonify, current_app
 from app import db
 from . import quantify_blueprint
-from app.model.quantify import SocioeconomicFacts,Country,SocioeconomicIndexes,SocioeconomicTable
+from app.model.quantify import Country
 from app.model.user import Permission
 from flask_login import current_user
 from app.model.comm.log import PutLog,DeleteLog,PostLog
