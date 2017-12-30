@@ -16,6 +16,8 @@
 
 ## Model
 
+![baies](http://123.206.8.125:10086/baies_uml.png)
+
 * log.py 日志系统的表
 * information.py 定性系统的表
 * agriculture_products.py 定量系统农产品的表
@@ -306,6 +308,16 @@ eg: /user/Role/２
     data:[] null
 }
 
+#### /user/upload
+> 上传文件
+
+* method: POST
+* from: file 
+* return: {
+    status: "success" or "fail",
+    reason: 成功时为空,失败见原因参考表,
+    data:""文件的url
+}
 
 ## reason list
 
