@@ -24,7 +24,7 @@ class PutLog(db.Model):
     status = db.Column(db.Integer, default=2) # 0 不显示通过，1不显示未通过，2显示
 
     user = db.relationship('User', primaryjoin=foreign(user_id) == remote(User.id),
-                           lazy='joined', backref='posts')
+                           lazy='joined', backref='put_logs')
     @staticmethod
     def log(user_id, target, pre, past, note):
         p = PutLog(user_id=user_id, target=target, pre=str(pre), past=str(past),note=note)
@@ -56,7 +56,7 @@ class DeleteLog(db.Model):
     detail = db.Column(db.String(1024),nullable=False) #　详细信息
 
     user = db.relationship('User', primaryjoin=foreign(user_id) == remote(User.id),
-                           lazy='joined', backref='posts')
+                           lazy='joined', backref='delete_logs')
 
     status = db.Column(db.Integer, default=2) # 0 不显示通过，1不显示未通过，2显示
 
@@ -92,7 +92,7 @@ class PostLog(db.Model):
 
     status = db.Column(db.Integer, default=2) # 0 不显示通过，1不显示未通过，2显示
     user = db.relationship('User', primaryjoin=foreign(user_id) == remote(User.id),
-                           lazy='joined', backref='posts')
+                           lazy='joined', backref='post_logs')
 
     note = db.Column(db.String(1024), default="")
 

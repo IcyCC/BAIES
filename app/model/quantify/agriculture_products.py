@@ -1,7 +1,7 @@
 from app import db
 from app.model.comm import ActionMixin
 from flask import jsonify
-from sqlalchemy.sql.expression import and_
+from sqlalchemy.sql.expression import and_,or_
 from sqlalchemy.orm import foreign, remote
 from . import Country
 
@@ -21,7 +21,16 @@ class AgricultureTable(db.Model):
             "name": self.name,
             "cn_alis": self.cn_alis,
             "en_alis": self.en_alis,
-            "indexes": str([i.to_json() for i in self.indexes])
+            "indexes": [i.to_json() for i in self.indexes]
+        }
+
+    def to_json_by_index(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "cn_alis": self.cn_alis,
+            "en_alis": self.en_alis,
+            "indexes": [i.id for i in self.indexes]
         }
 
 class AgricultureKind(db.Model):
@@ -30,11 +39,18 @@ class AgricultureKind(db.Model):
     id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
     name = db.Column(db.String(255), index=True, nullable=False)
 
-
     def to_json(self):
         return {
             "id": self.id,
             "name": self.name,
+            "facts": [i.to_json() for i in self.facts]
+        }
+
+    def to_json_by_fact(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "facts": [i.id for i in self.facts]
         }
 
 
@@ -60,19 +76,21 @@ class AgricultureIndexes(db.Model):
             "id": self.id,
             "name": self.name,
             "unit": self.unit,
-            "table": self.table.name,
+            "table": self.table.to_json_by_index(),
             "cn_alis": self.cn_alis,
-            "en_alis": self.en_alis
+            "en_alis": self.en_alis,
+            "facts": [i.to_json() for i in self.facts]
         }
 
-    def fact_to_json(self):
+    def to_json_by_fact(self):
         return {
             "id": self.id,
             "name": self.name,
             "unit": self.unit,
-            "table_id": self.table_id,
+            "table": self.table.to_json_by_index(),
             "cn_alis": self.cn_alis,
-            "en_alis": self.en_alis
+            "en_alis": self.en_alis,
+            "facts": [i.id for i in self.facts]
         }
 
 class AgricultureFacts(db.Model):
@@ -106,8 +124,8 @@ class AgricultureFacts(db.Model):
             "country": self.country.name,
             "time": self.time if self.time is None else self.time.strftime("%Y-%m-%d %H:%M:%S"),
             "time_stamp": self.time_stamp if self.time_stamp is None else self.time_stamp.strftime("%Y-%m-%d %H:%M:%S"),
-            "kind": self.kind.name,
-            "index": self.index.fact_to_json(),
+            "kind": self.kind.to_json_by_fact(),
+            "index": self.index.to_json_by_fact(),
             "value": self.value
         }
 
@@ -131,6 +149,8 @@ class AgricultureFacts(db.Model):
 
         s = AgricultureFacts(country_id=country.id, time=time,
                              index_id=index.id, value=value, kind_id=kind.id)
+
+        Country.query.filter(Country.id.in_())
 
         db.session.add(s)
         db.session.commit()
@@ -210,4 +230,4 @@ class AgricultureFacts(db.Model):
         if end_time is not None:
             query = query.filter(cls.time < end_time)
 
-        return query.all()
+        return query

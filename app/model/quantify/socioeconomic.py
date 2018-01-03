@@ -21,7 +21,16 @@ class SocioeconomicTable(db.Model):
             "name": self.name,
             "cn_alis": self.cn_alis,
             "en_alis": self.en_alis,
-            "indexes": str([i.to_json() for i in self.indexes])
+            "indexes": [i.to_json() for i in self.indexes]
+        }
+
+    def to_json_by_index(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "cn_alis": self.cn_alis,
+            "en_alis": self.en_alis,
+            "indexes": [i.id for i in self.indexes]
         }
 
 
@@ -45,19 +54,21 @@ class SocioeconomicIndexes(db.Model):
             "id": self.id,
             "name": self.name,
             "unit": self.unit,
-            "table": self.table.name,
+            "table": self.table.to_json_by_index(),
             "cn_alis": self.cn_alis,
-            "en_alis": self.en_alis
+            "en_alis": self.en_alis,
+            "facts": [i.to_json() for i in self.facts]
         }
 
-    def fact_to_json(self):
+    def to_json_by_fact(self):
         return {
             "id": self.id,
             "name": self.name,
             "unit": self.unit,
-            "table_id": self.table_id,
+            "table": self.table.to_json_by_index(),
             "cn_alis": self.cn_alis,
-            "en_alis": self.en_alis
+            "en_alis": self.en_alis,
+            "facts": [i.id for i in self.facts]
         }
 
 
@@ -92,7 +103,7 @@ class SocioeconomicFacts(db.Model):
             "country": self.country.name,
             "time": self.time if self.time is None else self.time.strftime("%Y-%m-%d %H:%M:%S"),
             "value": self.value,
-            "index": self.index.fact_to_json(),
+            "index": self.index.to_json_by_fact(),
             "time_stamp": self.time_stamp if self.time_stamp is None else self.time_stamp.strftime("%Y-%m-%d %H:%M:%S")
         }
 
@@ -186,7 +197,7 @@ class SocioeconomicFacts(db.Model):
         if end_time is not None:
             query = query.filter(cls.time < end_time)
 
-        return query.all()
+        return query
 
 
 

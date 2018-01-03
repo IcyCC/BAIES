@@ -22,6 +22,7 @@ def check_args(father,son):
 
     return set(father) > set(son)
 
+
 @quantify_blueprint.route("/socioeconomic_facts", methods=['GET', 'POST','PUT', 'DELETE'])
 def socioeconomic_facts():
     if request.method == "GET":
@@ -34,9 +35,17 @@ def socioeconomic_facts():
         if not check_args(ALLOW_ARGS, args.keys()):
             return jsonify(status="fail", reason="error args", data=[])
 
-        result = [fact.to_json() for fact in SocioeconomicFacts.find(tablename=args.get("tablename"), index=args.get("index"),
+        facts = SocioeconomicFacts.find(tablename=args.get("tablename"), index=args.get("index"),
                                           country=args.get("country"), start_time=args.get("start_time"),
-                                          end_time=args.get("end_time"))]
+                                          end_time=args.get("end_time"))
+        result = dict()
+
+        for fact in facts:
+            if result.get(fact.index_id) is None:
+                result.update({fact.index_id: [fact.to_json()]})
+            else:
+                result[fact.index_id].append(fact.to_json())
+
         return jsonify(status="success", reason="", data=result)
 
     if request.method == "POST":
@@ -118,8 +127,6 @@ def socioeconomic_facts():
             DeleteLog.log(current_user.id, target=fact.index.table.name, detail=str(fact.to_json()),note=note)
 
         return jsonify(status="success", reason="", data=[f.to_json() for f in deleted_facts])
-
-
 
 
 @quantify_blueprint.route("/socioeconomic_table", methods=['GET', 'POST','PUT', 'DELETE'])
