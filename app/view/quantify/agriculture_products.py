@@ -19,9 +19,18 @@ ALLOW_ARGS = (
     "kind"
 )
 
+
 def check_args(father,son):
 
     return set(father) > set(son)
+
+
+def find_in_list(items, id, func):
+    for item in items:
+        if func(item, id):
+            return item
+
+    return None
 
 
 @quantify_blueprint.route("/agriculture_facts", methods=['GET', 'POST','PUT', 'DELETE'])
@@ -35,16 +44,24 @@ def agriculture_facts():
 
         if not check_args(ALLOW_ARGS, args.keys()):
             return jsonify(status="fail", reason="error args", data=[])
-        facts =  AgricultureFacts.find(tablename=args.get("tablename"), index=args.get("index"),
+        facts = AgricultureFacts.find(tablename=args.get("tablename"), index=args.get("index"),
                                           country=args.get("country"), start_time=args.get("start_time"))
 
-        result = dict()
+        result = list()
 
         for fact in facts:
-            if result.get(fact.index_id) is None:
-                result.update({fact.index_id: [fact.to_json()]})
+            _tmp_has_index = find_in_list(result, fact.index_id, lambda x, y: x.get("index_id") == y)
+            if _tmp_has_index is None:
+                result.append({"index_id": fact.index_id,
+                               "data": [{"country_id": fact.country_id,
+                                         "data": [fact.to_json()]}]})
             else:
-                result[fact.index_id].append(fact.to_json())
+                _tmp_has_country = find_in_list(result, fact.country_id, lambda x, y: x.get("country_id") == y)
+                if _tmp_has_country is None:
+                    _tmp_has_index['data'].append({"country_id": fact.country_id,
+                                                   "data": [fact.to_json()]})
+                else:
+                    _tmp_has_country["data"].append(fact.to_json)
 
         return jsonify(status="success", reason="", data=result)
 
