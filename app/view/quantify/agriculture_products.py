@@ -69,12 +69,12 @@ def agriculture_facts():
 
         if request.args.get("batch") is None:
 
-            fact, detail = AgricultureFacts.insert_data(tablename=request.form.get("tablename"),
-                                                        country_name=request.form.get("country"),
-                                                        time=request.form.get("time"),
-                                                        index_name=request.form.get("index"),
-                                                        value=request.form.get("value"),
-                                                        kind=request.form.get("kind"))
+            fact, detail = AgricultureFacts.insert_data_with_id(table_id=request.form.get("table_id"),
+                                                                country_id=request.form.get("country_id"),
+                                                                time=request.form.get("time"),
+                                                                index_id=request.form.get("index_id"),
+                                                                kind_id=request.form.get("kind_id"),
+                                                                value=request.form.get("value"))
 
             if fact is None:
                 return jsonify(status="fail", reason=detail, data=[])
@@ -89,17 +89,17 @@ def agriculture_facts():
             for item in data:
 
                 # body:
-                # {tablename:"", data:[], note: ""}
+                # {table_id:"", data:[], note: ""}
 
-                fact, detail = AgricultureFacts.insert_data(tablename=body.get("tablename"),
-                                                            country_name=item.get("country"),
-                                                            time=item.get("time"),
-                                                            index_name=item.get("index"),
-                                                            value=item.get("value"),
-                                                            kind=item.get("kind"))
+                fact, detail = AgricultureFacts.insert_data_with_id(table_id=request.form.get("table_id"),
+                                                                    country_id=item.get("country_id"),
+                                                                    time=item.get("time"),
+                                                                    index_id=item.get("index_id"),
+                                                                    kind_id=item.get("kind_id"),
+                                                                    value=item.get("value"))
                 if fact is None:
                     return jsonify(status="fail", reason="some"+detail, data=[])
-                PostLog.log(current_user.id, detail=str(fact.to_json()), note=body.get("note",""), target=body.get("tablename"))
+                PostLog.log(current_user.id, detail=str(fact.to_json()), note=body.get("note",""), target=body.get("table_id"))
             return jsonify(status="success", reason="", data=[])
 
     if request.method == "PUT":
@@ -108,20 +108,20 @@ def agriculture_facts():
         for item in body.get("data"):
 
             # body:
-            # {tablename:"", data:[], note: ""}
+            # {table_id:"", data:[], note: ""}
             pre_fact = AgricultureFacts.query.filter_by(id=item.get("id")).first()
 
-            fact, detail = AgricultureFacts.update(id=item.get("id"),
-                                                   country_name=item.get("country"),
-                                                   time=item.get("time"),
-                                                   index_name=item.get("index"),
-                                                   value=item.get("value"),
-                                                   kind_name=item.get("kind"))
+            fact, detail = AgricultureFacts.update_with_id(id=item.get("id"),
+                                                           country_id=item.get("country_id"),
+                                                           time=item.get("time"),
+                                                           index_id=item.get("index_id"),
+                                                           value=item.get("value"),
+                                                           kind_id=item.get("kind_id"))
 
             if fact is None:
                 return jsonify(status="fail", reason="some" + detail, data=[])
             PutLog.log(current_user.id, pre=str(pre_fact.to_json()), past=str(fact.to_json()), note=body.get("note",""),
-                       target=body.get("tablename"))
+                       target=body.get("table_id"))
         return jsonify(status="success", reason="", data=[])
 
     if request.method == "DELETE":
@@ -158,8 +158,8 @@ def agriculture_table():
 
     if request.method == "POST":
         table = AgricultureTable(name=request.form.get("name"),
-                                   cn_alis=request.form.get("cn_alis"),
-                                   en_alis=request.form.get("en_alis"))
+                                 cn_alis=request.form.get("cn_alis"),
+                                 en_alis=request.form.get("en_alis"))
 
         return jsonify(status="success", reason="", data=[table.to_json()])
 

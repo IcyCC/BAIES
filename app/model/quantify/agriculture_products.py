@@ -161,7 +161,10 @@ class AgricultureFacts(db.Model):
     def insert_data_with_id(table_id=None, country_id=None, time=None, index_id=None, kind_id=None,value=None):
         if table_id is None or country_id is None or index_id is None or kind_id is None:
             return None,"some filed is empty"
-        index = AgricultureIndexes.query.filter_by(id=country_id).filter(AgricultureIndexes.table.id == table_id).first()
+        table = AgricultureTable.query.filter_by(id=table_id).first()
+        if table is None:
+            return None, "no such id table"
+        index = AgricultureIndexes.query.filter(AgricultureIndexes.table_id == table_id).first()
         country = Country.query.filter_by(id=index_id).first()
         kind = Country.query.filter_by(id=kind_id).first()
 
@@ -195,6 +198,29 @@ class AgricultureFacts(db.Model):
         index = AgricultureFacts.query.filter_by(name=index_name).first()
         country = Country.query.filter_by(name=country_name).first()
         kind = AgricultureKind.query.filter_by(name=kind_name).first()
+
+        fact.country_id = country.id
+        fact.time = time
+        fact.index_id = index.id
+        fact.value = value
+        fact.kind_id = kind.id
+        db.session.add(fact)
+        db.session.commit()
+        return fact, ""
+
+    @staticmethod
+    def update_with_id(id=None, country_id=None, time=None, index_id=None, value=None, kind_id=None):
+
+        if id is None or country_id is None or index_id is None or kind_id is None or value is None:
+            return None, "some filed is empty"
+
+        fact = AgricultureFacts.query.filter_by(id=id).fisrt()
+
+        if fact is None:
+            return None, "no such fact"
+        index = AgricultureFacts.query.filter_by(id=index_id).first()
+        country = Country.query.filter_by(id=country_id).first()
+        kind = AgricultureKind.query.filter_by(id=kind_id).first()
 
         fact.country_id = country.id
         fact.time = time

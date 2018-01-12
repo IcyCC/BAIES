@@ -137,7 +137,10 @@ class SocioeconomicFacts(db.Model):
     def insert_data_with_id(table_id=None, country_id=None, time=None, index_id=None, value=None):
         if table_id is None or country_id is None or index_id is None:
             return None,"some filed is empty"
-        index = SocioeconomicIndexes.query.filter_by(id=country_id).filter(SocioeconomicIndexes.table.id == table_id).first()
+        table = SocioeconomicTable.query.filter_by(id=table_id).first()
+        if table is None:
+            return None, "no such id table"
+        index = SocioeconomicIndexes.query.query.filter(SocioeconomicIndexes.table_id == table_id).first()
         country = Country.query.filter_by(id=index_id).first()
 
         if index is None:
@@ -147,7 +150,7 @@ class SocioeconomicFacts(db.Model):
             return None, "table have`t this country"
 
         s = SocioeconomicIndexes(country_id=country.id, time=time,
-                                index_id=index.id, value=value)
+                                 index_id=index.id, value=value)
 
         db.session.add(s)
         db.session.commit()
@@ -166,6 +169,27 @@ class SocioeconomicFacts(db.Model):
             return None, "no such fact"
         index = SocioeconomicIndexes.query.filter_by(name=index_name).first()
         country = Country.query.filter_by(name=country_name).first()
+        fact.country_id = country.id
+        fact.time = time
+        fact.index_id = index.id
+        fact.value = value
+        db.session.add(fact)
+        db.session.commit()
+        return fact, ""
+
+    @staticmethod
+    def update_with_id(id=None, country_id=None, time=None, index_id=None, value=None):
+
+        if id is None or country_id is None or index_id is None  or value is None:
+            return None, "some filed is empty"
+
+        fact = SocioeconomicFacts.query.filter_by(id=id).fisrt()
+
+        if fact is None:
+            return None, "no such fact"
+        index = SocioeconomicFacts.query.filter_by(id=index_id).first()
+        country = Country.query.filter_by(id=country_id).first()
+
         fact.country_id = country.id
         fact.time = time
         fact.index_id = index.id

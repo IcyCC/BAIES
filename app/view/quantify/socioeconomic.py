@@ -67,12 +67,11 @@ def socioeconomic_facts():
 
         if request.args.get("batch") is None:
 
-            fact, detail = SocioeconomicFacts.insert_data(tablename=request.form.get("tablename"),
-                                                          country_name=request.form.get("country_name"),
-                                                          time=request.form.get("time"),
-                                                          index_name=request.form.get("index_name"),
-                                                          value=request.form.get("value"))
-
+            fact, detail = SocioeconomicFacts.insert_data_with_id(table_id=request.form.get("table_id"),
+                                                                  country_id=request.form.get("country_id"),
+                                                                  time=request.form.get("time"),
+                                                                  index_id=request.form.get("index_id"),
+                                                                  value=request.form.get("value"))
             if fact is None:
                 return jsonify(status="fail", reason=detail, data=[])
             PostLog.log(user_id=current_user.id, target=request.form.get("tablename"), detail=str(fact.to_json()),
@@ -86,16 +85,16 @@ def socioeconomic_facts():
             for item in data:
 
                 # body:
-                # {tablename:"", data:[], note: ""}
+                # {table_id:"", data:[], note: ""}
 
-                fact, detail = SocioeconomicFacts.insert_data(tablename=body.get("tablename"),
-                                                              country_name=item.get("country"),
-                                                              time=item.get("time"),
-                                                              index_name=item.get("index"),
-                                                              value=item.get("value"))
+                fact, detail = SocioeconomicFacts.insert_data_with_id(table_id=request.form.get("table_id"),
+                                                                      country_id=item.get("country_id"),
+                                                                      time=item.get("time"),
+                                                                      index_id=item.get("index_id"),
+                                                                      value=item.get("value"))
                 if fact is None:
                     return jsonify(status="fail", reason="some"+detail, data=[])
-                PostLog.log(current_user.id, detail=str(fact.to_json()), note=body.get("note",""), target=body.get("tablename"))
+                PostLog.log(current_user.id, detail=str(fact.to_json()), note=body.get("note",""), target=body.get("table_id"))
             return jsonify(status="success", reason="", data=[])
 
     if request.method == "PUT":
@@ -104,18 +103,25 @@ def socioeconomic_facts():
         for item in body.get("data"):
 
             # body:
-            # {tablename:"", data:[], note: ""}
+            # {table_id:"", data:[], note: ""}
             pre_fact = SocioeconomicFacts.query.filter_by(id=item.get("id")).first()
 
-            fact, detail = SocioeconomicFacts.update(id=item.get("id"),
-                                                     country_name=item.get("country"),
-                                                     time=item.get("time"),
-                                                     index_name=item.get("index"),
-                                                     value=item.get("value"))
+            fact, detail = SocioeconomicFacts.update_with_id(id=item.get("id"),
+                                                             country_id=item.get("country_id"),
+                                                             time=item.get("time"),
+                                                             index_id=item.get("index_id"),
+                                                             value=item.get("value"),
+                                                         )
 
             if fact is None:
                 return jsonify(status="fail", reason="some" + detail, data=[])
-            PutLog.log(current_user.id, pre=str(pre_fact.to_json()), past=str(fact.to_json()), note=body.get("note",""), target=body.get("tablename"))
+
+            PutLog.log(current_user.id,
+                       pre=str(pre_fact.to_json()),
+                       past=str(fact.to_json()),
+                       note=body.get("note",""),
+                       target=body.get("table_id"))
+            
         return jsonify(status="success", reason="", data=[])
 
     if request.method == "DELETE":
