@@ -100,7 +100,7 @@ class SocioeconomicFacts(db.Model):
 
         return {
             "id": self.id,
-            "country": self.country.name,
+            "country": self.country.to_json(),
             "time": self.time if self.time is None else self.time.strftime("%Y-%m-%d %H:%M:%S"),
             "value": self.value,
             "index": self.index.to_json_by_fact(),

@@ -121,7 +121,7 @@ def socioeconomic_facts():
                        past=str(fact.to_json()),
                        note=body.get("note",""),
                        target=body.get("table_id"))
-            
+
         return jsonify(status="success", reason="", data=[])
 
     if request.method == "DELETE":

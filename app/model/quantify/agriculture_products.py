@@ -121,7 +121,7 @@ class AgricultureFacts(db.Model):
     def to_json(self):
         return {
             "id": self.id,
-            "country": self.country.name,
+            "country": self.country.to_json(),
             "time": self.time if self.time is None else self.time.strftime("%Y-%m-%d %H:%M:%S"),
             "time_stamp": self.time_stamp if self.time_stamp is None else self.time_stamp.strftime("%Y-%m-%d %H:%M:%S"),
             "kind": self.kind.to_json_by_fact(),
