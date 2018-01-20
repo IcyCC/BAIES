@@ -463,3 +463,32 @@ python BAIES.py Upgrade
 
 ```
 
+
+```json
+{
+   "data":[
+       {
+       "index_id":1,
+        "data":[
+          {
+            "country_id":1,
+            "data":[
+              {
+                fact1
+              },
+              {
+                fact2
+              }
+            ]
+          },
+          {
+            .....
+          }
+        ]
+       },
+       {
+        ....
+       }
+   ]
+}
+```
