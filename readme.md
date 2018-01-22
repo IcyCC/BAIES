@@ -136,20 +136,18 @@
 * json_body(批量提交):
 ```angular2html
 {
-	"tablename": "A",
+	"table_id": "A",
 	"note": "test_batch",
 	"data":[
 	      {
-            "country": "CN",
-            "id": 1,
-            "index": "a",
+            "country_id": 1,
+            "index_id": 1,
             "time": "2010-1-1 22:22:22",
             "value": 2.2
         },
-        {
-            "country": "CN",
-            "id": 2,
-            "index": "b",
+	      {
+            "country_id": 1,
+            "index_id": 1,
             "time": "2010-1-1 22:22:22",
             "value": 2.2
         }
@@ -171,20 +169,18 @@
 * json_body(批量提交):
 ```angular2html
 {
-	"tablename": "A",
+	"table_id": "A",
 	"note": "test_batch",
 	"data":[
 	      {
-            "country": "CN",
-            "id": 1,
-            "index": "a",
+            "country_id": 1,
+            "index_id": 1,
             "time": "2010-1-1 22:22:22",
             "value": 2.2
         },
-        {
-            "country": "CN",
-            "id": 2,
-            "index": "b",
+	      {
+            "country_id": 1,
+            "index_id": 1,
             "time": "2010-1-1 22:22:22",
             "value": 2.2
         }
@@ -214,7 +210,7 @@
 }
 
 
-## CURD API 范式(适用于定性数据,用户,日志)
+## CURD API 范式(适用于定性数据,用户,日志) ()
 
 ### /{Prefix}/{表名}
 eg: /user/Role
