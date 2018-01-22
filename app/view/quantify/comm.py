@@ -16,8 +16,8 @@ def route_country():
 
     if request.method == "POST":
         country = Country(name=request.form.get("name"),
-                          cn_alis=request.form.get("cn_alis"),
-                          en_alis=request.form.get("en_alis"))
+                          cn_alias=request.form.get("cn_alis"),
+                          en_alias=request.form.get("en_alis"))
 
         return jsonify(status="success", reason="", data=[country.to_json()])
 
