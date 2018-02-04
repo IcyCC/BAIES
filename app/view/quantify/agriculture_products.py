@@ -149,6 +149,15 @@ def agriculture_facts():
 
         return jsonify(status="success", reason="", data=[f.to_json() for f in deleted_facts])
 
+@quantify_blueprint.route("/agriculture_table/<id>/indexes", methods=['GET', 'POST','PUT', 'DELETE'])
+def socioeconomic_facts_indexes(id):
+    if request.method == "GET":
+        table = AgricultureTable.query.filter_by(id=id).first()
+
+        if table is None:
+            return jsonify(status="fail", reason="no such id table", data=[])
+
+        return jsonify(status="fail", reason="no such id table", data=[i.to_json() for i in table.indexes])
 
 @quantify_blueprint.route("/agriculture_table", methods=['GET', 'POST','PUT', 'DELETE'])
 def agriculture_table():

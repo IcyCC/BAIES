@@ -145,9 +145,20 @@ def socioeconomic_facts():
             db.session.delete(fact)
             db.session.commit()
 
-            DeleteLog.log(current_user.id, target=fact.index.table.name, detail=str(fact.to_json()),note=note)
+            DeleteLog.log(current_user.id, target=fact.index.table.name, detail=str(fact.to_json()), note=note)
 
         return jsonify(status="success", reason="", data=[f.to_json() for f in deleted_facts])
+
+
+@quantify_blueprint.route("/socioeconomic_table/<id>/indexes", methods=['GET', 'POST','PUT', 'DELETE'])
+def socioeconomic_facts_indexes(id):
+    if request.method == "GET":
+        table = SocioeconomicTable.query.filter_by(id=id).first()
+
+        if table is None:
+            return jsonify(status="fail", reason="no such id table", data=[])
+
+        return jsonify(status="fail", reason="no such id table", data=[i.to_json() for i in table.indexes])
 
 
 @quantify_blueprint.route("/socioeconomic_table", methods=['GET', 'POST','PUT', 'DELETE'])
