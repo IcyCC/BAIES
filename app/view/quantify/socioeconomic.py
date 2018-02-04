@@ -41,9 +41,9 @@ def socioeconomic_facts():
         if not check_args(ALLOW_ARGS, args.keys()):
             return jsonify(status="fail", reason="error args", data=[])
 
-        facts = SocioeconomicFacts.find(tablename=args.get("tablename"), index=args.get("index"),
-                                          country=args.get("country"), start_time=args.get("start_time"),
-                                          end_time=args.get("end_time"))
+        facts = SocioeconomicFacts.find(table_id=args.get("table_id"), index=args.get("index"),
+                                        country=args.get("country"), start_time=args.get("start_time"),
+                                        end_time=args.get("end_time"))
         result = list()
 
         for fact in facts:

@@ -200,11 +200,11 @@ class SocioeconomicFacts(db.Model):
 
 
     @classmethod
-    def find(cls, tablename=None, index=None,country=None, start_time=None, end_time=None):
+    def find(cls, table_id=None, index=None,country=None, start_time=None, end_time=None):
         query = cls.query
 
-        if tablename is not None:
-            table = SocioeconomicTable.query.filter_by(name=tablename).first()
+        if table_id is not None:
+            table = SocioeconomicTable.query.filter_by(id=table_id).first()
             if table is None:
                 return []
             query = query.join(SocioeconomicIndexes, SocioeconomicIndexes.id == cls.index_id).filter(SocioeconomicIndexes.table_id == table.id)
