@@ -18,6 +18,8 @@ class Post(db.Model):
     kind = db.Column(db.String(64))
     en_kind = db.Column(db.String(64))
 
+    show = db.Column(db.Boolean, default=False)
+
     timestamp = db.Column(db.DateTime, default=datetime.now())
 
     user_id = db.Column(db.Integer, nullable=False, index=True)
@@ -35,5 +37,6 @@ class Post(db.Model):
             'en_kind': self.en_kind,
             'kind':self.kind,
             'timestamp':self.time if self.time is None else self.time.strftime("%Y-%m-%d %H:%M:%S"),
-            'user_id':self.user_id
+            'user_id':self.user_id,
+            'show': self.show
         }
