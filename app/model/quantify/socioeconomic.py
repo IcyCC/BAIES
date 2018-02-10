@@ -21,7 +21,7 @@ class SocioeconomicTable(db.Model):
             "name": self.name,
             "cn_alis": self.cn_alis,
             "en_alis": self.en_alis,
-            "indexes": [i.to_json() for i in self.indexes]
+            "indexes": [i.to_json_by_fact() for i in self.indexes]
         }
 
     def to_json_by_index(self):

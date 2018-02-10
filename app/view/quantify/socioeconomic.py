@@ -150,7 +150,7 @@ def socioeconomic_facts():
         return jsonify(status="success", reason="", data=[f.to_json() for f in deleted_facts])
 
 
-@quantify_blueprint.route("/socioeconomic_table1/<id>/indexes", methods=['GET', 'POST','PUT', 'DELETE'])
+@quantify_blueprint.route("/socioeconomic_table/<id>/indexes", methods=['GET', 'POST','PUT', 'DELETE'])
 def socioeconomic_facts_indexes(id):
     if request.method == "GET":
         table = SocioeconomicTable.query.filter_by(id=id).first()
