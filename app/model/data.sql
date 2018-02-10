@@ -14,3 +14,6 @@ INSERT INTO agriculture_facts(index_id,item_id,country,value) VALUES (2,2,'ZH',1
 INSERT INTO agriculture_facts(index_id,item_id,country,value) VALUES (4,1,'CN',20);
 INSERT INTO agriculture_facts(index_id,item_id,country,value) VALUES (5,1,'CN',20);
 INSERT INTO agriculture_facts(index_id,item_id,country,value) VALUES (4,2,'CN',30);
+
+
+SELECT * FROM posts;

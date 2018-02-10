@@ -7,6 +7,7 @@ from app.model.user import Permission
 from flask_login import current_user
 from app.model.comm.log import PutLog,DeleteLog,PostLog
 import json
+from datetime import datetime
 import sqlalchemy
 
 ALLOW_ARGS = (
@@ -41,9 +42,29 @@ def socioeconomic_facts():
         if not check_args(ALLOW_ARGS, args.keys()):
             return jsonify(status="fail", reason="error args", data=[])
 
-        facts = SocioeconomicFacts.find(table_id=args.get("table_id"), index=args.get("index"),
-                                        country=args.get("country"), start_time=args.get("start_time"),
-                                        end_time=args.get("end_time"))
+        index_ids = args.get("index_ids")
+        if index_ids is not None:
+            index_ids = json.loads(index_ids)
+            if not index_ids:
+                index_ids = None
+
+        index_ids = args.get("index_ids")
+        if index_ids is not None:
+            index_ids = json.loads(index_ids)
+            if not index_ids:
+                index_ids = None
+
+        start_time = args.get("start_time")
+        if start_time is not None:
+            start_time = datetime.strptime(start_time, "%Y")
+
+        end_time = args.get("end_time")
+        if end_time is not None:
+            end_time = datetime.strptime(end_time, "%Y")
+
+        facts = SocioeconomicFacts.find(table_id=int(args.get("table_id")), index_ids=index_ids,
+                                        country_ids=args.get("country"), start_time=start_time,
+                                        end_time=end_time)
         result = list()
 
         for fact in facts:
@@ -172,12 +193,24 @@ def socioeconomic_table():
                                    cn_alis=request.form.get("cn_alis"),
                                    en_alis=request.form.get("en_alis"))
 
+        db.session.add(table)
+        db.session.commit()
+
         return jsonify(status="success", reason="", data=[table.to_json()])
 
     if request.method == "DELETE":
 
-        table = SocioeconomicTable.query.filter_by(id=request.args.get("id")).first()
+        table = SocioeconomicTable.query.filter_by(id=request.form.get("id")).first()
         db.session.delete(table)
+        db.session.commit()
+        return jsonify(status="success", reason="", data=[table.to_json()])
+
+    if request.method == "PUT":
+        table = SocioeconomicTable.query.filter_by(id=request.form.get("id")).first()
+        table.name = request.form.get("name")
+        table.cn_alis = request.form.get("cn_alis")
+        table.en_alis = request.form.get("en_alis")
+        db.session.add(table)
         db.session.commit()
         return jsonify(status="success", reason="", data=[table.to_json()])
 
@@ -194,17 +227,25 @@ def socioeconomic_index():
                                      en_alis=request.form.get("en_alis"),
                                      unit=request.form.get("unit"),
                                      table_id=request.form.get("table_id"))
+        db.session.add(index)
+        db.session.commit()
 
         return jsonify(status="success", reason="", data=[index.to_json()])
 
     if request.method == "PUT":
         index = SocioeconomicIndexes.query.filter_by(id=request.form.get("id")).first()
+        index.name = request.form.get("name")
+        index.cn_alis = request.form.get("cn_alis")
+        index.en_alis = request.form.get("en_alis")
+        index.unit = request.form.get("unit")
+        db.session.add(index)
+        db.session.commit()
 
         return jsonify(status="success", reason="", data=[index.to_json()])
 
     if request.method == "DELETE":
 
-        index = SocioeconomicIndexes.query.filter_by(id=request.args.get("id")).first()
+        index = SocioeconomicIndexes.query.filter_by(id=request.form.get("id")).first()
         db.session.delete(index)
         db.session.commit()
         return jsonify(status="success", reason="", data=[index.to_json()])

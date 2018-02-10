@@ -45,9 +45,19 @@ SELECT * FROM socioeconomic_facts;
 
 SELECT * FROM post_logs;
 
-SELECT concat('DROP TABLE IF EXISTS ', table_name, ';')
-FROM information_schema.tables
-WHERE table_schema = 'baies';
+# SELECT concat('DROP TABLE IF EXISTS ', table_name, ';')
+# FROM information_schema.tables
+# WHERE table_schema = 'baies';
 
 
 ALTER DATABASE baies DEFAULT CHARACTER SET utf8 ;
+
+## ADD KIND
+
+INSERT INTO kinds(name, cn_alis, en_alis) VALUES ('农业发展政策信息','农业发展政策信息','Agricultural Development');
+INSERT INTO kinds(name, cn_alis, en_alis) VALUES ('农业贸易政策信息','农业贸易策信息','Agricultural Trade');
+
+INSERT INTO kinds(name, cn_alis, en_alis) VALUES ('农业科技政策信息','农业科技策信息','Agricultural Science and Technology');
+
+INSERT INTO kinds(name, cn_alis, en_alis) VALUES ('鱼林政策信息','鱼林政策信息','Fishery & Aquaculture Policies');
+

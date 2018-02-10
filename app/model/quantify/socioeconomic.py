@@ -54,7 +54,7 @@ class SocioeconomicIndexes(db.Model):
             "id": self.id,
             "name": self.name,
             "unit": self.unit,
-            "table": self.table.to_json_by_index(),
+            "table_id": self.table_id,
             "cn_alis": self.cn_alis,
             "en_alis": self.en_alis,
             "facts": [i.to_json() for i in self.facts]
@@ -103,7 +103,7 @@ class SocioeconomicFacts(db.Model):
             "country": self.country.to_json(),
             "time": self.time if self.time is None else self.time.strftime("%Y-%m-%d %H:%M:%S"),
             "value": self.value,
-            "index": self.index.to_json_by_fact(),
+            "index_id": self.index_id,
             "time_stamp": self.time_stamp if self.time_stamp is None else self.time_stamp.strftime("%Y-%m-%d %H:%M:%S")
         }
 
@@ -200,7 +200,7 @@ class SocioeconomicFacts(db.Model):
 
 
     @classmethod
-    def find(cls, table_id=None, index=None,country=None, start_time=None, end_time=None):
+    def find(cls, table_id=None, index_ids=None,country_ids=None, start_time=None, end_time=None):
         query = cls.query
 
         if table_id is not None:
@@ -209,11 +209,11 @@ class SocioeconomicFacts(db.Model):
                 return []
             query = query.join(SocioeconomicIndexes, SocioeconomicIndexes.id == cls.index_id).filter(SocioeconomicIndexes.table_id == table.id)
 
-        if country is not None:
-            query = query.join(Country, Country.id == cls.country_id).filter(Country.name == country)
+        if country_ids is not None:
+            query = query.join(Country, Country.id == cls.country_id).filter(Country.id.in_(country_ids))
 
-        if index is not None:
-            query = query.join(SocioeconomicIndexes, SocioeconomicIndexes.id == cls.index_id).filter(SocioeconomicIndexes.name == index)
+        if index_ids is not None:
+            query = query.join(SocioeconomicIndexes, SocioeconomicIndexes.id == cls.index_id).filter(SocioeconomicIndexes.id.in_(index_ids))
 
         if start_time is not None:
             query = query.filter(cls.time > start_time)

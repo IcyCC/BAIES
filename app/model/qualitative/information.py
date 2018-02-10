@@ -7,22 +7,43 @@ from sqlalchemy.orm import foreign, remote
 
 # 定性信息
 
+class Kind(db.Model):
+
+    __tablename__ = "kinds"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, index=True)
+    name = db.Column(db.String(64))
+    cn_alis = db.Column(db.String(255))
+    en_alis = db.Column(db.String(255))
+
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'cn_alis': self.cn_alis,
+            'en_alis':self.en_alis,
+            'posts': [p.to_json() for p in self.posts]
+        }
+
+
 class Post(db.Model):
-    __tablename__ = "post"
+    __tablename__ = "posts"
     # 文章信息
     id = db.Column(db.Integer,primary_key=True,autoincrement=True,index=True)
     title = db.Column(db.String(255))
     body = db.Column(db.Text)
-    en_title = db.Column(db.String(255)) # en　为英文
-    en_body = db.Column(db.Text)
-    kind = db.Column(db.String(64))
-    en_kind = db.Column(db.String(64))
+
+    kind_id = db.Column(db.Integer)
 
     show = db.Column(db.Boolean, default=False)
 
     timestamp = db.Column(db.DateTime, default=datetime.now())
 
     user_id = db.Column(db.Integer, nullable=False, index=True)
+
+    kind = db.relationship('Kind', primaryjoin=foreign(kind_id) == remote(Kind.id),
+                            backref='posts', lazy='joined')
 
     user = db.relationship('User', primaryjoin=foreign(user_id) == remote(User.id),
                            lazy='joined', backref='posts')
@@ -32,11 +53,8 @@ class Post(db.Model):
             'id':self.id,
             'title':self.title,
             'body':self.body,
-            'en_title': self.en_title,
-            'en_body': self.en_body,
-            'en_kind': self.en_kind,
-            'kind':self.kind,
-            'timestamp':self.time if self.time is None else self.time.strftime("%Y-%m-%d %H:%M:%S"),
+            'kind_id':self.kind_id,
+            'timestamp':self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'user_id':self.user_id,
             'show': self.show
         }
