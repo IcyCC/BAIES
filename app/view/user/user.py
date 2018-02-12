@@ -15,8 +15,8 @@ def users():
 
     if request.method == "GET":
 
-        if not current_user.can(Permission.USER_R):
-            return jsonify(status="fail", data=[], reason="no permission")
+        # if not current_user.can(Permission.USER_R):
+        #     return jsonify(status="fail", data=[], reason="no permission")
 
         if not check_args(fields, request.args.keys()):
             return jsonify(status="fail", reason="error args", data=[])
@@ -40,8 +40,8 @@ def users():
 
     if request.method == "POST":
 
-        if not current_user.can(Permission.USER_W):
-            return jsonify(status="fail", data=[], reason="no permission")
+        # if not current_user.can(Permission.USER_W):
+        #     return jsonify(status="fail", data=[], reason="no permission")
 
         form = request.form
         if not check_args(fields, form.keys()):
@@ -126,8 +126,8 @@ def roles():
 
     if request.method == "GET":
 
-        if not current_user.can(Permission.USER_R):
-            return jsonify(status="fail", data=[], reason="no permission")
+        # if not current_user.can(Permission.USER_R):
+        #     return jsonify(status="fail", data=[], reason="no permission")
 
         if not check_args(fields, request.args.keys()):
             return jsonify(status="fail", reason="error args", data=[])

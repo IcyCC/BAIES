@@ -12,6 +12,7 @@ import sqlalchemy
 
 ALLOW_ARGS = (
     "tablename",
+    "table_id",
     "country",
     "index",
     "start_time",

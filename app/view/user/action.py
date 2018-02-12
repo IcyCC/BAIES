@@ -41,6 +41,12 @@ def logout():
         logout_user()
         return jsonify(status="success", reason="", data=[])
 
+@user_blueprint.route("/register", methods=['POST'])
+def register():
+    form = request.form
+    username = form.get('username')
+    passwork = form.get("password")
+
 
 @user_blueprint.route("/upload", methods=["POST"])
 def upload():
