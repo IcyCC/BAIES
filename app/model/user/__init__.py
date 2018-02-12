@@ -67,6 +67,12 @@ class AnonymousUser(AnonymousUserMixin):
     def can(self, permissions):
         return permissions & self.permissions  == permissions
 
+    def to_json(self):
+        return {
+            "id": -1,
+            "username": "Anonymous"
+        }
+
 
 login_manager.anonymous_user = AnonymousUser
 

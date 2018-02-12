@@ -1,5 +1,5 @@
 from flask import request, jsonify, current_app
-from app import db
+from app import db, std_json
 from . import quantify_blueprint
 from app.model.quantify import Country
 from app.model.quantify.socioeconomic import SocioeconomicFacts,SocioeconomicIndexes,SocioeconomicTable
@@ -17,7 +17,9 @@ ALLOW_ARGS = (
     "index",
     "start_time",
     "end_time",
-    "batch"
+    "batch",
+    "country_ids",
+    "index_ids"
 )
 
 def check_args(father,son):
@@ -38,46 +40,34 @@ def socioeconomic_facts():
         # if not current_user.can(Permission.QUANTIFY_R):
         #     return jsonify(status="fail", data=[], reason="no permission")
 
-        args = request.args
+        args = std_json(request.args)
 
         if not check_args(ALLOW_ARGS, args.keys()):
             return jsonify(status="fail", reason="error args", data=[])
 
-        index_ids = args.get("index_ids")
-        if index_ids is not None:
-            index_ids = json.loads(index_ids)
-            if not index_ids:
-                index_ids = None
-
-        country_ids = args.get("country_ids")
-        if country_ids is not None:
-            country_ids = json.loads(country_ids)
-            if not country_ids:
-                country_ids = None
-
         start_time = args.get("start_time")
         if start_time is not None:
-            start_time = datetime.strptime(start_time, "%Y")
+            start_time = datetime.strptime(str(start_time), "%Y")
 
         end_time = args.get("end_time")
         if end_time is not None:
-            end_time = datetime.strptime(end_time, "%Y")
+            end_time = datetime.strptime(str(end_time), "%Y")
 
-        facts = SocioeconomicFacts.find(table_id=int(args.get("table_id")), index_ids=index_ids,
-                                        country_ids=country_ids, start_time=start_time,
+        facts = SocioeconomicFacts.find(table_id=args.get("table_id"), index_ids=args.get("index_ids"),
+                                        country_ids=args.get("country_ids"), start_time=start_time,
                                         end_time=end_time)
         result = list()
 
         for fact in facts:
             _tmp_has_index = find_in_list(result, fact.index_id, lambda x, y: x.get("index_id") == y)
             if _tmp_has_index is None:
-                result.append({"index_id": fact.index_id,
-                               "data": [{"country_id": fact.country_id,
+                result.append({"index": fact.index.to_json(),
+                               "data": [{"country": fact.country.to_json(),
                                          "data": [fact.to_json()]}]})
             else:
                 _tmp_has_country = find_in_list(result, fact.country_id, lambda x, y: x.get("country_id") == y)
                 if _tmp_has_country is None:
-                    _tmp_has_index['data'].append({"country_id": fact.country_id,
+                    _tmp_has_index['data'].append({"country": fact.country.to_json(),
                                                    "data": [fact.to_json()]})
                 else:
                     _tmp_has_country["data"].append(fact.to_json)

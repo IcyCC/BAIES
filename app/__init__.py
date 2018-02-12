@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_login import LoginManager
 from config import config
+import json
 
 db = SQLAlchemy()
 
@@ -39,3 +40,11 @@ SPECIAL_ARGS=[
 def check_args(f,s):
 
     return set(f+SPECIAL_ARGS) > set(s)
+
+def std_json(d):
+
+    r = {}
+    for k, v in d.items():
+        r[k] = json.loads(v)
+
+    return r

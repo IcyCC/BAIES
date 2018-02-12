@@ -57,7 +57,6 @@ class SocioeconomicIndexes(db.Model):
             "table_id": self.table_id,
             "cn_alis": self.cn_alis,
             "en_alis": self.en_alis,
-            "facts": [i.to_json() for i in self.facts]
         }
 
     def to_json_by_fact(self):
@@ -209,11 +208,11 @@ class SocioeconomicFacts(db.Model):
                 return []
             query = query.join(SocioeconomicIndexes, SocioeconomicIndexes.id == cls.index_id).filter(SocioeconomicIndexes.table_id == table.id)
 
-        if country_ids is not None:
+        if country_ids is False or country_ids is not None:
             query = query.join(Country, Country.id == cls.country_id).filter(Country.id.in_(country_ids))
 
-        if index_ids is not None:
-            query = query.join(SocioeconomicIndexes, SocioeconomicIndexes.id == cls.index_id).filter(SocioeconomicIndexes.id.in_(index_ids))
+        if index_ids is False or index_ids is not None:
+            query = query.filter(SocioeconomicIndexes.id.in_(index_ids))
 
         if start_time is not None:
             query = query.filter(cls.time > start_time)
@@ -221,7 +220,7 @@ class SocioeconomicFacts(db.Model):
         if end_time is not None:
             query = query.filter(cls.time < end_time)
 
-        return query
+        return query.all()
 
 
 

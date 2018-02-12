@@ -109,8 +109,8 @@ def post_r(q_id):
     if request.method == "PUT":
         form = request.form
 
-        if not current_user.can(Permission.QUALITATIVE_W):
-            return jsonify(status="fail", data=[], reason="no permission")
+        # if not current_user.can(Permission.QUALITATIVE_W):
+        #     return jsonify(status="fail", data=[], reason="no permission")
 
         if not check_args(fields, form.keys()):
             return jsonify(status="fail", reason="error form args", data=[])
@@ -129,8 +129,8 @@ def post_r(q_id):
 
     if request.method == "DELETE":
 
-        if not current_user.can(Permission.QUANTIFY_W):
-            return jsonify(status="fail", data=[], reason="no permission")
+        # if not current_user.can(Permission.QUANTIFY_W):
+        #     return jsonify(status="fail", data=[], reason="no permission")
 
 
         try:
