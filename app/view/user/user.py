@@ -2,7 +2,7 @@ from flask import request, jsonify, current_app
 from app import db
 from . import user_blueprint
 from app.model.user import *
-from app import check_args
+from app import check_args,SPECIAL_ARGS
 from flask_login import current_user,login_user, logout_user,login_required
 import sqlalchemy
 
@@ -18,7 +18,7 @@ def users():
         # if not current_user.can(Permission.USER_R):
         #     return jsonify(status="fail", data=[], reason="no permission")
 
-        if not check_args(fields, request.args.keys()):
+        if not check_args(SPECIAL_ARGS+fields, request.args.keys()):
             return jsonify(status="fail", reason="error args", data=[])
 
         page = request.args.get('page')
@@ -44,7 +44,7 @@ def users():
         #     return jsonify(status="fail", data=[], reason="no permission")
 
         form = request.form
-        if not check_args(fields, form.keys()):
+        if not check_args(SPECIAL_ARGS+fields, form.keys()):
             return jsonify(status="fail", reason="error form args", data=[])
 
         c = User()
@@ -75,19 +75,19 @@ def users_r(q_id):
         return jsonify(status="fail", reason="no this id thing", data=[])
 
     if request.method == "GET":
-
-        if not current_user.can(Permission.USER_R):
-            return jsonify(status="fail", data=[], reason="no permission")
+        #
+        # if not current_user.can(Permission.USER_R):
+        #     return jsonify(status="fail", data=[], reason="no permission")
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
     if request.method == "PUT":
         form = request.form
 
-        if not current_user.can(Permission.USER_W):
-            return jsonify(status="fail", data=[], reason="no permission")
+        # if not current_user.can(Permission.USER_W):
+        #     return jsonify(status="fail", data=[], reason="no permission")
 
-        if not check_args(fields, form.keys()):
+        if not check_args(SPECIAL_ARGS+fields, form.keys()):
             return jsonify(status="fail", reason="error form args", data=[])
 
         for k, v in form.items():
@@ -106,8 +106,8 @@ def users_r(q_id):
 
     if request.method == "DELETE":
 
-        if not current_user.can(Permission.QUANTIFY_W):
-            return jsonify(status="fail", data=[], reason="no permission")
+        # if not current_user.can(Permission.QUANTIFY_W):
+        #     return jsonify(status="fail", data=[], reason="no permission")
 
 
         try:
@@ -223,5 +223,5 @@ def roles_r(q_id):
         except sqlalchemy.exc.OperationalError as e:
             return jsonify(status="fail", reason=e, data=[])
 
-        return jsonify(status="success", reason="", data=[c.to_json()])
+        return jsonify(status="success", reason="", data=[])
 

@@ -54,8 +54,8 @@ class User(db.Model, UserMixin):
             'id':self.id,
             'email': self.email,
             'username': self.username,
-            'role_id': self.role_id,
-            'country': self.country
+            'country': self.country,
+            'role': self.role.to_json()
         }
 
 

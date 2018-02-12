@@ -49,11 +49,11 @@ def socioeconomic_facts():
             if not index_ids:
                 index_ids = None
 
-        index_ids = args.get("index_ids")
-        if index_ids is not None:
-            index_ids = json.loads(index_ids)
-            if not index_ids:
-                index_ids = None
+        country_ids = args.get("country_ids")
+        if country_ids is not None:
+            country_ids = json.loads(country_ids)
+            if not country_ids:
+                country_ids = None
 
         start_time = args.get("start_time")
         if start_time is not None:
@@ -64,7 +64,7 @@ def socioeconomic_facts():
             end_time = datetime.strptime(end_time, "%Y")
 
         facts = SocioeconomicFacts.find(table_id=int(args.get("table_id")), index_ids=index_ids,
-                                        country_ids=args.get("country"), start_time=start_time,
+                                        country_ids=country_ids, start_time=start_time,
                                         end_time=end_time)
         result = list()
 
