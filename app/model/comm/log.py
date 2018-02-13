@@ -30,7 +30,7 @@ class Log(db.Model):
 
     @staticmethod
     def log(user_id, target, past, note, pre="",):
-        p = Log(user_id=user_id, target=target, pre=str(pre), past=str(past),note=note)
+        p = Log(user_id=user_id, target=target, pre=pre, past=past,note=note)
         db.session.add(p)
         db.session.commit()
 
@@ -43,5 +43,6 @@ class Log(db.Model):
             'target':self.target,
             'pre':self.pre,
             'past':self.past,
-            'status': self.status
+            'status': self.status,
+            "note": self.note
         }

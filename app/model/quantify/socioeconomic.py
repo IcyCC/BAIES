@@ -2,6 +2,7 @@ from app import db
 from app.model.comm import ActionMixin
 from flask import jsonify
 from sqlalchemy.sql.expression import and_
+from datetime import datetime
 from sqlalchemy.orm import foreign, remote
 from . import Country
 
@@ -97,7 +98,7 @@ class SocioeconomicFacts(db.Model):
     country_id = db.Column(db.Integer,index=True)
     time = db.Column(db.DateTime, index=True)
 
-    time_stamp = db.Column(db.DateTime, index=True)
+    time_stamp = db.Column(db.DateTime, index=True, default=datetime.now())
 
     index_id = db.Column(db.Integer, index=True)
     value = db.Column(db.Float)
@@ -258,7 +259,12 @@ class SocioeconomicFacts(db.Model):
             query = query.filter(SocioeconomicIndexes.id == index_id)
 
         if time is not None:
-            query = query.filter(cls.time == time)
+            query = query.filter(
+                and_(
+                    cls.time <= datetime.strptime(str(time)+"-12-31 23:59:59", "%Y-%m-%d %H:%M:%S"),
+                    cls.time >= datetime.strptime(str(time)+"-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
+                     )
+            )
 
         return query.first()
 

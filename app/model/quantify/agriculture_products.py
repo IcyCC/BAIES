@@ -4,6 +4,7 @@ from flask import jsonify
 from sqlalchemy.sql.expression import and_,or_
 from sqlalchemy.orm import foreign, remote
 from . import Country
+from datetime import datetime
 
 class AgricultureTable(db.Model):
     __tablename__ = "agriculture_tables"
@@ -117,7 +118,7 @@ class AgricultureFacts(db.Model):
     country_id = db.Column(db.Integer, index=True)
     time = db.Column(db.DateTime, index=True)
 
-    time_stamp = db.Column(db.DateTime, index=True)
+    time_stamp = db.Column(db.DateTime, index=True, default=datetime.now())
     kind_id = db.Column(db.Integer, index=True)
 
     index_id = db.Column(db.Integer, index=True)
@@ -295,8 +296,13 @@ class AgricultureFacts(db.Model):
             query = query.filter(AgricultureIndexes.id == index_id)
 
         if time is not None:
-            query = query.filter(cls.time == time)
-
+            if time is not None:
+                query = query.filter(
+                    and_(
+                        cls.time <= datetime.strptime(str(time) + "-12-31 23:59:59", "%Y-%m-%d %H:%M:%S"),
+                        cls.time >= datetime.strptime(str(time) + "-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
+                    )
+                )
         if kind_id is not None:
             query.filter(AgricultureFacts.kind_id == kind_id)
 
