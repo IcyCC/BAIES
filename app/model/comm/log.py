@@ -8,10 +8,10 @@ from app.model.user import User
 # 用户日志
 
 
-class PutLog(db.Model):
+class Log(db.Model):
 
     # 更改的log
-    __tablename__ = "put_logs"
+    __tablename__ = "logs"
 
     id = db.Column(db.Integer, primary_key=True, index=True)
     timestamp = db.Column(db.DateTime, default=datetime.now())
@@ -23,11 +23,14 @@ class PutLog(db.Model):
     note = db.Column(db.String(1024), default="")
     status = db.Column(db.Integer, default=2) # 0 不显示通过，1不显示未通过，2显示
 
-    user = db.relationship('User', primaryjoin=foreign(user_id) == remote(User.id),
-                           lazy='joined', backref='put_logs')
+    @property
+    def user(self):
+        t = User.query.filter(User.id == self.user_id).first()
+        return t
+
     @staticmethod
-    def log(user_id, target, pre, past, note):
-        p = PutLog(user_id=user_id, target=target, pre=str(pre), past=str(past),note=note)
+    def log(user_id, target, past, note, pre="",):
+        p = Log(user_id=user_id, target=target, pre=str(pre), past=str(past),note=note)
         db.session.add(p)
         db.session.commit()
 
@@ -42,74 +45,3 @@ class PutLog(db.Model):
             'past':self.past,
             'status': self.status
         }
-
-
-class DeleteLog(db.Model):
-
-    # 删除的log
-    __tablename__ = "delete_logs"
-
-    id = db.Column(db.Integer, primary_key=True, index=True)
-    timestamp = db.Column(db.DateTime, default=datetime.now())
-    user_id = db.Column(db.Integer, nullable=False)
-    target = db.Column(db.String(255), nullable=False)
-    detail = db.Column(db.String(1024),nullable=False) #　详细信息
-
-    user = db.relationship('User', primaryjoin=foreign(user_id) == remote(User.id),
-                           lazy='joined', backref='delete_logs')
-
-    status = db.Column(db.Integer, default=2) # 0 不显示通过，1不显示未通过，2显示
-
-    note = db.Column(db.String(1024), default="")
-    @staticmethod
-    def log(user_id, target, detail, note):
-        p = DeleteLog(user_id=user_id, target=target, detail=str(detail), note=note)
-        db.session.add(p)
-        db.session.commit()
-
-    def to_json(self):
-        return {
-            'id': self.id,
-            'timestamp': self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-            'user_id': self.user_id,
-            'target': self.target,
-            'pre': self.pre,
-            'past': self.past,
-            'status': self.status
-        }
-
-
-class PostLog(db.Model):
-
-    # 兴增的log
-    __tablename__ = "post_logs"
-
-    id = db.Column(db.Integer, primary_key=True, index=True)
-    timestamp = db.Column(db.DateTime, default=datetime.now())
-    user_id = db.Column(db.Integer, nullable=False)
-    target = db.Column(db.String(255), nullable=False)
-    detail = db.Column(db.String(1024), nullable=False)
-
-    status = db.Column(db.Integer, default=2) # 0 不显示通过，1不显示未通过，2显示
-    user = db.relationship('User', primaryjoin=foreign(user_id) == remote(User.id),
-                           lazy='joined', backref='post_logs')
-
-    note = db.Column(db.String(1024), default="")
-
-    @staticmethod
-    def log(user_id, target, detail, note):
-        p = PostLog(user_id=user_id, target=target, detail=detail, note=note)
-        db.session.add(p)
-        db.session.commit()
-
-    def to_json(self):
-        return {
-            'id': self.id,
-            'timestamp': self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-            'user_id': self.user_id,
-            'target': self.target,
-            'detail': self.detail,
-            'status': self.status
-        }
-
-

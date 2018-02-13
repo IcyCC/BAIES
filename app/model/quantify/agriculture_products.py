@@ -13,6 +13,10 @@ class AgricultureTable(db.Model):
     cn_alis = db.Column(db.String(255))
     en_alis = db.Column(db.String(255))
 
+    @property
+    def indexes(self):
+        t = AgricultureIndexes.query.join(AgricultureTable, AgricultureTable.id == AgricultureIndexes.table_id).filter(AgricultureIndexes.table_id == self.id).all()
+        return t
 
 
     def to_json(self):
@@ -38,6 +42,11 @@ class AgricultureKind(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
     name = db.Column(db.String(255), index=True, nullable=False)
+
+    @property
+    def facts(self):
+        t = AgricultureFacts.query.join(AgricultureKind, AgricultureKind.id == AgricultureFacts.kind_id).filter(self.id == AgricultureFacts.kind_id).all()
+        return t
 
     def to_json(self):
         return {
@@ -65,8 +74,15 @@ class AgricultureIndexes(db.Model):
 
     table_id = db.Column(db.Integer, index=True)
 
-    table = db.relationship('AgricultureTable', primaryjoin=foreign(table_id) == remote(table_id),
-                              backref='table', lazy='joined')
+    @property
+    def table(self):
+        t = AgricultureTable.query.filter(self.table_id == AgricultureTable.id).first()
+        return t
+
+    @property
+    def facts(self):
+        t = AgricultureFacts.query.join(AgricultureIndexes, AgricultureIndexes.id == self.index_id).filter(AgricultureIndexes.id == AgricultureFacts.index_id).all()
+        return t
 
     cn_alis = db.Column(db.String(255))
     en_alis = db.Column(db.String(255))
@@ -107,16 +123,20 @@ class AgricultureFacts(db.Model):
     index_id = db.Column(db.Integer, index=True)
     value = db.Column(db.Float, index=True)
 
-    index = db.relationship('AgricultureIndexes', primaryjoin=foreign(index_id) == remote(AgricultureIndexes.id),
-                            backref='facts', lazy='joined')
+    @property
+    def index(self):
+        t = AgricultureIndexes.query.filter(AgricultureIndexes.id == self.index_id).first()
+        return t
 
-    country = db.relationship('Country',
-                               primaryjoin=foreign(country_id) == remote(Country.id),
-                               backref='facts', lazy='joined')
+    @property
+    def country(self):
+        t = Country.query.filter(Country.id == self.country_id).first()
+        return t
 
-
-    kind = db.relationship('AgricultureKind', primaryjoin=foreign(kind_id) == remote(AgricultureKind.id),
-                           lazy='joined', backref='facts')
+    @property
+    def kind(self):
+        t = AgricultureKind.query.filter(AgricultureKind.id == self.kind_id).first()
+        return t
 
     def to_json(self):
         return {
@@ -232,28 +252,52 @@ class AgricultureFacts(db.Model):
         return fact, ""
 
     @classmethod
-    def find(cls, table_id=None, index=None, kind=None ,country=None, start_time=None, end_time=None):
+    def find(cls, table_id=None, kind_id=None, index_ids=None,country_ids=None, start_time=None, end_time=None):
         query = cls.query
 
         if table_id is not None:
             table = AgricultureIndexes.query.filter_by(id=table_id).first()
             if table is None:
                 return []
-            query = query.join(AgricultureIndexes, AgricultureKind.id == cls.kind_id).filter(AgricultureIndexes.table_id == table.id)
+            query = query.join(AgricultureIndexes, AgricultureIndexes.id == cls.index_id).filter(AgricultureIndexes.table_id == table.id)
 
-        if country is not None:
-            query = query.join(Country, Country.id == cls.country_id).filter(Country.name == country)
+        if country_ids is False or country_ids is not None:
+            query = query.join(Country, Country.id == cls.country_id).filter(Country.id.in_(country_ids))
 
-        if index is not None:
-            query = query.join(AgricultureIndexes, AgricultureIndexes.id == cls.index_id).filter(AgricultureIndexes.name == index)
+        if index_ids is False or index_ids is not None:
+            query = query.filter(AgricultureIndexes.id.in_(index_ids))
 
-        if kind is not None:
-            query = query.join(AgricultureKind, AgricultureKind.id == cls.kind_id).filter(AgricultureKind.name == kind)
+        if kind_id is not None:
+            query.join(AgricultureKind,AgricultureKind.id == cls.kind_id).filter(AgricultureKind.id == kind_id)
 
         if start_time is not None:
-            query = query.filter(cls.time > start_time)
+            query = query.filter(cls.time >= start_time)
 
         if end_time is not None:
-            query = query.filter(cls.time < end_time)
+            query = query.filter(cls.time <= end_time)
 
-        return query
+        return query.all()
+
+    @classmethod
+    def find_one(cls, table_id=None, index_id=None,country_id=None, time=None, kind_id= None):
+        query = cls.query
+
+        if table_id is not None:
+            table = AgricultureTable.query.filter_by(id=table_id).first()
+            if table is None:
+                return []
+            query = query.join(AgricultureIndexes, AgricultureIndexes.id == cls.index_id).filter(AgricultureIndexes.table_id == table.id)
+
+        if country_id is not None:
+            query = query.join(Country, Country.id == cls.country_id).filter(Country.id == country_id)
+
+        if index_id is not None:
+            query = query.filter(AgricultureIndexes.id == index_id)
+
+        if time is not None:
+            query = query.filter(cls.time == time)
+
+        if kind_id is not None:
+            query.filter(AgricultureFacts.kind_id == kind_id)
+
+        return query.first()

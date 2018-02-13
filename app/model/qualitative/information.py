@@ -16,6 +16,11 @@ class Kind(db.Model):
     cn_alis = db.Column(db.String(255))
     en_alis = db.Column(db.String(255))
 
+    @property
+    def posts(self):
+        t = Post.query.join(Kind, Kind.id == Post.kind_id).filter(Kind.id == Post.kind_id).all()
+        return t
+
 
     def to_json(self):
         return {
@@ -42,11 +47,15 @@ class Post(db.Model):
 
     user_id = db.Column(db.Integer, nullable=False, index=True)
 
-    kind = db.relationship('Kind', primaryjoin=foreign(kind_id) == remote(Kind.id),
-                            backref='posts', lazy='joined')
+    @property
+    def kind(self):
+        t = Kind.query.filter(Kind.id == self.kind_id).first()
+        return t
 
-    user = db.relationship('User', primaryjoin=foreign(user_id) == remote(User.id),
-                           lazy='joined', backref='posts')
+    @property
+    def user(self):
+        t = User.query.filter(User.id == self.user_id).first()
+        return t
 
     def to_json(self):
         return {

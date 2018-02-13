@@ -13,6 +13,10 @@ class SocioeconomicTable(db.Model):
     cn_alis = db.Column(db.String(255))
     en_alis = db.Column(db.String(255))
 
+    @property
+    def indexes(self):
+        t = SocioeconomicIndexes.query.join(SocioeconomicTable, SocioeconomicTable.id == SocioeconomicIndexes.table_id).filter(SocioeconomicIndexes.table_id == self.id).all()
+        return t
 
 
     def to_json(self):
@@ -43,8 +47,19 @@ class SocioeconomicIndexes(db.Model):
 
     table_id = db.Column(db.Integer, index=True)
 
-    table = db.relationship('SocioeconomicTable', primaryjoin=foreign(table_id) == remote(SocioeconomicTable.id),
-                            backref='indexes', lazy='joined')
+    # table = db.relationship('SocioeconomicTable', primaryjoin=foreign(table_id) == remote(SocioeconomicTable.id),
+    #                         backref='indexes', lazy='joined'
+
+    @property
+    def table(self):
+        t = SocioeconomicTable.query.filter(self.table_id == SocioeconomicTable.id).first()
+        return t
+
+    @property
+    def facts(self):
+        t = SocioeconomicIndexes.query.join(SocioeconomicFacts, SocioeconomicFacts.index_id == SocioeconomicIndexes.id).\
+            filter(self.id == SocioeconomicFacts.index_id).all()
+        return t
 
     cn_alis = db.Column(db.String(255))
     en_alis = db.Column(db.String(255))
@@ -65,6 +80,7 @@ class SocioeconomicIndexes(db.Model):
             "name": self.name,
             "unit": self.unit,
             "table": self.table.to_json_by_index(),
+            "table_id": self.table_id,
             "cn_alis": self.cn_alis,
             "en_alis": self.en_alis,
             "facts": [i.id for i in self.facts]
@@ -86,13 +102,16 @@ class SocioeconomicFacts(db.Model):
     index_id = db.Column(db.Integer, index=True)
     value = db.Column(db.Float)
 
-    index = db.relationship('SocioeconomicIndexes', primaryjoin=(foreign(index_id) == remote(SocioeconomicIndexes.id)),
-                            backref='facts', lazy='joined')
+    @property
+    def index(self):
+        t = SocioeconomicIndexes.query.filter(SocioeconomicIndexes.id == self.index_id).first()
+        return t
 
 
-    country = db.relationship('Country',
-                              primaryjoin=foreign(country_id) == remote(Country.id),
-                              backref='country', lazy='joined')
+    @property
+    def country(self):
+        t = Country.query.filter(Country.id == self.country_id).first()
+        return t
 
 
     def to_json(self):
@@ -215,14 +234,33 @@ class SocioeconomicFacts(db.Model):
             query = query.filter(SocioeconomicIndexes.id.in_(index_ids))
 
         if start_time is not None:
-            query = query.filter(cls.time > start_time)
+            query = query.filter(cls.time >= start_time)
 
         if end_time is not None:
-            query = query.filter(cls.time < end_time)
+            query = query.filter(cls.time <= end_time)
 
         return query.all()
 
+    @classmethod
+    def find_one(cls, table_id=None, index_id=None,country_id=None, time=None):
+        query = cls.query
 
+        if table_id is not None:
+            table = SocioeconomicTable.query.filter_by(id=table_id).first()
+            if table is None:
+                return []
+            query = query.join(SocioeconomicIndexes, SocioeconomicIndexes.id == cls.index_id).filter(SocioeconomicIndexes.table_id == table.id)
+
+        if country_id is not None:
+            query = query.join(Country, Country.id == cls.country_id).filter(Country.id == country_id)
+
+        if index_id is not None:
+            query = query.filter(SocioeconomicIndexes.id == index_id)
+
+        if time is not None:
+            query = query.filter(cls.time == time)
+
+        return query.first()
 
 
 

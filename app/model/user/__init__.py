@@ -36,6 +36,23 @@ class User(db.Model, UserMixin):
     country = db.Column(db.String(64))
 
     @property
+    def role(self):
+        t = Role.query.filter(Role.id == self.role_id).first()
+        return t
+
+    @property
+    def posts(self):
+        from app.model.qualitative.information import Post
+        t = Post.query.join(User, User.id == Post.user_id).filter(self.id == Post.kind_id).all()
+        return t
+
+    @property
+    def logs(self):
+        from app.model.comm.log import Log
+        t = Log.query.join(User, User.id == Log.user_id).filter(self.id == Log.user_id).all()
+        return t
+
+    @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
 
@@ -83,7 +100,12 @@ class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True ,index=True)
     name = db.Column(db.String(64), unique=True)
     permissions = db.Column(db.Integer)
-    users = db.relationship('User', backref='role', lazy='dynamic')
+
+
+    @property
+    def users(self):
+        t = User.query.join(Role, Role.id == User.role_id).filter(User.id == self.user_id).all()
+        return t
 
     def to_json(self):
         return {

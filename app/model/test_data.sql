@@ -61,3 +61,5 @@ INSERT INTO kinds(name, cn_alis, en_alis) VALUES ('农业科技政策信息','�
 
 INSERT INTO kinds(name, cn_alis, en_alis) VALUES ('鱼林政策信息','鱼林政策信息','Fishery & Aquaculture Policies');
 
+SELECT * FROM countrys;
+SELECT * FROM socioeconomic_indexes;
