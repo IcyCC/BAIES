@@ -56,22 +56,29 @@ def socioeconomic_facts():
         facts = SocioeconomicFacts.find(table_id=args.get("table_id"), index_ids=args.get("index_ids"),
                                         country_ids=args.get("country_ids"), start_time=start_time,
                                         end_time=end_time)
-        result = list()
-
+        result = []
+        tmp_index = {}
+        tmp_country = {}
         for fact in facts:
-            _tmp_has_index = find_in_list(result, fact.index_id, lambda x, y: x.get("index_id") == y)
-            if _tmp_has_index is None:
-                result.append({"index": fact.index.to_json(),
-                               "data": [{"country": fact.country.to_json(),
-                                         "data": [fact.to_json()]}]})
+            if tmp_index.get(fact.index_id) is None:
+                tmp_index[fact.index_id] = [fact]
             else:
-                _tmp_has_country = find_in_list(result, fact.country_id, lambda x, y: x.get("country_id") == y)
-                if _tmp_has_country is None:
-                    _tmp_has_index['data'].append({"country": fact.country.to_json(),
-                                                   "data": [fact.to_json()]})
-                else:
-                    _tmp_has_country["data"].append(fact.to_json)
+                tmp_index[fact.index_id].append(fact)
 
+        for index_id,same_index_facts in tmp_index.items():
+
+            for fact in same_index_facts:
+                if tmp_country.get(fact.country_id) is None:
+                    tmp_country[fact.country_id] = [fact]
+                else:
+                    tmp_country[fact.country_id].append(fact)
+
+            index = SocioeconomicIndexes.query.filter_by(id=index_id).first()
+            final_data = []
+            for country_id, same_country_facts in tmp_country.items():
+                country = Country.query.filter_by(id=country_id).first()
+                final_data.append({"country": country.to_json(), "data":[fact.to_json() for fact in same_country_facts]})
+            result.append({"index":index.to_json(), "data":list(final_data)})
 
         return jsonify(status="success", reason="", data=result)
     #
@@ -195,12 +202,12 @@ def socioeconomic_facts_batch():
         for data in datas:
             pre_fact = SocioeconomicFacts.find_one(table_id=table_id, index_id=data.get("index_id"),
                                                    country_id = data.get('country_id'),
-                                                   time=datetime.strptime(str(data.get('time')), "%Y"))
+                                                   time=data.get('time'))
             if pre_fact is not None:
 
-                if data.get("value") is True:
+                if data.get("value") is not None:
                     # 修改
-                    pre_log.append(pre_fact.ro_json())
+                    pre_log.append(pre_fact.to_json())
 
                     pre_fact.value = data.get("value")
                     pre_fact.index_id = data.get("index_id")
@@ -212,7 +219,7 @@ def socioeconomic_facts_batch():
                     db.session.commit()
                 else:
                     # 删除
-                    pre_log.append(pre_fact.ro_json())
+                    pre_log.append(pre_fact.to_json())
                     past_log.append([])
                     db.session.delete(pre_fact)
                     db.session.commit()
@@ -222,14 +229,13 @@ def socioeconomic_facts_batch():
                     pre_log.append([])
 
                     add_fact = SocioeconomicFacts(
-                        table_id=table_id,
                         value=data.get("value"),
                         country_id=data.get("country_id"),
                         time=datetime.strptime(str(data.get('time')), "%Y"),
                         index_id=data.get("index_id"),
                     )
                     db.session.add(add_fact)
-                    past_log.append(add_fact)
+                    past_log.append(add_fact.to_json())
                     db.session.commit()
 
         Log.log(user_id=current_user.id, target=table.to_json_by_index(), pre=json.dumps(pre_log),
