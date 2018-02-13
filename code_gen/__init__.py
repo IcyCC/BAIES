@@ -1,13 +1,9 @@
 import re
 from app.model.quantify import socioeconomic,agriculture_products
 from app.model.qualitative import information
-from app.model.comm.log import *
+from app.model.comm import log
 from app.model import user
 from jinja2 import Template
-
-
-
-
 
 class Extractor:
 
@@ -42,7 +38,6 @@ class Generator:
 
 
 if __name__ == '__main__':
-
     e = Extractor("/home/suchang/Code/Proj/BAIES/app/model/comm/log.py")
     g = Generator("/home/suchang/Code/Proj/BAIES/app/view/user/log.py")
-    g.gen(e.parser(), "user_blueprint",table=information, permisson="QUALITATIVE")
+    g.gen(e.parser(), "user_blueprint",table=log, permisson="QUALITATIVE")
