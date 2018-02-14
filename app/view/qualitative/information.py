@@ -2,36 +2,10 @@ from flask import request, jsonify, current_app
 from app import db
 from . import qualitative_blueprint
 from app.model.qualitative.information import *
-from app import check_args,SPECIAL_ARGS
+from app import check_args,SPECIAL_ARGS, std_json
 from app.model.user import Permission
 from flask_login import current_user
 import sqlalchemy
-
-"""
-@api {GET} /qualitative/Post 获取所有文章
-@apiGroup qualitative
-@apiName 文章相关
-
-@apiParam (params) {Number} id
-@apiParam (params) {Boolean=true, false} show
-@apiParam (params) {String} title s
-
-@apiSuccess {Array} post 返回所有根据条件查询到的文章信息
-
-@apiSuccessExample Success-Response:
-    HTTP/1.1 200 OK
-    {
-        "accuncheks":[{
-            "url":"血糖仪地址",
-            "sn":"血糖仪sn码",
-            "bed_id":"床位号"
-        }](血糖仪信息),
-        "prev":"上一页地址",
-        "next":"下一页地址",
-        "count":"总数量",
-        "pages":"总页数"
-    }
-"""
 
 @qualitative_blueprint.route("/Post" , methods=['GET', 'POST'])
 def post():
@@ -53,15 +27,16 @@ def post():
         page = int(page)
 
         query = Post.query
-
-        for k, v in request.args.items():
+        args = std_json(request.args)
+        for k, v in args.items():
             if k in fields:
                 query = query.filter_by(**{k: v})
 
-        pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-                                                    error_out=False)
-        return jsonify(status="success", reason="", data=[item.to_json() for item in pagenation.items],
-                       page={'current':pagenation.pages,'per_page':pagenation.per_page,'total':pagenation.total})
+        # pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        #                                             error_out=False)
+        return jsonify(status="success", reason="", data=[item.to_json() for item in query],
+                       # page={'current':pagenation.pages,'per_page':pagenation.per_page,'total':pagenation.total}
+                       )
 
     if request.method == "POST":
 
@@ -167,10 +142,11 @@ def kind():
             if k in fields:
                 query = query.filter_by(**{k: v})
 
-        pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-                                                    error_out=False)
-        return jsonify(status="success", reason="", data=[item.to_json() for item in pagenation.items],
-                       page={'current':pagenation.pages,'per_page':pagenation.per_page,'total':pagenation.total})
+        # pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        #                                             error_out=False)
+        return jsonify(status="success", reason="", data=[item.to_json() for item in query],
+                       # page={'current':pagenation.pages,'per_page':pagenation.per_page,'total':pagenation.total}
+                    )
 
     if request.method == "POST":
 

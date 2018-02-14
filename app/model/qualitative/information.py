@@ -31,6 +31,13 @@ class Kind(db.Model):
             'posts': [p.to_json() for p in self.posts]
         }
 
+    def to_json_simple(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'cn_alis': self.cn_alis,
+            'en_alis': self.en_alis,
+        }
 
 class Post(db.Model):
     __tablename__ = "posts"
@@ -63,6 +70,7 @@ class Post(db.Model):
             'title':self.title,
             'body':self.body,
             'kind_id':self.kind_id,
+            'kind': self.kind.to_json_simple(),
             'timestamp':self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'user_id':self.user_id,
             'show': self.show,
