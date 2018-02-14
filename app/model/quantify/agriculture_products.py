@@ -116,7 +116,7 @@ class AgricultureFacts(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
     country_id = db.Column(db.Integer, index=True)
-    time = db.Column(db.DateTime, index=True)
+    time = db.Column(db.Integer, index=True)
 
     time_stamp = db.Column(db.DateTime, index=True, default=datetime.now())
     kind_id = db.Column(db.Integer, index=True)
@@ -143,7 +143,7 @@ class AgricultureFacts(db.Model):
         return {
             "id": self.id,
             "country": self.country.to_json(),
-            "time": self.time if self.time is None else self.time.strftime("%Y-%m-%d %H:%M:%S"),
+            "time": self.time,
             "time_stamp": self.time_stamp if self.time_stamp is None else self.time_stamp.strftime("%Y-%m-%d %H:%M:%S"),
             "kind": self.kind.to_json_by_fact(),
             "index": self.index.to_json_by_fact(),
@@ -296,13 +296,8 @@ class AgricultureFacts(db.Model):
             query = query.filter(AgricultureIndexes.id == index_id)
 
         if time is not None:
-            if time is not None:
-                query = query.filter(
-                    and_(
-                        cls.time <= datetime.strptime(str(time) + "-12-31 23:59:59", "%Y-%m-%d %H:%M:%S"),
-                        cls.time >= datetime.strptime(str(time) + "-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
-                    )
-                )
+            query = query.filter(AgricultureFacts.time == time)
+
         if kind_id is not None:
             query.filter(AgricultureFacts.kind_id == kind_id)
 

@@ -46,16 +46,16 @@ def socioeconomic_facts():
             return jsonify(status="fail", reason="error args", data=[])
 
         start_time = args.get("start_time")
-        if start_time is not None:
-            start_time = datetime.strptime(str(start_time), "%Y")
+        # if start_time is not None:
+        #     start_time = datetime.strptime(str(start_time), "%Y")
 
         end_time = args.get("end_time")
-        if end_time is not None:
-            end_time = datetime.strptime(str(end_time), "%Y")
+        # if end_time is not None:
+        #     end_time = datetime.strptime(str(end_time), "%Y")
 
         facts = SocioeconomicFacts.find(table_id=args.get("table_id"), index_ids=args.get("index_ids"),
-                                        country_ids=args.get("country_ids"), start_time=start_time,
-                                        end_time=end_time)
+                                        country_ids=args.get("country_ids"), start_time=int(start_time),
+                                        end_time=int(end_time))
         result = []
         tmp_index = {}
         tmp_country = {}
@@ -212,7 +212,7 @@ def socioeconomic_facts_batch():
                     pre_fact.value = data.get("value")
                     pre_fact.index_id = data.get("index_id")
                     pre_fact.country_id = data.get("country_id")
-                    pre_fact.time = datetime.strptime(str(data.get('time')), "%Y")
+                    pre_fact.time = data.get("time")
                     past_log.append(pre_fact.to_json())
 
                     db.session.add(pre_fact)
@@ -231,7 +231,7 @@ def socioeconomic_facts_batch():
                     add_fact = SocioeconomicFacts(
                         value=data.get("value"),
                         country_id=data.get("country_id"),
-                        time=datetime.strptime(str(data.get('time')), "%Y"),
+                        time=int(data.get('time')),
                         index_id=data.get("index_id"),
                     )
                     db.session.add(add_fact)
