@@ -2,7 +2,7 @@ from flask import request, jsonify, current_app
 from app import db
 from . import user_blueprint
 from app.model.user import *
-from app import check_args,SPECIAL_ARGS
+from app import check_args,SPECIAL_ARGS, std_json
 from flask_login import current_user,login_user, logout_user,login_required
 import sqlalchemy
 
@@ -29,7 +29,9 @@ def users():
 
         query = User.query
 
-        for k, v in request.args.items():
+        args = std_json(request.args)
+
+        for k, v in args.items():
             if k in fields:
                 query = query.filter_by(**{k: v})
 
@@ -140,7 +142,9 @@ def roles():
 
         query = Role.query
 
-        for k, v in request.args.items():
+        args = std_json(request.args)
+
+        for k, v in args.items():
             if k in fields:
                 query = query.filter_by(**{k: v})
 
