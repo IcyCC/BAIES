@@ -27,15 +27,16 @@ def post():
         page = int(page)
 
         query = Post.query
-        args = std_json(request.args.items())
+        args = std_json(request.args)
         for k, v in args.items():
             if k in fields:
                 query = query.filter_by(**{k: v})
 
-        pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-                                                    error_out=False)
-        return jsonify(status="success", reason="", data=[item.to_json() for item in pagenation.items],
-                       page={'current':pagenation.pages,'per_page':pagenation.per_page,'total':pagenation.total})
+        # pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        #                                             error_out=False)
+        return jsonify(status="success", reason="", data=[item.to_json() for item in query],
+                       # page={'current':pagenation.pages,'per_page':pagenation.per_page,'total':pagenation.total}
+                       )
 
     if request.method == "POST":
 
@@ -141,10 +142,11 @@ def kind():
             if k in fields:
                 query = query.filter_by(**{k: v})
 
-        pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-                                                    error_out=False)
-        return jsonify(status="success", reason="", data=[item.to_json() for item in pagenation.items],
-                       page={'current':pagenation.pages,'per_page':pagenation.per_page,'total':pagenation.total})
+        # pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        #                                             error_out=False)
+        return jsonify(status="success", reason="", data=[item.to_json() for item in query],
+                       # page={'current':pagenation.pages,'per_page':pagenation.per_page,'total':pagenation.total}
+                    )
 
     if request.method == "POST":
 
