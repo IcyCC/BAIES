@@ -57,28 +57,42 @@ def socioeconomic_facts():
                                         country_ids=args.get("country_ids"), start_time=int(start_time),
                                         end_time=int(end_time))
         result = []
-        tmp_index = {}
-        tmp_country = {}
-        for fact in facts:
-            if tmp_index.get(fact.index_id) is None:
-                tmp_index[fact.index_id] = [fact]
-            else:
-                tmp_index[fact.index_id].append(fact)
 
-        for index_id,same_index_facts in tmp_index.items():
-
-            for fact in same_index_facts:
-                if tmp_country.get(fact.country_id) is None:
-                    tmp_country[fact.country_id] = [fact]
-                else:
-                    tmp_country[fact.country_id].append(fact)
-
-            index = SocioeconomicIndexes.query.filter_by(id=index_id).first()
-            final_data = []
-            for country_id, same_country_facts in tmp_country.items():
+        for country_id in args.get("country_ids"):
+            for index_id in args.get("index_ids"):
+                facts = SocioeconomicFacts.find(table_id=args.get("table_id"), index_ids=[index_id],
+                                                country_ids=[country_id], start_time=int(start_time),
+                                                end_time=int(end_time))
+                index = SocioeconomicIndexes.query.filter_by(id=index_id).first()
                 country = Country.query.filter_by(id=country_id).first()
-                final_data.append({"country": country.to_json(), "data":[fact.to_json() for fact in same_country_facts]})
-            result.append({"index":index.to_json(), "data":list(final_data)})
+                result.append(
+                    {"country":country.to_json(),
+                     "index": index.to_json(),
+                     "data":[fact.to_json() for fact in facts]})
+
+
+        # tmp_index = {}
+        # tmp_country = {}
+        # for fact in facts:
+        #     if tmp_index.get(fact.index_id) is None:
+        #         tmp_index[fact.index_id] = [fact]
+        #     else:
+        #         tmp_index[fact.index_id].append(fact)
+        #
+        # for index_id,same_index_facts in tmp_index.items():
+        #
+        #     for fact in same_index_facts:
+        #         if tmp_country.get(fact.country_id) is None:
+        #             tmp_country[fact.country_id] = [fact]
+        #         else:
+        #             tmp_country[fact.country_id].append(fact)
+        #
+        #     index = SocioeconomicIndexes.query.filter_by(id=index_id).first()
+        #     final_data = []
+        #     for country_id, same_country_facts in tmp_country.items():
+        #         country = Country.query.filter_by(id=country_id).first()
+        #         final_data.append({"country": country.to_json(), "data":[fact.to_json() for fact in same_country_facts]})
+        #     result.append({"index":index.to_json(), "data":list(final_data)})
 
         return jsonify(status="success", reason="", data=result)
     #
@@ -210,8 +224,6 @@ def socioeconomic_facts_batch():
                     pre_log.append(pre_fact.to_json())
 
                     pre_fact.value = data.get("value")
-                    pre_fact.index_id = data.get("index_id")
-                    pre_fact.country_id = data.get("country_id")
                     pre_fact.time = data.get("time")
                     past_log.append(pre_fact.to_json())
 

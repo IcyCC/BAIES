@@ -119,7 +119,7 @@ class SocioeconomicFacts(db.Model):
 
         return {
             "id": self.id,
-            "country": self.country.to_json(),
+            "country_id": self.country_id,
             "time": self.time ,
             "value": self.value,
             "index_id": self.index_id,
