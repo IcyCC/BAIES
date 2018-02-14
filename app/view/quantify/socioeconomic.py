@@ -238,8 +238,8 @@ def socioeconomic_facts_batch():
                     past_log.append(add_fact.to_json())
                     db.session.commit()
 
-        Log.log(user_id=current_user.id, target=table.to_json_by_index(), pre=json.dumps(pre_log),
-                past=json.dumps(past_log),note=note)
+        Log.log_soc(user_id=current_user.id, target=table.to_json_by_index(), pre=json.dumps(pre_log),
+                    past=json.dumps(past_log),note=note)
 
         return jsonify(status="success",)
 
