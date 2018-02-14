@@ -13,13 +13,16 @@ class Log(db.Model):
     # 更改的log
     __tablename__ = "logs"
 
+    SOCIOECONOMIC = 1
+    AGRICULTURE = 2
+
     id = db.Column(db.Integer, primary_key=True, index=True)
     timestamp = db.Column(db.DateTime, default=datetime.now())
-    user_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, nullable=False, index=True)
     target = db.Column(db.String(255), nullable=False) # 更改的表
     pre = db.Column(db.String(1024), nullable=False) # 修改前
+    kind = db.Column(db.Integer, nullable=False) # 类别 1 经济 2 农业
     past = db.Column(db.String(1024), nullable=False) # 修改后
-
     note = db.Column(db.String(1024), default="")
     status = db.Column(db.Integer, default=2) # 0 不显示通过，1不显示未通过，2显示
 
@@ -29,11 +32,16 @@ class Log(db.Model):
         return t
 
     @staticmethod
-    def log(user_id, target, past, note, pre="",):
-        p = Log(user_id=user_id, target=target, pre=pre, past=past,note=note)
+    def log_soc(user_id, target, past, note, pre="",):
+        p = Log(user_id=user_id, target=target, pre=pre, past=past,note=note, kind=Log.SOCIOECONOMIC)
         db.session.add(p)
         db.session.commit()
 
+    @staticmethod
+    def log_agr(user_id, target, past, note, pre="",):
+        p = Log(user_id=user_id, target=target, pre=pre, past=past,note=note,kind=Log.AGRICULTURE)
+        db.session.add(p)
+        db.session.commit()
 
     def to_json(self):
         return {
@@ -43,6 +51,7 @@ class Log(db.Model):
             'target':self.target,
             'pre':self.pre,
             'past':self.past,
+            'kind': self.kind,
             'status': self.status,
             "note": self.note
         }

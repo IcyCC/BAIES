@@ -46,7 +46,7 @@ class Post(db.Model):
     title = db.Column(db.String(255))
     body = db.Column(db.Text)
 
-    kind_id = db.Column(db.Integer)
+    kind_id = db.Column(db.Integer, index=True)
 
     show = db.Column(db.Boolean, default=False)
 
