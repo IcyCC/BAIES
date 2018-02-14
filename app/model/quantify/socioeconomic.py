@@ -96,7 +96,7 @@ class SocioeconomicFacts(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
     country_id = db.Column(db.Integer,index=True)
-    time = db.Column(db.DateTime, index=True)
+    time = db.Column(db.Integer, index=True, default=1119)
 
     time_stamp = db.Column(db.DateTime, index=True, default=datetime.now())
 
@@ -120,7 +120,7 @@ class SocioeconomicFacts(db.Model):
         return {
             "id": self.id,
             "country": self.country.to_json(),
-            "time": self.time if self.time is None else self.time.strftime("%Y-%m-%d %H:%M:%S"),
+            "time": self.time ,
             "value": self.value,
             "index_id": self.index_id,
             "time_stamp": self.time_stamp if self.time_stamp is None else self.time_stamp.strftime("%Y-%m-%d %H:%M:%S")
@@ -259,12 +259,7 @@ class SocioeconomicFacts(db.Model):
             query = query.filter(SocioeconomicIndexes.id == index_id)
 
         if time is not None:
-            query = query.filter(
-                and_(
-                    cls.time <= datetime.strptime(str(time)+"-12-31 23:59:59", "%Y-%m-%d %H:%M:%S"),
-                    cls.time >= datetime.strptime(str(time)+"-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
-                     )
-            )
+            query = query.filter(SocioeconomicFacts.time == time)
 
         return query.first()
 

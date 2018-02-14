@@ -27,19 +27,19 @@ SELECT * FROM socioeconomic_indexes;
 
 #ADD FACT
 EXPLAIN socioeconomic_facts;
-INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (1,'2016-12-31 23:59:59','2018-12-31 23:59:59',1,100);
-INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (1,'2015-12-31 23:59:59','2018-12-31 23:59:59',1,200);
-INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (1,'2016-12-31 23:59:59','2018-12-31 23:59:59',2,100);
-INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (1,'2015-12-31 23:59:59','2018-12-31 23:59:59',2,200);
-INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (1,'2016-12-31 23:59:59','2018-12-31 23:59:59',4,100);
-INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (1,'2015-12-31 23:59:59','2018-12-31 23:59:59',5,200);
+INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (1,2016,'2018-12-31 23:59:59',1,100);
+INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (1,2015,'2018-12-31 23:59:59',1,200);
+INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (1,2016,'2018-12-31 23:59:59',2,100);
+INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (1,2015,'2018-12-31 23:59:59',2,200);
+INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (1,2016,'2018-12-31 23:59:59',4,100);
+INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (1,2015,'2018-12-31 23:59:59',5,200);
 
-INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (2,'2016-12-31 23:59:59','2018-12-31 23:59:59',1,1000);
-INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (2,'2015-12-31 23:59:59','2018-12-31 23:59:59',1,2000);
-INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (2,'2016-12-31 23:59:59','2018-12-31 23:59:59',2,1000);
-INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (2,'2015-12-31 23:59:59','2018-12-31 23:59:59',2,2000);
-INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (2,'2016-12-31 23:59:59','2018-12-31 23:59:59',4,1000);
-INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (2,'2015-12-31 23:59:59','2018-12-31 23:59:59',5,2000);
+INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (2,2016,'2018-12-31 23:59:59',1,1000);
+INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (2,2015,'2018-12-31 23:59:59',1,2000);
+INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (2,2016,'2018-12-31 23:59:59',2,1000);
+INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (2,2015,'2018-12-31 23:59:59',2,2000);
+INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (2,2016,'2018-12-31 23:59:59',4,1000);
+INSERT INTO socioeconomic_facts(country_id, time, time_stamp, index_id, value) VALUES (2,2015,'2018-12-31 23:59:59',5,2000);
 
 SELECT * FROM socioeconomic_facts;
 
