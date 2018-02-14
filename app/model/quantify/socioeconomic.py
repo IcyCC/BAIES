@@ -232,7 +232,7 @@ class SocioeconomicFacts(db.Model):
             query = query.join(Country, Country.id == cls.country_id).filter(Country.id.in_(country_ids))
 
         if index_ids is False or index_ids is not None:
-            query = query.filter(SocioeconomicIndexes.id.in_(index_ids))
+            query = query.filter(SocioeconomicFacts.index_id.in_(index_ids))
 
         if start_time is not None:
             query = query.filter(cls.time >= start_time)
@@ -240,7 +240,7 @@ class SocioeconomicFacts(db.Model):
         if end_time is not None:
             query = query.filter(cls.time <= end_time)
 
-        return query.all()
+        return query
 
     @classmethod
     def find_one(cls, table_id=None, index_id=None,country_id=None, time=None):
