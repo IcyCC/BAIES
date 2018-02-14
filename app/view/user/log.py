@@ -3,7 +3,7 @@ from app import db
 from . import user_blueprint
 from app.model.user import *
 from app.model.comm.log import  *
-from app import check_args
+from app import check_args,std_json
 from flask_login import current_user,login_user, logout_user,login_required
 import sqlalchemy
 
@@ -25,17 +25,18 @@ def put_logs():
             page = 1
 
         page = int(page)
-
+        args = std_json(request.args)
         query = Log.query
 
-        for k, v in request.args.items():
+        for k, v in args.items():
             if k in fields:
                 query = query.filter_by(**{k: v})
 
-        pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-                                                    error_out=False)
-        return jsonify(status="success", reason="", data=[item.to_json() for item in pagenation.items],
-                       page={'current':pagenation.pages,'per_page':pagenation.per_page,'total':pagenation.total})
+        # pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        #                                             error_out=False)
+        return jsonify(status="success", reason="", data=[item.to_json() for item in query.items],
+                       # page={'current':pagenation.pages,'per_page':pagenation.per_page,'total':pagenation.total}
+                       )
 
     if request.method == "POST":
 

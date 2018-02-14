@@ -87,7 +87,8 @@ class AnonymousUser(AnonymousUserMixin):
     def to_json(self):
         return {
             "id": -1,
-            "username": "Anonymous"
+            "username": "Anonymous",
+            "role": "Anonymous"
         }
 
 
