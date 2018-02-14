@@ -325,3 +325,47 @@ def socioeconomic_index():
         db.session.delete(index)
         db.session.commit()
         return jsonify(status="success", reason="", data=[index.to_json()])
+
+@quantify_blueprint.route("/socioeconomic_facts/graph", methods=['GET', 'POST','PUT', 'DELETE'])
+def socioeconomic_facts_graph():
+    if request.method == "GET":
+
+        # if not current_user.can(Permission.QUANTIFY_R):
+        #     return jsonify(status="fail", data=[], reason="no permission")
+
+        args = std_json(request.args)
+
+        if not check_args(ALLOW_ARGS, args.keys()):
+            return jsonify(status="fail", reason="error args", data=[])
+
+        start_time = args.get("start_time")
+        # if start_time is not None:
+        #     start_time = datetime.strptime(str(start_time), "%Y")
+
+        end_time = args.get("end_time")
+        # if end_time is not None:
+        #     end_time = datetime.strptime(str(end_time), "%Y")
+        datas = []
+        for index_id in args.get('index_ids'):
+            index = SocioeconomicIndexes.query.filter_by(id=index_id).first()
+            data = {'index':index.to_json()}
+            series = []
+            for country_id in args.get('country_ids'):
+                facts=SocioeconomicFacts.find(table_id=args.get("table_id"), index_ids=[index_id],
+                                        country_ids=[country_id], start_time=int(start_time),
+                                        end_time=int(end_time))
+                country = Country.query.filter_by(id=country_id).first()
+                serie = {'country':country.to_json()}
+                fact_series = []
+                for fact in facts:
+                    fact_serie = {'x':fact.time, 'y':fact.value}
+                    fact_series.append(fact_serie)
+                serie['series'] = fact_series
+                series.append(serie)
+            data['series'] = series
+            datas.append(data)
+        return jsonify({
+            'status': 'success',
+            'reason': '',
+            'data': datas
+        })
