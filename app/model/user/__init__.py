@@ -88,7 +88,8 @@ class AnonymousUser(AnonymousUserMixin):
         return {
             "id": -1,
             "username": "Anonymous",
-            "role": "Anonymous"
+            "role": "Anonymous",
+            "country":"NU"
         }
 
 
