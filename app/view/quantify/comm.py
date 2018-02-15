@@ -26,3 +26,4 @@ def route_country():
         db.session.delete(country)
         db.session.commit()
         return jsonify(status="success", reason="", data=[country.to_json()])
+

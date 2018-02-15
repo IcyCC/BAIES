@@ -5,53 +5,87 @@ from datetime import datetime
 from sqlalchemy.sql.expression import and_
 from sqlalchemy.orm import foreign, remote
 from app.model.user import User
+
 # 用户日志
 
 
-class Log(db.Model):
+class SocLog(db.Model):
 
     # 更改的log
-    __tablename__ = "logs"
+    __tablename__ = "soc_logs"
 
-    SOCIOECONOMIC = 1
-    AGRICULTURE = 2
-
-    id = db.Column(db.Integer, primary_key=True, index=True)
+    id = db.Column(db.Integer, primary_key=True, index=True,autoincrement=True)
+    note = db.Column(db.String(1024), default='')
+    user_id = db.Column(db.Integer, index=True)
+    table_id = db.Column(db.Integer, index=True)
     timestamp = db.Column(db.DateTime, default=datetime.now())
-    user_id = db.Column(db.Integer, nullable=False, index=True)
-    target = db.Column(db.String(255), nullable=False) # 更改的表
-    pre = db.Column(db.String(1024), nullable=False) # 修改前
-    kind = db.Column(db.Integer, nullable=False) # 类别 1 经济 2 农业
-    past = db.Column(db.String(1024), nullable=False) # 修改后
-    note = db.Column(db.String(1024), default="")
-    status = db.Column(db.Integer, default=2) # 0 不显示通过，1不显示未通过，2显示
 
     @property
     def user(self):
         t = User.query.filter(User.id == self.user_id).first()
         return t
 
-    @staticmethod
-    def log_soc(user_id, target, past, note, pre="",):
-        p = Log(user_id=user_id, target=target, pre=pre, past=past,note=note, kind=Log.SOCIOECONOMIC)
-        db.session.add(p)
-        db.session.commit()
+    @property
+    def facts(self):
+        from app.model.quantify.socioeconomic import SocioeconomicFacts
+        t = SocioeconomicFacts.join(SocLog, SocLog.id == SocioeconomicFacts.log_id).\
+            filter(SocLog.id == SocioeconomicFacts.log_id).all()
+        return t
 
-    @staticmethod
-    def log_agr(user_id, target, past, note, pre="",):
-        p = Log(user_id=user_id, target=target, pre=pre, past=past,note=note,kind=Log.AGRICULTURE)
-        db.session.add(p)
-        db.session.commit()
+    @property
+    def table(self):
+        from app.model.quantify.socioeconomic import SocioeconomicTable
+        t = SocioeconomicTable.query.filter(SocioeconomicTable.id == self.table_id).first()
+        return t
 
     def to_json(self):
         return {
             'id':self.id,
-            'timestamp':self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-            'user_id':self.user_id,
-            'target':self.target,
-            'pre':self.pre,
-            'past':self.past,
-            'kind': self.kind,
-            'status': self.status,
-            "note": self.note
+            'note': self.note,
+            'user_id': self.user_id,
+            'timestamp': self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+            'facts': [f.to_json() for f in self.facts],
+            'table_id': self.table_id,
+            'table': self.table.to_json_by_index()
         }
+
+
+class ArgLog(db.Model):
+
+    # 更改的log
+    __tablename__ = "arg_logs"
+
+    id = db.Column(db.Integer, primary_key=True, index=True,autoincrement=True)
+    note = db.Column(db.String(1024), default='')
+    user_id = db.Column(db.Integer, index=True)
+    table_id = db.Column(db.Integer, index=True)
+    timestamp = db.Column(db.DateTime, default=datetime.now())
+
+    # @property
+    # def user(self):
+    #     t = User.query.filter(User.id == self.user_id).first()
+    #     return t
+    #
+    # @property
+    # def facts(self):
+    #     from app.model.quantify.agriculture_products import AgricultureFacts
+    #     t = SocioeconomicFacts.join(SocLog, SocLog.id == SocioeconomicFacts.log_id).\
+    #         filter(SocLog.id == SocioeconomicFacts.log_id).all()
+    #     return t
+    #
+    # @property
+    # def table(self):
+    #     from app.model.quantify.socioeconomic import SocioeconomicTable
+    #     t = SocioeconomicTable.query.filter(SocioeconomicTable.id == self.table_id).first()
+    #     return t
+    #
+    # def to_json(self):
+    #     return {
+    #         'id':self.id,
+    #         'note': self.note,
+    #         'user_id': self.user_id,
+    #         'timestamp': self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+    #         'facts': [f.to_json() for f in self.facts],
+    #         'table_id': self.table_id,
+    #         'table': self.table.to_json_by_index()
+    #     }
