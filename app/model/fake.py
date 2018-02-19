@@ -30,7 +30,7 @@ def insert_post(count=100):
             db.session.rollback()
 
 
-def insert_test_data():
+def insert_test_soc_data():
     load = {
         "name": 'A',
         "cn_alis": 'ATable',
@@ -52,3 +52,34 @@ def insert_test_data():
     }
     requests.post("http://127.0.0.1:5000/quantify/socioeconomic_table", data=load)
 
+    load = {
+        "name": 'a',
+        "cn_alis": 'aindex',
+        "en_alis": 'a指标',
+        "table_id": 1
+    }
+    requests.post("http://127.0.0.1:5000/quantify/socioeconomic_index", data=load)
+
+    load = {
+        "name": 'b',
+        "cn_alis": 'bindex',
+        "en_alis": 'b指标',
+        "table_id": 1
+    }
+    requests.post("http://127.0.0.1:5000/quantify/socioeconomic_index", data=load)
+
+    load = {
+        "name": 'c',
+        "cn_alis": 'cindex',
+        "en_alis": 'c指标',
+        "table_id": 1
+    }
+    requests.post("http://127.0.0.1:5000/quantify/socioeconomic_index", data=load)
+
+    load = {
+        "name": 'd',
+        "cn_alis": 'dindex',
+        "en_alis": 'd指标',
+        "table_id": 2
+    }
+    requests.post("http://127.0.0.1:5000/quantify/socioeconomic_index", data=load)
