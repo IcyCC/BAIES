@@ -297,8 +297,11 @@ def socioeconomic_table():
         table = SocioeconomicTable(name=request.form.get("name"),
                                    cn_alis=request.form.get("cn_alis"),
                                    en_alis=request.form.get("en_alis"))
-
         db.session.add(table)
+        db.session.commit()
+
+        log = SocLog(note="init", table_id=table.id, user_id=current_user.id)
+        db.session.add(log)
         db.session.commit()
 
         return jsonify(status="success", reason="", data=[table.to_json()])
