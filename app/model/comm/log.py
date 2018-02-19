@@ -30,7 +30,7 @@ class SocLog(db.Model):
     def facts(self):
         from app.model.quantify.socioeconomic import SocioeconomicFacts
         t = SocioeconomicFacts.query.join(SocLog, SocLog.id == SocioeconomicFacts.log_id).\
-            filter(SocLog.id == SocioeconomicFacts.log_id).all()
+            filter(self.id == SocioeconomicFacts.log_id).all()
         return t
 
     @property
