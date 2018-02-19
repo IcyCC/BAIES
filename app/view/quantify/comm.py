@@ -18,7 +18,8 @@ def route_country():
         country = Country(name=request.form.get("name"),
                           cn_alias=request.form.get("cn_alis"),
                           en_alias=request.form.get("en_alis"))
-
+        db.session.add(country)
+        db.session.commit()
         return jsonify(status="success", reason="", data=[country.to_json()])
 
     if request.method == "DELETE":

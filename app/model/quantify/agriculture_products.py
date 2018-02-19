@@ -124,6 +124,8 @@ class AgricultureFacts(db.Model):
     index_id = db.Column(db.Integer, index=True)
     value = db.Column(db.Float, index=True)
 
+    log_id = db.Column(db.Integer, index=True, autoincrement=True)
+
     @property
     def index(self):
         t = AgricultureIndexes.query.filter(AgricultureIndexes.id == self.index_id).first()
@@ -253,7 +255,7 @@ class AgricultureFacts(db.Model):
         return fact, ""
 
     @classmethod
-    def find(cls, table_id=None, kind_id=None, index_ids=None,country_ids=None, start_time=None, end_time=None):
+    def find(cls, table_id=None, kind_id=None, index_ids=None,country_ids=None, start_time=None, end_time=None, log_id = None):
         query = cls.query
 
         if table_id is not None:
@@ -277,10 +279,13 @@ class AgricultureFacts(db.Model):
         if end_time is not None:
             query = query.filter(cls.time <= end_time)
 
+        if log_id is not None:
+            query = query.filter(cls.log_id == log_id)
+
         return query.all()
 
     @classmethod
-    def find_one(cls, table_id=None, index_id=None,country_id=None, time=None, kind_id= None):
+    def find_one(cls, table_id=None, index_id=None,country_id=None, time=None, kind_id= None, log_id=None):
         query = cls.query
 
         if table_id is not None:
@@ -299,6 +304,9 @@ class AgricultureFacts(db.Model):
             query = query.filter(AgricultureFacts.time == time)
 
         if kind_id is not None:
-            query.filter(AgricultureFacts.kind_id == kind_id)
+            query = query.filter(AgricultureFacts.kind_id == kind_id)
+
+        if log_id is not None:
+            query = query.filter(AgricultureFacts.log_id == log_id)
 
         return query.first()
