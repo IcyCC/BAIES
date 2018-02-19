@@ -229,15 +229,21 @@ def socioeconomic_facts_batch():
         old_facts = SocioeconomicFacts.query.filter(SocioeconomicFacts.log_id == old_log.id).all()
         fields = [i for i in SocioeconomicFacts.__table__.c._data]
 
+        print("Copy start")
+
         for fact in old_facts:
             f = SocioeconomicFacts()
             for field in fields:
+                if field == "id":
+                    pass
                 if field == "log_id":
                     f.log_id = new_log.id
                 else:
                     setattr(f, field, getattr(fact, field))
             db.session.add(f)
             db.session.commit()
+
+        print("Copy finish")
 
         for data in datas:
             pre_fact = SocioeconomicFacts.find_one(table_id=table_id, index_id=data.get("index_id"),
@@ -270,6 +276,8 @@ def socioeconomic_facts_batch():
                     db.session.add(add_fact)
                     db.session.commit()
         table.cur_log_id = new_log.id
+        db.session.add(table)
+        db.session.commit()
 
         return jsonify(status="success",)
 
