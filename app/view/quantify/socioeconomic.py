@@ -62,8 +62,7 @@ def socioeconomic_facts():
         log_id = args.get("log_id")
 
         if log_id is None:
-            old_log = table.get_newest_log()
-            log_id = old_log.id
+            log_id = table.cur_log_id
 
         result = []
 
@@ -222,7 +221,7 @@ def socioeconomic_facts_batch():
 
         old_log = table.get_newest_log()
         new_log = SocLog(note=note, user_id=current_user.id,
-                         table_id=table_id, pre_log_id=old_log.id)
+                         table_id=table_id, pre_log_id=old_log.id, timestamp=datetime.now())
         db.session.add(new_log)
         db.session.commit()
 
@@ -235,9 +234,11 @@ def socioeconomic_facts_batch():
             f = SocioeconomicFacts()
             for field in fields:
                 if field == "id":
-                    pass
-                if field == "log_id":
+                    print("change id")
+                elif field == "log_id":
                     f.log_id = new_log.id
+                elif field == "time_stamp":
+                   f.time_stamp = datetime.now()
                 else:
                     setattr(f, field, getattr(fact, field))
             db.session.add(f)
