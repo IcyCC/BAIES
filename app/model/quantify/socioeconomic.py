@@ -14,7 +14,7 @@ class SocioeconomicTable(db.Model):
     name = db.Column(db.String(255), index=True, nullable=False)
     cn_alis = db.Column(db.String(255))
     en_alis = db.Column(db.String(255))
-    cur_log_id = db.Column(db.Integer, index=True)
+    cur_log_id = db.Column(db.Integer, index=True, default=0)
 
     @property
     def indexes(self):
@@ -30,7 +30,7 @@ class SocioeconomicTable(db.Model):
 
     def get_newest_log(self, offset = 0):
         log = SocLog.query.join(SocioeconomicTable, SocLog.table_id == SocioeconomicTable.id). \
-            filter(SocLog.table_id == SocioeconomicTable.id).order_by(SocLog.timestamp.desc()).offset(offset).first()
+            filter(SocLog.table_id == SocioeconomicTable.id).order_by(SocLog.timestamp).offset(offset).first()
         return log
 
     @property
@@ -39,13 +39,15 @@ class SocioeconomicTable(db.Model):
         return log
 
 
+
+
     def to_json(self):
         return {
             "id": self.id,
             "name": self.name,
             "cn_alis": self.cn_alis,
             "en_alis": self.en_alis,
-            "indexes": [i.to_json_by_fact() for i in self.indexes]
+            "indexes": [i.to_json_by_fact() for i in self.indexes],
         }
 
     def to_json_by_index(self):

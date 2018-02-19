@@ -63,3 +63,7 @@ INSERT INTO kinds(name, cn_alis, en_alis) VALUES ('鱼林政策信息','鱼林�
 
 SELECT * FROM countrys;
 SELECT * FROM socioeconomic_indexes;
+
+SELECT * FROM socioeconomic_tables;
+SELECT * FROM socioeconomic_facts;
+SELECT * FROM soc_logs;

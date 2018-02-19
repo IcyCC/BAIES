@@ -39,6 +39,15 @@ class SocLog(db.Model):
         t = SocioeconomicTable.query.filter(SocioeconomicTable.id == self.table_id).first()
         return t
 
+    @property
+    def pre_log(self):
+        if self.pre_log == 0:
+            return {
+                "id": 0
+            }
+        log = SocLog.query.filter(SocLog.id == self.pre_log_id).first()
+        return log
+
     def to_json(self):
         return {
             'id':self.id,
