@@ -2,7 +2,7 @@ from flask import request, jsonify, current_app
 from app import db
 from . import user_blueprint
 from app.model.user import *
-from app.model.comm.log import  *
+from app.model.comm.log import *
 from app import check_args,std_json
 from flask_login import current_user,login_user, logout_user,login_required
 import sqlalchemy
@@ -10,7 +10,7 @@ import sqlalchemy
 @user_blueprint.route("/Log" , methods=['GET', 'POST'])
 def put_logs():
 
-    fields = [i for i in Log.__table__.c._data]
+    fields = [i for i in SocLog.__table__.c._data]
 
     if request.method == "GET":
 
@@ -26,16 +26,16 @@ def put_logs():
 
         page = int(page)
         args = std_json(request.args)
-        query = Log.query
+        query = SocLog.query
 
         for k, v in args.items():
             if k in fields:
                 query = query.filter_by(**{k: v})
 
-        # pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-        #                                             error_out=False)
-        return jsonify(status="success", reason="", data=[item.to_json() for item in query.items],
-                       # page={'current':pagenation.pages,'per_page':pagenation.per_page,'total':pagenation.total}
+        pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+                                                    error_out=False)
+        return jsonify(status="success", reason="", data=[item.to_json() for item in pagenation.items],
+                       page={'current':pagenation.pages,'per_page':pagenation.per_page,'total':pagenation.total}
                        )
 
     if request.method == "POST":
@@ -47,7 +47,7 @@ def put_logs():
         if not check_args(fields, form.keys()):
             return jsonify(status="fail", reason="error form args", data=[])
 
-        c = Log()
+        c = SocLog()
 
         for k, v in form.items():
             if hasattr(c, k):
@@ -65,8 +65,8 @@ def put_logs():
 @user_blueprint.route("/Log/<q_id>", methods=['GET', 'PUT', 'DELETE'])
 def put_logs_r(q_id):
 
-    c = Log.query.filter_by(id=q_id).first()
-    fields = [i for i in Log.__table__.c._data]
+    c = SocLog.query.filter_by(id=q_id).first()
+    fields = [i for i in SocLog.__table__.c._data]
 
 
     if c is None:

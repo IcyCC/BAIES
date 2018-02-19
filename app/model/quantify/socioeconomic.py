@@ -5,6 +5,7 @@ from sqlalchemy.sql.expression import and_
 from datetime import datetime
 from sqlalchemy.orm import foreign, remote
 from . import Country
+from app.model.comm.log import SocLog
 
 class SocioeconomicTable(db.Model):
     __tablename__ = "socioeconomic_tables"
@@ -18,6 +19,19 @@ class SocioeconomicTable(db.Model):
     def indexes(self):
         t = SocioeconomicIndexes.query.join(SocioeconomicTable, SocioeconomicTable.id == SocioeconomicIndexes.table_id).filter(SocioeconomicIndexes.table_id == self.id).all()
         return t
+
+    @property
+    def logs(self):
+        from app.model.comm.log import SocLog
+        t = SocLog.join(SocioeconomicTable, SocLog.table_id == SocioeconomicTable.id).\
+            filter(SocLog.table_id == SocioeconomicTable.id).all()
+        return t
+
+    def get_newest_log(self, offset = 0):
+        log = SocLog.join(SocioeconomicTable, SocLog.table_id == SocioeconomicTable.id). \
+            filter(SocLog.table_id == SocioeconomicTable.id).order_by(SocLog.timestamp.desc()).offset(offset).first()
+        return log
+
 
 
     def to_json(self):
@@ -101,6 +115,7 @@ class SocioeconomicFacts(db.Model):
     time_stamp = db.Column(db.DateTime, index=True, default=datetime.now())
 
     index_id = db.Column(db.Integer, index=True)
+    log_id = db.Column(db.Integer, index=True)
     value = db.Column(db.Float)
 
     @property
@@ -114,6 +129,10 @@ class SocioeconomicFacts(db.Model):
         t = Country.query.filter(Country.id == self.country_id).first()
         return t
 
+    @property
+    def log(self):
+        t = SocLog.query.filter(SocLog.id == self.log_id).first()
+        return t
 
     def to_json(self):
 
@@ -219,7 +238,7 @@ class SocioeconomicFacts(db.Model):
 
 
     @classmethod
-    def find(cls, table_id=None, index_ids=None,country_ids=None, start_time=None, end_time=None):
+    def find(cls, table_id=None, index_ids=None,country_ids=None, start_time=None, end_time=None, log_id=None):
         query = cls.query
 
         if table_id is not None:
@@ -227,6 +246,9 @@ class SocioeconomicFacts(db.Model):
             if table is None:
                 return []
             query = query.join(SocioeconomicIndexes, SocioeconomicIndexes.id == cls.index_id).filter(SocioeconomicIndexes.table_id == table.id)
+
+        if log_id is not None:
+            query = query.filter(SocioeconomicFacts.log_id == log_id)
 
         if country_ids is False or country_ids is not None:
             query = query.join(Country, Country.id == cls.country_id).filter(Country.id.in_(country_ids))
@@ -243,7 +265,7 @@ class SocioeconomicFacts(db.Model):
         return query
 
     @classmethod
-    def find_one(cls, table_id=None, index_id=None,country_id=None, time=None):
+    def find_one(cls, table_id=None, index_id=None,country_id=None, time=None, log_id=None):
         query = cls.query
 
         if table_id is not None:
@@ -251,6 +273,9 @@ class SocioeconomicFacts(db.Model):
             if table is None:
                 return []
             query = query.join(SocioeconomicIndexes, SocioeconomicIndexes.id == cls.index_id).filter(SocioeconomicIndexes.table_id == table.id)
+
+        if log_id is not None:
+            query = query.filter(SocioeconomicFacts.log_id == log_id)
 
         if country_id is not None:
             query = query.join(Country, Country.id == cls.country_id).filter(Country.id == country_id)

@@ -4,7 +4,7 @@ from . import quantify_blueprint
 from app.model.quantify import Country
 from app.model.user import Permission
 from flask_login import current_user
-from app.model.comm.log import Log
+from app.model.comm.log import SocLog
 import sqlalchemy
 
 @quantify_blueprint.route("/country", methods=['GET', 'POST'])
@@ -26,3 +26,4 @@ def route_country():
         db.session.delete(country)
         db.session.commit()
         return jsonify(status="success", reason="", data=[country.to_json()])
+

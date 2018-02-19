@@ -5,7 +5,7 @@ from app.model.quantify import Country
 from app.model.quantify.socioeconomic import SocioeconomicFacts,SocioeconomicIndexes,SocioeconomicTable
 from app.model.user import Permission
 from flask_login import current_user
-from app.model.comm.log import Log
+from app.model.comm.log import SocLog
 import json
 from datetime import datetime
 import sqlalchemy
@@ -19,7 +19,8 @@ ALLOW_ARGS = (
     "end_time",
     "batch",
     "country_ids",
-    "index_ids"
+    "index_ids",
+    "log_id"
 )
 
 def check_args(father,son):
@@ -42,6 +43,7 @@ def socioeconomic_facts():
 
         args = std_json(request.args)
 
+
         if not check_args(ALLOW_ARGS, args.keys()):
             return jsonify(status="fail", reason="error args", data=[])
 
@@ -53,16 +55,23 @@ def socioeconomic_facts():
         # if end_time is not None:
         #     end_time = datetime.strptime(str(end_time), "%Y")
 
-        facts = SocioeconomicFacts.find(table_id=args.get("table_id"), index_ids=args.get("index_ids"),
-                                        country_ids=args.get("country_ids"), start_time=int(start_time),
-                                        end_time=int(end_time))
+        table = SocioeconomicTable.query.filter_by(id=args.get("table_id")).first()
+        if table is None:
+            return jsonify(status="fail", data=[], reason="no such table")
+
+        log_id = args.get("log_id")
+
+        if log_id is None:
+            old_log = table.get_newest_log()
+            log_id = old_log.id
+
         result = []
 
         for country_id in args.get("country_ids"):
             for index_id in args.get("index_ids"):
-                facts = SocioeconomicFacts.find(table_id=args.get("table_id"), index_ids=[index_id],
+                facts = SocioeconomicFacts.find(table_id=table.id, index_ids=[index_id],
                                                 country_ids=[country_id], start_time=int(start_time),
-                                                end_time=int(end_time))
+                                                end_time=int(end_time),log_id=log_id)
                 index = SocioeconomicIndexes.query.filter_by(id=index_id).first()
                 country = Country.query.filter_by(id=country_id).first()
                 result.append(
@@ -204,54 +213,62 @@ def socioeconomic_facts_batch():
         note = body.get("note")
         table_id = body.get("table_id")
 
+
         table = SocioeconomicTable.query.filter_by(id=table_id).first()
         if table is None:
             return jsonify(status="fail", reason="no id table", data=[])
 
         datas = body.get("data")
 
-        pre_log = []
-        past_log = []
+        old_log = table.get_newest_log()
+        new_log = SocLog(note=note, user_id=current_user.id,
+                     table_id=table_id)
+        db.session.add(new_log)
+        db.session.commit()
+
+        old_facts = SocioeconomicFacts.query.filter(SocioeconomicFacts.log_id == old_log.id).all()
+        fields = [i for i in SocioeconomicFacts.__table__.c._data]
+
+        for fact in old_facts:
+            f = SocioeconomicFacts()
+            for field in fields:
+                if field == "log_id":
+                    f.log_id = new_log.id
+                else:
+                    setattr(f, field, fact.get(f))
+            db.session.add(f)
+            db.session.commit()
 
         for data in datas:
             pre_fact = SocioeconomicFacts.find_one(table_id=table_id, index_id=data.get("index_id"),
                                                    country_id = data.get('country_id'),
-                                                   time=data.get('time'))
+                                                   time=data.get('time'), log_id=new_log.id)
             if pre_fact is not None:
 
                 if data.get("value") is not None:
                     # 修改
-                    pre_log.append(pre_fact.to_json())
 
                     pre_fact.value = data.get("value")
                     pre_fact.time = data.get("time")
-                    past_log.append(pre_fact.to_json())
 
                     db.session.add(pre_fact)
                     db.session.commit()
                 else:
                     # 删除
-                    pre_log.append(pre_fact.to_json())
-                    past_log.append([])
                     db.session.delete(pre_fact)
                     db.session.commit()
             else:
                 if data.get("value") is not None:
                     # 添加
-                    pre_log.append([])
-
                     add_fact = SocioeconomicFacts(
                         value=data.get("value"),
                         country_id=data.get("country_id"),
                         time=int(data.get('time')),
                         index_id=data.get("index_id"),
+                        log_id=new_log.id
                     )
                     db.session.add(add_fact)
-                    past_log.append(add_fact.to_json())
                     db.session.commit()
-
-        Log.log_soc(user_id=current_user.id, target=table.to_json_by_index(), pre=json.dumps(pre_log),
-                    past=json.dumps(past_log),note=note)
 
         return jsonify(status="success",)
 
@@ -280,8 +297,11 @@ def socioeconomic_table():
         table = SocioeconomicTable(name=request.form.get("name"),
                                    cn_alis=request.form.get("cn_alis"),
                                    en_alis=request.form.get("en_alis"))
-
         db.session.add(table)
+        db.session.commit()
+
+        log = SocLog(note="init", table_id=table.id, user_id=current_user.id)
+        db.session.add(log)
         db.session.commit()
 
         return jsonify(status="success", reason="", data=[table.to_json()])
@@ -350,6 +370,16 @@ def socioeconomic_facts_graph():
         if not check_args(ALLOW_ARGS, args.keys()):
             return jsonify(status="fail", reason="error args", data=[])
 
+        table = SocioeconomicTable.query.filter_by(id=args.get("table_id")).first()
+        if table is None:
+            return jsonify(status="fail", data=[], reason="no such table")
+
+        log_id = args.get("log_id")
+
+        if log_id is None:
+            old_log = table.get_newest_log()
+            log_id = old_log.id
+
         start_time = args.get("start_time")
         # if start_time is not None:
         #     start_time = datetime.strptime(str(start_time), "%Y")
@@ -365,7 +395,7 @@ def socioeconomic_facts_graph():
             for country_id in args.get('country_ids'):
                 facts=SocioeconomicFacts.find(table_id=args.get("table_id"), index_ids=[index_id],
                                         country_ids=[country_id], start_time=int(start_time),
-                                        end_time=int(end_time))
+                                        end_time=int(end_time), log_id=log_id)
                 country = Country.query.filter_by(id=country_id).first()
                 serie = {'country':country.to_json()}
                 fact_series = []
