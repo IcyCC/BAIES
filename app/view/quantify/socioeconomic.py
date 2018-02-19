@@ -235,7 +235,7 @@ def socioeconomic_facts_batch():
                 if field == "log_id":
                     f.log_id = new_log.id
                 else:
-                    setattr(f, field, fact.get(f))
+                    setattr(f, field, fact.get(field))
             db.session.add(f)
             db.session.commit()
 
