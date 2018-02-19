@@ -20,6 +20,19 @@ class SocioeconomicTable(db.Model):
         t = SocioeconomicIndexes.query.join(SocioeconomicTable, SocioeconomicTable.id == SocioeconomicIndexes.table_id).filter(SocioeconomicIndexes.table_id == self.id).all()
         return t
 
+    @property
+    def logs(self):
+        from app.model.comm.log import SocLog
+        t = SocLog.join(SocioeconomicTable, SocLog.table_id == SocioeconomicTable.id).\
+            filter(SocLog.table_id == SocioeconomicTable.id).all()
+        return t
+
+    def get_newest_log(self, offset = 0):
+        log = SocLog.join(SocioeconomicTable, SocLog.table_id == SocioeconomicTable.id). \
+            filter(SocLog.table_id == SocioeconomicTable.id).order_by(SocLog.timestamp.desc()).offset(offset).first()
+        return log
+
+
 
     def to_json(self):
         return {
