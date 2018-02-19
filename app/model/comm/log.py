@@ -18,6 +18,7 @@ class SocLog(db.Model):
     note = db.Column(db.String(1024), default='')
     user_id = db.Column(db.Integer, index=True)
     table_id = db.Column(db.Integer, index=True)
+    pre_log_id = db.Column(db.Integer,index=True)
     timestamp = db.Column(db.DateTime, default=datetime.now())
 
     @property
@@ -28,7 +29,7 @@ class SocLog(db.Model):
     @property
     def facts(self):
         from app.model.quantify.socioeconomic import SocioeconomicFacts
-        t = SocioeconomicFacts.join(SocLog, SocLog.id == SocioeconomicFacts.log_id).\
+        t = SocioeconomicFacts.query.join(SocLog, SocLog.id == SocioeconomicFacts.log_id).\
             filter(SocLog.id == SocioeconomicFacts.log_id).all()
         return t
 
@@ -37,6 +38,15 @@ class SocLog(db.Model):
         from app.model.quantify.socioeconomic import SocioeconomicTable
         t = SocioeconomicTable.query.filter(SocioeconomicTable.id == self.table_id).first()
         return t
+
+    @property
+    def pre_log(self):
+        if self.pre_log == 0:
+            return {
+                "id": 0
+            }
+        log = SocLog.query.filter(SocLog.id == self.pre_log_id).first()
+        return log
 
     def to_json(self):
         return {
