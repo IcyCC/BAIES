@@ -30,7 +30,7 @@ class SocioeconomicTable(db.Model):
 
     def get_newest_log(self, offset = 0):
         log = SocLog.query.join(SocioeconomicTable, SocLog.table_id == SocioeconomicTable.id). \
-            filter(SocLog.table_id == self.id).order_by(SocLog.timestamp).offset(offset).first()
+            filter(SocLog.table_id == self.id).order_by(SocLog.timestamp.desc()).offset(offset).first()
         return log
 
     @property
