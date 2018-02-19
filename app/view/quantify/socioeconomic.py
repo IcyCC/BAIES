@@ -222,7 +222,7 @@ def socioeconomic_facts_batch():
 
         old_log = table.get_newest_log()
         new_log = SocLog(note=note, user_id=current_user.id,
-                     table_id=table_id)
+                         table_id=table_id, pre_log_id=old_log.id)
         db.session.add(new_log)
         db.session.commit()
 
@@ -235,7 +235,7 @@ def socioeconomic_facts_batch():
                 if field == "log_id":
                     f.log_id = new_log.id
                 else:
-                    setattr(f, field, fact.get(field))
+                    setattr(f, field, getattr(fact, field))
             db.session.add(f)
             db.session.commit()
 
@@ -269,6 +269,7 @@ def socioeconomic_facts_batch():
                     )
                     db.session.add(add_fact)
                     db.session.commit()
+        table.cur_log_id = new_log.id
 
         return jsonify(status="success",)
 
@@ -302,6 +303,10 @@ def socioeconomic_table():
 
         log = SocLog(note="init", table_id=table.id, user_id=current_user.id)
         db.session.add(log)
+        db.session.commit()
+
+        table.cur_log_id = log.id
+        db.session.add(table)
         db.session.commit()
 
         return jsonify(status="success", reason="", data=[table.to_json()])
