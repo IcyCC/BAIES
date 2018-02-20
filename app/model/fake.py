@@ -1,13 +1,54 @@
 from app.model.qualitative.information import Post, Kind
 from app import db
+from app.model.quantify.socioeconomic import Country
+
 from sqlalchemy.exc import IntegrityError
 from faker import Faker
 from random import randint
 import requests
 
+def insert_country():
+    c1 = Country(name='CN',cn_alias="中国", en_alias="China")
+    db.session.add(c1)
+
+    c2 = Country(name='EN', cn_alias="英国", en_alias="England")
+    db.session.add(c2)
+
+    c3 = Country(name='US', cn_alias="美国", en_alias="USA")
+    db.session.add(c3)
+
+    db.session.commit()
+
+def insert_kind():
+    k1 = Kind(name= '农业发展政策信息',
+            cn_alis='农业发展政策信息',
+            en_alis='Agricultural Development')
+    db.session.add(k1)
+
+    k2 = Kind(name= '农业贸易政策信息',
+            cn_alis='农业贸易政策信息',
+            en_alis='Agricultural Trade')
+    db.session.add(k2)
+
+    k3 = Kind(name='农业科技政策信息',
+              cn_alis='农业科技政策信息',
+              en_alis='Agricultural Science and Technology')
+    db.session.add(k3)
+
+    k4 = Kind(name='鱼林政策信息',
+              cn_alis='鱼林政策信息',
+              en_alis='Fishery & Aquaculture Policies')
+    db.session.add(k4)
+
+    db.session.commit()
+
 def insert_post(count=100):
     fake = Faker(locale='zh_CN')
     i=0
+
+    k_count = Kind.query.count()
+    if k_count == 0:
+        insert_kind()
     k_count = Kind.query.count()
     print("COUNT K", k_count)
     while i<count:
@@ -30,7 +71,8 @@ def insert_post(count=100):
             db.session.rollback()
 
 
-def insert_test_data():
+
+def insert_test_soc_data():
     load = {
         "name": 'A',
         "cn_alis": 'ATable',
@@ -52,3 +94,40 @@ def insert_test_data():
     }
     requests.post("http://127.0.0.1:5000/quantify/socioeconomic_table", data=load)
 
+    load = {
+        "name": 'a',
+        "cn_alis": 'aindex',
+        "en_alis": 'a指标',
+        "table_id": 1
+    }
+    requests.post("http://127.0.0.1:5000/quantify/socioeconomic_index", data=load)
+
+    load = {
+        "name": 'b',
+        "cn_alis": 'bindex',
+        "en_alis": 'b指标',
+        "table_id": 1
+    }
+    requests.post("http://127.0.0.1:5000/quantify/socioeconomic_index", data=load)
+
+    load = {
+        "name": 'c',
+        "cn_alis": 'cindex',
+        "en_alis": 'c指标',
+        "table_id": 1
+    }
+    requests.post("http://127.0.0.1:5000/quantify/socioeconomic_index", data=load)
+
+    load = {
+        "name": 'd',
+        "cn_alis": 'dindex',
+        "en_alis": 'd指标',
+        "table_id": 2
+    }
+    requests.post("http://127.0.0.1:5000/quantify/socioeconomic_index", data=load)
+
+
+def gen():
+    insert_country()
+    insert_post()
+    insert_test_soc_data()

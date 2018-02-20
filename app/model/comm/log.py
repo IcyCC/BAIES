@@ -18,7 +18,7 @@ class SocLog(db.Model):
     note = db.Column(db.String(1024), default='')
     user_id = db.Column(db.Integer, index=True)
     table_id = db.Column(db.Integer, index=True)
-    pre_log_id = db.Column(db.Integer,index=True)
+    pre_log_id = db.Column(db.Integer,index=True,default=0)
     timestamp = db.Column(db.DateTime, default=datetime.now())
 
     @property
@@ -41,12 +41,23 @@ class SocLog(db.Model):
 
     @property
     def pre_log(self):
-        if self.pre_log == 0:
+        if self.pre_log_id == 0:
             return {
                 "id": 0
             }
         log = SocLog.query.filter(SocLog.id == self.pre_log_id).first()
         return log
+
+    def to_json_simple(self):
+        return {
+            'id':self.id,
+            'note': self.note,
+            'user_id': self.user_id,
+            'timestamp': self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+            'table_id': self.table_id,
+            'table': self.table.to_json_by_index(),
+            'per_log_id': self.pre_log_id
+        }
 
     def to_json(self):
         return {
@@ -56,7 +67,20 @@ class SocLog(db.Model):
             'timestamp': self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'facts': [f.to_json() for f in self.facts],
             'table_id': self.table_id,
-            'table': self.table.to_json_by_index()
+            'table': self.table.to_json_by_index(),
+            'pre_log': self.pre_log.to_json_son(),
+            'per_log_id': self.pre_log_id
+        }
+
+    def to_json_son(self):
+        return {
+            'id':self.id,
+            'note': self.note,
+            'user_id': self.user_id,
+            'timestamp': self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+            'facts': [f.to_json() for f in self.facts],
+            'table_id': self.table_id,
+            'table': self.table.to_json_by_index(),
         }
 
 
