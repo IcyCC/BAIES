@@ -273,7 +273,7 @@ def agriculture_facts_batch():
 
 
 @quantify_blueprint.route("/agriculture_table/<id>/indexes", methods=['GET', 'POST', 'PUT', 'DELETE'])
-def socioeconomic_facts_indexes(id):
+def agriculture_facts_indexes(id):
     if request.method == "GET":
         table = AgricultureTable.query.filter_by(id=id).first()
 
@@ -358,7 +358,7 @@ def agriculture_index():
 
 
 @quantify_blueprint.route("/agriculture_kinds", methods=['GET', 'POST', 'DELETE'])
-def route_country():
+def agriculture_kinds():
     if request.method == "GET":
         kinds = AgricultureKind.query.all()
         return jsonify(status="success", reason="", data=[t.to_json() for t in kinds])
@@ -377,8 +377,8 @@ def route_country():
         return jsonify(status="success", reason="", data=[kind.to_json()])
 
 
-@quantify_blueprint.route("/socioeconomic_facts/graph", methods=['GET', 'POST', 'PUT', 'DELETE'])
-def socioeconomic_facts_graph():
+@quantify_blueprint.route("/agriculture_facts/graph", methods=['GET', 'POST', 'PUT', 'DELETE'])
+def agriculture_facts_graph():
     if request.method == "GET":
 
         # if not current_user.can(Permission.QUANTIFY_R):
