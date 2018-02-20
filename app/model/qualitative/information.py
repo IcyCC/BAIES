@@ -76,3 +76,13 @@ class Post(db.Model):
             'show': self.show,
             'user': self.user.to_json() if self.user is not None else AnonymousUser.to_json()
         }
+
+    def to_json_simple(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'kind_id': self.kind_id,
+            'kind': self.kind.to_json_simple(),
+            'timestamp': self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+            'user_id': self.user_id,
+        }

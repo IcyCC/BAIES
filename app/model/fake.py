@@ -11,13 +11,13 @@ import requests
 
 
 def insert_country():
-    c1 = Country(name='CN',cn_alias="中国", en_alias="China")
+    c1 = Country(name='CN',cn_alis="中国", en_alis="China")
     db.session.add(c1)
 
-    c2 = Country(name='EN', cn_alias="英国", en_alias="England")
+    c2 = Country(name='EN', cn_alis="英国", en_alis="England")
     db.session.add(c2)
 
-    c3 = Country(name='US', cn_alias="美国", en_alias="USA")
+    c3 = Country(name='US', cn_alis="美国", en_alis="USA")
     db.session.add(c3)
 
     db.session.commit()
