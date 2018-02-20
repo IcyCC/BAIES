@@ -21,13 +21,13 @@ def insert_country():
 
 def insert_kind():
     k1 = Kind(name= '农业发展政策信息',
-            cn_alis='农业发展政策信息',
-            en_alis='Agricultural Development')
+              cn_alis='农业发展政策信息',
+              en_alis='Agricultural Development')
     db.session.add(k1)
 
     k2 = Kind(name= '农业贸易政策信息',
-            cn_alis='农业贸易政策信息',
-            en_alis='Agricultural Trade')
+              cn_alis='农业贸易政策信息',
+              en_alis='Agricultural Trade')
     db.session.add(k2)
 
     k3 = Kind(name='农业科技政策信息',
