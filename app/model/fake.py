@@ -131,6 +131,7 @@ def insert_test_soc_data():
 
 
 def gen():
+    Role.insert_roles()
     insert_country()
     insert_post()
     insert_test_soc_data()
