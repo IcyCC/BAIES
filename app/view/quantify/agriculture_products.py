@@ -9,6 +9,7 @@ from flask_login import current_user
 from app import std_json
 import json
 import sqlalchemy
+import datetime
 
 ALLOW_ARGS = (
     "tablename",
@@ -55,8 +56,7 @@ def agriculture_facts():
 
         log_id = args.get('log_id')
         if log_id is None:
-            old_log = table.get_newest_log()
-            log_id = old_log.id
+            log_id = table.cur_log_id
 
         result = []
         for country_id in args.get("country_ids"):
@@ -70,9 +70,9 @@ def agriculture_facts():
                     kind = AgricultureKind.query.filter_by(id=kind_id).first()
                     result.append(
                         {"country":country.to_json(),
-                        "index": index.to_json(),
+                         "index": index.to_json(),
                          "kind": kind.to_json(),
-                        "data":[fact.to_json() for fact in facts]})
+                         "data":[fact.to_json() for fact in facts]})
 
         # facts = AgricultureFacts.find(table_id=args.get("table_id"), index=args.get("index"),
         #                                   country=args.get("country"), start_time=args.get("start_time"))
@@ -210,7 +210,7 @@ def agriculture_facts_batch():
 
         old_log = table.get_newest_log()
         new_log = ArgLog(note=note, user_id=current_user.id,
-                     table_id=table_id)
+                     table_id=table_id, timestamp=datetime.now())
         db.session.add(new_log)
         db.session.commit()
 
@@ -220,12 +220,17 @@ def agriculture_facts_batch():
         for fact in old_facts:
             f = AgricultureFacts()
             for field in fields:
-                if field == "log_id":
+                if field == "id":
+                    print("change id")
+                elif field == "log_id":
                     f.log_id = new_log.id
+                elif field == "time_stamp":
+                   f.time_stamp = datetime.now()
                 else:
-                    setattr(f, field, fact.get(field))
+                    setattr(f, field, getattr(fact, field))
             db.session.add(f)
             db.session.commit()
+
 
         for data in datas:
             pre_fact = AgricultureFacts.find_one(table_id=table_id, index_id=data.get("index_id"),
@@ -257,6 +262,9 @@ def agriculture_facts_batch():
                     )
                     db.session.add(add_fact)
                     db.session.commit()
+        table.cur_log_id = new_log.id
+        db.session.add(table)
+        db.session.commit()
 
         return jsonify(status="success",)
 
@@ -286,6 +294,10 @@ def agriculture_table():
 
         log = ArgLog(note="init", table_id=table.id, user_id=current_user.id)
         db.session.add(log)
+        db.session.commit()
+
+        table.cur_log_id = log.id
+        db.session.add(table)
         db.session.commit()
 
         return jsonify(status="success", reason="", data=[table.to_json()])
