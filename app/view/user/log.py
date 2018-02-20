@@ -7,7 +7,7 @@ from app import check_args,std_json
 from flask_login import current_user,login_user, logout_user,login_required
 import sqlalchemy
 
-@user_blueprint.route("/Log" , methods=['GET', 'POST'])
+@user_blueprint.route("/SocLog" , methods=['GET', 'POST'])
 def put_logs():
 
     fields = [i for i in SocLog.__table__.c._data]
@@ -34,7 +34,7 @@ def put_logs():
 
         pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
                                                     error_out=False)
-        return jsonify(status="success", reason="", data=[item.to_json() for item in pagenation.items],
+        return jsonify(status="success", reason="", data=[item.to_json_simple() for item in pagenation.items],
                        page={'current':pagenation.pages,'per_page':pagenation.per_page,'total':pagenation.total}
                        )
 
@@ -62,7 +62,7 @@ def put_logs():
         return jsonify(status="success", reason="", data=[c.to_json()])
 
 
-@user_blueprint.route("/Log/<q_id>", methods=['GET', 'PUT', 'DELETE'])
+@user_blueprint.route("/SocLog/<q_id>", methods=['GET', 'PUT', 'DELETE'])
 def put_logs_r(q_id):
 
     c = SocLog.query.filter_by(id=q_id).first()

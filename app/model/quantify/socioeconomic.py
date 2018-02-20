@@ -71,6 +71,8 @@ class SocioeconomicIndexes(db.Model):
 
     # table = db.relationship('SocioeconomicTable', primaryjoin=foreign(table_id) == remote(SocioeconomicTable.id),
     #                         backref='indexes', lazy='joined'
+    cn_alis = db.Column(db.String(255))
+    en_alis = db.Column(db.String(255))
 
     @property
     def table(self):
@@ -83,8 +85,6 @@ class SocioeconomicIndexes(db.Model):
             filter(self.id == SocioeconomicFacts.index_id).all()
         return t
 
-    cn_alis = db.Column(db.String(255))
-    en_alis = db.Column(db.String(255))
 
     def to_json(self):
         return {
