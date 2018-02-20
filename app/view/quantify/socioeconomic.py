@@ -219,7 +219,7 @@ def socioeconomic_facts_batch():
 
         datas = body.get("data")
 
-        old_log = table.get_newest_log()
+        old_log = table.cur_log
         new_log = SocLog(note=note, user_id=current_user.id,
                          table_id=table_id, pre_log_id=old_log.id, timestamp=datetime.now())
         db.session.add(new_log)

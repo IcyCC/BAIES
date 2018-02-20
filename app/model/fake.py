@@ -1,11 +1,14 @@
-from app.model.qualitative.information import Post, Kind
+from app.model.qualitative.information import *
 from app import db
-from app.model.quantify.socioeconomic import Country
+from app.model.quantify.socioeconomic import *
+from app.model.comm.log import *
+from app.model.user import *
 
 from sqlalchemy.exc import IntegrityError
 from faker import Faker
 from random import randint
 import requests
+
 
 def insert_country():
     c1 = Country(name='CN',cn_alias="中国", en_alias="China")
