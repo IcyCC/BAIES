@@ -6,6 +6,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     SQLALCHEMY_COMMIT_TEARDOWN = True
     UPLOAD_FOLDER = basedir+'/app/static/upload'
+    THREADED = True
 
     @staticmethod
     def init_app(app):

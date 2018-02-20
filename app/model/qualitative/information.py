@@ -74,5 +74,5 @@ class Post(db.Model):
             'timestamp':self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'user_id':self.user_id,
             'show': self.show,
-            'user': self.user.to_json() if self.user is not None else {'id':-1, 'username':'匿名'}
+            'user': self.user.to_json() if self.user is not None else AnonymousUser.to_json()
         }

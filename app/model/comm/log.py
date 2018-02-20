@@ -4,7 +4,7 @@ from functools import wraps
 from datetime import datetime
 from sqlalchemy.sql.expression import and_
 from sqlalchemy.orm import foreign, remote
-from app.model.user import User
+from app.model.user import User,AnonymousUser
 
 # 用户日志
 
@@ -56,7 +56,8 @@ class SocLog(db.Model):
             'timestamp': self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'table_id': self.table_id,
             'table': self.table.to_json_by_index(),
-            'per_log_id': self.pre_log_id
+            'per_log_id': self.pre_log_id,
+            'user': self.user.to_json() if self.user is not None else AnonymousUser.to_json()
         }
 
     def to_json(self):
@@ -69,7 +70,8 @@ class SocLog(db.Model):
             'table_id': self.table_id,
             'table': self.table.to_json_by_index(),
             'pre_log': self.pre_log.to_json_son(),
-            'per_log_id': self.pre_log_id
+            'per_log_id': self.pre_log_id,
+            'user': self.user.to_json() if self.user is not None else AnonymousUser.to_json()
         }
 
     def to_json_son(self):
@@ -81,6 +83,7 @@ class SocLog(db.Model):
             'facts': [f.to_json() for f in self.facts],
             'table_id': self.table_id,
             'table': self.table.to_json_by_index(),
+            'user': self.user.to_json() if self.user is not None else AnonymousUser.to_json()
         }
 
 
