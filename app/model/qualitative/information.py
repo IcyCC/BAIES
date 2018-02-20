@@ -1,7 +1,7 @@
 from app import db
 from app.model.comm import ActionMixin
 from datetime import datetime
-from app.model.user import User
+from app.model.user import User,AnonymousUser
 from sqlalchemy.sql.expression import and_
 from sqlalchemy.orm import foreign, remote
 

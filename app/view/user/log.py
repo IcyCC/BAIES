@@ -32,6 +32,8 @@ def put_logs():
             if k in fields:
                 query = query.filter_by(**{k: v})
 
+        query = query.order_by(SocLog.id.desc())
+
         pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
                                                     error_out=False)
         return jsonify(status="success", reason="", data=[item.to_json_simple() for item in pagenation.items],
