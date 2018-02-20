@@ -416,11 +416,15 @@ def agriculture_facts_graph():
                     facts = AgricultureFacts.find(table_id=args.get("table_id"), index_ids=[index_id], kind_id=kind_id,
                                                   country_ids=[country_id], start_time=int(start_time),
                                                   end_time=int(end_time), log_id=log_id)
+                    fact_series = []
+                    for fact in facts:
+                        fact_serie = {'x': fact.time, 'y': fact.value}
+                        fact_series.append(fact_serie)
                     data = {
                         'index': index.to_json(),
                         'kind': kind.to_json(),
                         'country': country.to_json(),
-                        'series': [i.to_json() for i in facts]
+                        'series': fact_series
                     }
                     datas.append(data)
         return jsonify({
