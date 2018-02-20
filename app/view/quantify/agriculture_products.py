@@ -314,9 +314,9 @@ def agriculture_table():
 
     if request.method == "PUT":
         table = AgricultureTable.query.filter_by(id=request.form.get("id")).first()
-        table.name = request.form.get("name")
-        table.cn_alis = request.form.get("cn_alis")
-        table.en_alis = request.form.get("en_alis")
+        for k, v in request.form.items():
+            if hasattr(table, k):
+                setattr(table, k, v)
         db.session.add(table)
         db.session.commit()
         return jsonify(status="success", reason="", data=[table.to_json()])
