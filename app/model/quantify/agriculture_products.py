@@ -273,7 +273,7 @@ class AgricultureFacts(db.Model):
         query = cls.query
 
         if table_id is not None:
-            table = AgricultureIndexes.query.filter_by(id=table_id).first()
+            table = AgricultureTable.query.filter_by(id=table_id).first()
             if table is None:
                 return []
             query = query.join(AgricultureIndexes, AgricultureIndexes.id == cls.index_id).filter(AgricultureIndexes.table_id == table.id)
@@ -282,7 +282,7 @@ class AgricultureFacts(db.Model):
             query = query.filter(AgricultureFacts.country_id.in_(country_ids))
 
         if index_ids is False or index_ids is not None:
-            query = query.filter(AgricultureIndexes.id.in_(index_ids))
+            query = query.filter(AgricultureFacts.index_id.in_(index_ids))
 
         if kind_id is not None:
             query.filter(AgricultureFacts.kind_id == kind_id)
