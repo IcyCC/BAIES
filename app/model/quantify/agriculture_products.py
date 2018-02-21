@@ -1,10 +1,11 @@
 from app import db
-from app.model.comm import ActionMixin
+from app.model.comm.log import ArgLog
 from flask import jsonify
 from sqlalchemy.sql.expression import and_,or_
 from sqlalchemy.orm import foreign, remote
 from . import Country
 from datetime import datetime
+
 
 class AgricultureTable(db.Model):
     __tablename__ = "agriculture_tables"
@@ -13,11 +14,16 @@ class AgricultureTable(db.Model):
     name = db.Column(db.String(255), index=True, nullable=False)
     cn_alis = db.Column(db.String(255))
     en_alis = db.Column(db.String(255))
+    cur_log_id = db.Column(db.Integer, index=True, default=0)
 
     @property
     def indexes(self):
         t = AgricultureIndexes.query.join(AgricultureTable, AgricultureTable.id == AgricultureIndexes.table_id).filter(AgricultureIndexes.table_id == self.id).all()
         return t
+    @property
+    def cur_log(self):
+        log = ArgLog.query.filter(ArgLog.id == self.cur_log_id).first()
+        return log
 
 
     def to_json(self):
@@ -43,7 +49,8 @@ class AgricultureKind(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
     name = db.Column(db.String(255), index=True, nullable=False)
-
+    en_alis = db.Column(db.String(255))
+    cn_alis = db.Column(db.String(255))
     @property
     def facts(self):
         t = AgricultureFacts.query.join(AgricultureKind, AgricultureKind.id == AgricultureFacts.kind_id).filter(self.id == AgricultureFacts.kind_id).all()
@@ -53,6 +60,8 @@ class AgricultureKind(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "cn_alis": self.cn_alis,
+            "en_alis": self.en_alis,
             "facts": [i.to_json() for i in self.facts]
         }
 
@@ -60,6 +69,8 @@ class AgricultureKind(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "cn_alis": self.cn_alis,
+            "en_alis": self.en_alis,
             "facts": [i.id for i in self.facts]
         }
 
@@ -82,7 +93,7 @@ class AgricultureIndexes(db.Model):
 
     @property
     def facts(self):
-        t = AgricultureFacts.query.join(AgricultureIndexes, AgricultureIndexes.id == self.index_id).filter(AgricultureIndexes.id == AgricultureFacts.index_id).all()
+        t = AgricultureFacts.query.join(AgricultureIndexes, AgricultureIndexes.id == AgricultureFacts.index_id).filter(self.id == AgricultureFacts.index_id).all()
         return t
 
     cn_alis = db.Column(db.String(255))
@@ -134,6 +145,11 @@ class AgricultureFacts(db.Model):
     @property
     def country(self):
         t = Country.query.filter(Country.id == self.country_id).first()
+        return t
+
+    @property
+    def log(self):
+        t = ArgLog.query.filter(ArgLog.id == self.log_id).first()
         return t
 
     @property
