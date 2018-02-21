@@ -360,20 +360,21 @@ def agriculture_index():
 def agriculture_kinds():
     if request.method == "GET":
         kinds = AgricultureKind.query.all()
-        return jsonify(status="success", reason="", data=[t.to_json() for t in kinds])
+        return jsonify(status="success", reason="", data=[t.to_json_by_fact() for t in kinds])
 
     if request.method == "POST":
         kind = AgricultureKind(name=request.form.get("name"),
-                               cn_alias=request.form.get("cn_alis"),
-                               en_alias=request.form.get("en_alis"))
-
-        return jsonify(status="success", reason="", data=[kind.to_json()])
+                               cn_alis=request.form.get("cn_alis"),
+                               en_alis=request.form.get("en_alis"))
+        db.session.add(kind)
+        db.session.commit()
+        return jsonify(status="success", reason="", data=[kind.to_json_by_fact()])
 
     if request.method == "DELETE":
         kind = AgricultureKind.filter_by(id=request.args.get("id")).first()
         db.session.delete(kind)
         db.session.commit()
-        return jsonify(status="success", reason="", data=[kind.to_json()])
+        return jsonify(status="success", reason="", data=[kind.to_json_by_fact()])
 
     if request.method == "PUT":
         kind = AgricultureKind.query.filter_by(id=request.form.get("id")).first()
@@ -382,6 +383,8 @@ def agriculture_kinds():
                 setattr(kind, k, v)
         db.session.add(kind)
         db.session.commit()
+        return jsonify(status="success", reason="", data=[kind.to_json_by_fact()])
+
 
 @quantify_blueprint.route("/agriculture_facts/graph", methods=['GET', 'POST', 'PUT', 'DELETE'])
 def agriculture_facts_graph():

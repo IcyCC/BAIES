@@ -68,4 +68,11 @@ SELECT * FROM socioeconomic_tables;
 SELECT * FROM socioeconomic_facts;
 SELECT * FROM soc_logs;
 
-Drop TABLE countrys;
+SELECT * FROM agriculture_tables;
+SELECT *FROM  agriculture_indexes;
+SELECT * FROM agriculture_kinds;
+SELECT * FROM agriculture_facts;
+SELECT * FROM arg_logs;
+SHOW TABLES ;
+
+Drop TABLE agriculture_indexes;

@@ -1,10 +1,11 @@
 from app import db
-from app.model.comm import ActionMixin
+from app.model.comm.log import ArgLog
 from flask import jsonify
 from sqlalchemy.sql.expression import and_,or_
 from sqlalchemy.orm import foreign, remote
 from . import Country
 from datetime import datetime
+
 
 class AgricultureTable(db.Model):
     __tablename__ = "agriculture_tables"
@@ -13,11 +14,16 @@ class AgricultureTable(db.Model):
     name = db.Column(db.String(255), index=True, nullable=False)
     cn_alis = db.Column(db.String(255))
     en_alis = db.Column(db.String(255))
+    cur_log_id = db.Column(db.Integer, index=True, default=0)
 
     @property
     def indexes(self):
         t = AgricultureIndexes.query.join(AgricultureTable, AgricultureTable.id == AgricultureIndexes.table_id).filter(AgricultureIndexes.table_id == self.id).all()
         return t
+    @property
+    def cur_log(self):
+        log = ArgLog.query.filter(ArgLog.id == self.cur_log_id).first()
+        return log
 
 
     def to_json(self):
@@ -139,6 +145,11 @@ class AgricultureFacts(db.Model):
     @property
     def country(self):
         t = Country.query.filter(Country.id == self.country_id).first()
+        return t
+
+    @property
+    def log(self):
+        t = ArgLog.query.filter(ArgLog.id == self.log_id).first()
         return t
 
     @property
