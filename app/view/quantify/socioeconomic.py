@@ -219,7 +219,7 @@ def socioeconomic_facts_batch():
 
         datas = body.get("data")
 
-        old_log = table.get_newest_log()
+        old_log = table.cur_log
         new_log = SocLog(note=note, user_id=current_user.id,
                          table_id=table_id, pre_log_id=old_log.id, timestamp=datetime.now())
         db.session.add(new_log)
@@ -299,6 +299,7 @@ def socioeconomic_facts_indexes(id):
 
 @quantify_blueprint.route("/socioeconomic_table", methods=['GET', 'POST','PUT', 'DELETE'])
 def socioeconomic_table():
+
     if request.method == "GET":
         tables = SocioeconomicTable.query.all()
         return jsonify(status="success", reason="", data=[t.to_json() for t in tables])
@@ -328,10 +329,11 @@ def socioeconomic_table():
         return jsonify(status="success", reason="", data=[table.to_json()])
 
     if request.method == "PUT":
+
         table = SocioeconomicTable.query.filter_by(id=request.form.get("id")).first()
-        table.name = request.form.get("name")
-        table.cn_alis = request.form.get("cn_alis")
-        table.en_alis = request.form.get("en_alis")
+        for k, v in request.form.items():
+            if hasattr(table, k):
+                setattr(table, k, v)
         db.session.add(table)
         db.session.commit()
         return jsonify(status="success", reason="", data=[table.to_json()])

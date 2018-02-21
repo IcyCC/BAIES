@@ -67,3 +67,5 @@ SELECT * FROM socioeconomic_indexes;
 SELECT * FROM socioeconomic_tables;
 SELECT * FROM socioeconomic_facts;
 SELECT * FROM soc_logs;
+
+Drop TABLE countrys;

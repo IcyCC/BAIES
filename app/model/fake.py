@@ -1,20 +1,23 @@
-from app.model.qualitative.information import Post, Kind
+from app.model.qualitative.information import *
 from app import db
-from app.model.quantify.socioeconomic import Country
+from app.model.quantify.socioeconomic import *
+from app.model.comm.log import *
+from app.model.user import *
 
 from sqlalchemy.exc import IntegrityError
 from faker import Faker
 from random import randint
 import requests
 
+
 def insert_country():
-    c1 = Country(name='CN',cn_alias="中国", en_alias="China")
+    c1 = Country(name='CN',cn_alis="中国", en_alis="China")
     db.session.add(c1)
 
-    c2 = Country(name='EN', cn_alias="英国", en_alias="England")
+    c2 = Country(name='EN', cn_alis="英国", en_alis="England")
     db.session.add(c2)
 
-    c3 = Country(name='US', cn_alias="美国", en_alias="USA")
+    c3 = Country(name='US', cn_alis="美国", en_alis="USA")
     db.session.add(c3)
 
     db.session.commit()
@@ -128,6 +131,7 @@ def insert_test_soc_data():
 
 
 def gen():
+    Role.insert_roles()
     insert_country()
     insert_post()
     insert_test_soc_data()

@@ -149,6 +149,7 @@ class SocioeconomicFacts(db.Model):
             "time": self.time ,
             "value": self.value,
             "index_id": self.index_id,
+            "log_id": self.log_id,
             "time_stamp": self.time_stamp if self.time_stamp is None else self.time_stamp.strftime("%Y-%m-%d %H:%M:%S")
         }
 
