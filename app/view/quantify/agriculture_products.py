@@ -10,7 +10,7 @@ from flask_login import current_user
 from app import std_json
 import json
 import sqlalchemy
-import datetime
+from datetime import datetime
 
 ALLOW_ARGS = (
     "tablename",
@@ -212,7 +212,7 @@ def agriculture_facts_batch():
 
         datas = body.get("data")
 
-        old_log = table.cur_log()
+        old_log = table.cur_log
         new_log = ArgLog(note=note, user_id=current_user.id,
                          table_id=table_id, timestamp=datetime.now())
         db.session.add(new_log)
@@ -261,6 +261,7 @@ def agriculture_facts_batch():
                         country_id=data.get("country_id"),
                         time=int(data.get('time')),
                         index_id=data.get("index_id"),
+                        kind_id=data.get("kind_id"),
                         log_id=new_log.id
                     )
                     db.session.add(add_fact)

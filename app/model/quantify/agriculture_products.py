@@ -70,8 +70,7 @@ class AgricultureKind(db.Model):
             "id": self.id,
             "name": self.name,
             "cn_alis": self.cn_alis,
-            "en_alis": self.en_alis,
-            "facts": [i.id for i in self.facts]
+            "en_alis": self.en_alis
         }
 
 
@@ -117,8 +116,7 @@ class AgricultureIndexes(db.Model):
             "unit": self.unit,
             "table": self.table.to_json_by_index(),
             "cn_alis": self.cn_alis,
-            "en_alis": self.en_alis,
-            "facts": [i.id for i in self.facts]
+            "en_alis": self.en_alis
         }
 
 class AgricultureFacts(db.Model):
@@ -275,19 +273,19 @@ class AgricultureFacts(db.Model):
         query = cls.query
 
         if table_id is not None:
-            table = AgricultureIndexes.query.filter_by(id=table_id).first()
+            table = AgricultureTable.query.filter_by(id=table_id).first()
             if table is None:
                 return []
             query = query.join(AgricultureIndexes, AgricultureIndexes.id == cls.index_id).filter(AgricultureIndexes.table_id == table.id)
 
         if country_ids is False or country_ids is not None:
-            query = query.join(Country, Country.id == cls.country_id).filter(Country.id.in_(country_ids))
+            query = query.filter(AgricultureFacts.country_id.in_(country_ids))
 
         if index_ids is False or index_ids is not None:
-            query = query.filter(AgricultureIndexes.id.in_(index_ids))
+            query = query.filter(AgricultureFacts.index_id.in_(index_ids))
 
         if kind_id is not None:
-            query.join(AgricultureKind,AgricultureKind.id == cls.kind_id).filter(AgricultureKind.id == kind_id)
+            query.filter(AgricultureFacts.kind_id == kind_id)
 
         if start_time is not None:
             query = query.filter(cls.time >= start_time)

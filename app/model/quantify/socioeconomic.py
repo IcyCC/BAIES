@@ -259,7 +259,7 @@ class SocioeconomicFacts(db.Model):
             query = query.filter(SocioeconomicFacts.log_id == log_id)
 
         if country_ids is False or country_ids is not None:
-            query = query.join(Country, Country.id == cls.country_id).filter(Country.id.in_(country_ids))
+            query = query.filter(SocioeconomicFacts.country_id.in_(country_ids))
 
         if index_ids is False or index_ids is not None:
             query = query.filter(SocioeconomicFacts.index_id.in_(index_ids))
