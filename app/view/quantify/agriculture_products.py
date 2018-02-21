@@ -212,7 +212,7 @@ def agriculture_facts_batch():
 
         datas = body.get("data")
 
-        old_log = table.get_newest_log()
+        old_log = table.cur_log()
         new_log = ArgLog(note=note, user_id=current_user.id,
                          table_id=table_id, timestamp=datetime.now())
         db.session.add(new_log)
@@ -314,9 +314,9 @@ def agriculture_table():
 
     if request.method == "PUT":
         table = AgricultureTable.query.filter_by(id=request.form.get("id")).first()
-        table.name = request.form.get("name")
-        table.cn_alis = request.form.get("cn_alis")
-        table.en_alis = request.form.get("en_alis")
+        for k, v in request.form.items():
+            if hasattr(table, k):
+                setattr(table, k, v)
         db.session.add(table)
         db.session.commit()
         return jsonify(status="success", reason="", data=[table.to_json()])

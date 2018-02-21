@@ -116,6 +116,36 @@ def post_r(q_id):
 
         return jsonify(status="success", reason="", data=[c.to_json()])
 
+@qualitative_blueprint.route("/Post/simple" , methods=['GET', 'POST'])
+def post_simple():
+
+    fields = [i for i in Post.__table__.c._data]
+
+    if request.method == "GET":
+
+        # if not current_user.can(Permission.QUALITATIVE_R):
+        #     return jsonify(status="fail", data=[], reason="no permission")
+
+        if not check_args(fields, request.args.keys()):
+            return jsonify(status="fail", reason="error args", data=[])
+
+        page = request.args.get('page')
+        if page is None:
+            page = 1
+
+        page = int(page)
+
+        query = Post.query
+        args = std_json(request.args)
+        for k, v in args.items():
+            if k in fields:
+                query = query.filter_by(**{k: v})
+
+        pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+                                                    error_out=False)
+        return jsonify(status="success", reason="", data=[item.to_json_simple() for item in pagenation.items],
+                       page={'current':pagenation.pages,'per_page':pagenation.per_page,'total':pagenation.total}
+                       )
 
 @qualitative_blueprint.route("/Kind" , methods=['GET', 'POST'])
 def kind():
