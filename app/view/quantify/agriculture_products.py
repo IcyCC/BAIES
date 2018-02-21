@@ -341,10 +341,9 @@ def agriculture_index():
 
     if request.method == "PUT":
         index = AgricultureIndexes.query.filter_by(id=request.form.get("id")).first()
-        index.name = request.form.get("name")
-        index.cn_alis = request.form.get("cn_alis")
-        index.en_alis = request.form.get("en_alis")
-        index.unit = request.form.get("unit")
+        for k, v in request.form.items():
+            if hasattr(index, k):
+                setattr(index, k, v)
         db.session.add(index)
         db.session.commit()
 
@@ -376,6 +375,13 @@ def agriculture_kinds():
         db.session.commit()
         return jsonify(status="success", reason="", data=[kind.to_json()])
 
+    if request.method == "PUT":
+        kind = AgricultureKind.query.filter_by(id=request.form.get("id")).first()
+        for k, v in request.form.items():
+            if hasattr(kind, k):
+                setattr(kind, k, v)
+        db.session.add(kind)
+        db.session.commit()
 
 @quantify_blueprint.route("/agriculture_facts/graph", methods=['GET', 'POST', 'PUT', 'DELETE'])
 def agriculture_facts_graph():
