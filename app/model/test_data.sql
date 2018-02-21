@@ -75,4 +75,4 @@ SELECT * FROM agriculture_facts;
 SELECT * FROM arg_logs;
 SHOW TABLES ;
 
-Drop TABLE agriculture_indexes;
+Drop TABLE arg_logs;
