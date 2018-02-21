@@ -285,7 +285,7 @@ class AgricultureFacts(db.Model):
             query = query.filter(AgricultureFacts.index_id.in_(index_ids))
 
         if kind_id is not None:
-            query.filter(AgricultureFacts.kind_id == kind_id)
+            query = query.filter(AgricultureFacts.kind_id == kind_id)
 
         if start_time is not None:
             query = query.filter(cls.time >= start_time)

@@ -214,7 +214,7 @@ def agriculture_facts_batch():
 
         old_log = table.cur_log
         new_log = ArgLog(note=note, user_id=current_user.id,
-                         table_id=table_id, timestamp=datetime.now())
+                         table_id=table_id, timestamp=datetime.now(),pre_log_id=old_log.id)
         db.session.add(new_log)
         db.session.commit()
 
