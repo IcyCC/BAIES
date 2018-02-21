@@ -43,7 +43,8 @@ class AgricultureKind(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
     name = db.Column(db.String(255), index=True, nullable=False)
-
+    en_alis = db.Column(db.String(255))
+    cn_alis = db.Column(db.String(255))
     @property
     def facts(self):
         t = AgricultureFacts.query.join(AgricultureKind, AgricultureKind.id == AgricultureFacts.kind_id).filter(self.id == AgricultureFacts.kind_id).all()
@@ -53,6 +54,8 @@ class AgricultureKind(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "cn_alis": self.cn_alis,
+            "en_alis": self.en_alis,
             "facts": [i.to_json() for i in self.facts]
         }
 
@@ -60,6 +63,8 @@ class AgricultureKind(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "cn_alis": self.cn_alis,
+            "en_alis": self.en_alis,
             "facts": [i.id for i in self.facts]
         }
 
@@ -82,7 +87,7 @@ class AgricultureIndexes(db.Model):
 
     @property
     def facts(self):
-        t = AgricultureFacts.query.join(AgricultureIndexes, AgricultureIndexes.id == self.index_id).filter(AgricultureIndexes.id == AgricultureFacts.index_id).all()
+        t = AgricultureFacts.query.join(AgricultureIndexes, AgricultureIndexes.id == AgricultureFacts.index_id).filter(self.id == AgricultureFacts.index_id).all()
         return t
 
     cn_alis = db.Column(db.String(255))

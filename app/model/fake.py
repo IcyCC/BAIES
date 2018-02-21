@@ -77,8 +77,11 @@ def insert_post(count=100):
 def insert_agriculture_kinds():
     fake = Faker(locale='en_AU')
     i=0
+    fake2 =  Faker(locale='zh_CN')
     while i < 4:
-        index = AgricultureKind(name=fake.name())
+        index = AgricultureKind(name=fake.name(),
+                                en_alis=fake.name(),
+                                cn_alis=fake2.name())
         db.session.add(index)
         try:
             db.session.commit()
@@ -88,27 +91,52 @@ def insert_agriculture_kinds():
             db.session.rollback()
 
 def insert_agriculture_tables():
-    fake = Faker(locale='zh_CN')
-    i=0
-    while i<4:
-        table = AgricultureTable(name=fake.name(), cn_alis=fake.sentence(), en_alis=fake.sentence())
-        db.session.add(table)
-        try:
-            db.session.commit()
-            i += 1
-        except IntegrityError:
-            print("EXCEPETION")
-            db.session.rollback()
+    # fake = Faker(locale='zh_CN')
+    # i=0
+    # while i<4:
+    #     table = AgricultureTable(name=fake.name(), cn_alis=fake.sentence(), en_alis=fake.sentence())
+    #     db.session.add(table)
+    #     try:
+    #         db.session.commit()
+    #         i += 1
+    #     except IntegrityError:
+    #         print("EXCEPETION")
+    #         db.session.rollback()
+
+    load = {
+        "name": 'A',
+        "cn_alis": 'ATable',
+        "en_alis": 'A表',
+    }
+    requests.post("http://127.0.0.1:5000/quantify/agriculture_table",data=load)
+
+    load = {
+        "name": 'B',
+        "cn_alis": 'BTable',
+        "en_alis": 'B表',
+    }
+    requests.post("http://127.0.0.1:5000/quantify/agriculture_table",data=load)
+
+    load = {
+        "name": 'C',
+        "cn_alis": 'CTable',
+        "en_alis": 'C表',
+    }
+    requests.post("http://127.0.0.1:5000/quantify/agriculture_table", data=load)
 
 def insert_agriculture_indexs():
     t_count = AgricultureTable.query.count()
     names = ['增长率','下降率','饱和率','平均生产总值']
+    fake = Faker(locale='en_AU')
+    fake2 =  Faker(locale='zh_CN')
     i=0
-    while i<20:
+    while i<10:
         t = AgricultureTable.query.offset(randint(0, t_count - 1)).first()
         index = AgricultureIndexes(
             name = names[randint(0, 3)],
-            table_id=t.id
+            table_id=t.id,
+            cn_alis=fake2.name(),
+            en_alis=fake.name()
         )
         db.session.add(index)
         try:
