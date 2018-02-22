@@ -89,7 +89,11 @@ class AnonymousUser(AnonymousUserMixin):
         return {
             "id": -1,
             "username": "Anonymous",
-            "role": "Anonymous",
+            "role":{
+                'id':"-1",
+                'name': "Anonymous",
+                'permissions': cls.permissions,
+        },
             "country":"NU"
         }
 
