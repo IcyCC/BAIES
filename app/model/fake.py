@@ -241,4 +241,3 @@ def gen():
     insert_agriculture_kinds()
     insert_agriculture_tables()
     insert_agriculture_indexs()
-    insert_agriculture_facts()
