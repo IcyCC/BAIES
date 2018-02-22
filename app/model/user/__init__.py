@@ -99,7 +99,11 @@ class AnonymousUser(AnonymousUserMixin):
                 'name': "Anonymous",
                 'permissions': cls.permissions,
         },
-            "country":"NU"
+            "country":{
+                "name":"NU",
+                "cn_alis": "世界",
+                "en_alis": "NU"
+            }
         }
 
 
