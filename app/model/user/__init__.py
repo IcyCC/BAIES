@@ -33,7 +33,13 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), index=True)
-    country = db.Column(db.String(64))
+    country_id = db.Column(db.Integer, index=True)
+
+    @property
+    def country(self):
+        from app.model.quantify import Country
+        t = Country.query.filter(Country.id == self.country_id).first()
+        return t
 
     @property
     def role(self):
@@ -71,10 +77,9 @@ class User(db.Model, UserMixin):
             'id':self.id,
             'email': self.email,
             'username': self.username,
-            'country': self.country,
+            'country': self.country.to_json(),
             'role': self.role.to_json()
         }
-
 
 class AnonymousUser(AnonymousUserMixin):
 
