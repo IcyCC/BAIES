@@ -158,12 +158,13 @@ class AgricultureFacts(db.Model):
     def to_json(self):
         return {
             "id": self.id,
-            "country": self.country.to_json(),
-            "time": self.time,
-            "time_stamp": self.time_stamp if self.time_stamp is None else self.time_stamp.strftime("%Y-%m-%d %H:%M:%S"),
-            "kind": self.kind.to_json_by_fact(),
-            "index": self.index.to_json_by_fact(),
-            "value": self.value
+            "country_id": self.country_id,
+            "time": self.time ,
+            "value": self.value,
+            "index_id": self.index_id,
+            "kind_id": self.kind_id,
+            "log_id": self.log_id,
+            "time_stamp": self.time_stamp if self.time_stamp is None else self.time_stamp.strftime("%Y-%m-%d %H:%M:%S")
         }
 
     @staticmethod
@@ -269,7 +270,7 @@ class AgricultureFacts(db.Model):
         return fact, ""
 
     @classmethod
-    def find(cls, table_id=None, kind_id=None, index_ids=None,country_ids=None, start_time=None, end_time=None, log_id = None):
+    def find(cls, table_id=None, kind_ids=None, index_ids=None,country_ids=None, start_time=None, end_time=None, log_id = None):
         query = cls.query
 
         if table_id is not None:
@@ -284,8 +285,8 @@ class AgricultureFacts(db.Model):
         if index_ids is False or index_ids is not None:
             query = query.filter(AgricultureFacts.index_id.in_(index_ids))
 
-        if kind_id is not None:
-            query = query.filter(AgricultureFacts.kind_id == kind_id)
+        if kind_ids is False or kind_ids is not None:
+            query = query.filter(AgricultureFacts.kind_id.in_(kind_ids))
 
         if start_time is not None:
             query = query.filter(cls.time >= start_time)
