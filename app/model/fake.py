@@ -46,6 +46,16 @@ def insert_kind():
 
     db.session.commit()
 
+def insert_user():
+    c_count = Country.query.count()
+    c = Kind.query.offset(randint(0, c_count - 1)).first()
+    a = Role.query.filter_by(name="Administrator").first().id
+    u = User(username="admin", country_id=c.id, role_id=a,email="110")
+    u.password = "admin"
+    db.session.add(u)
+    db.session.commit()
+
+
 def insert_post(count=100):
     fake = Faker(locale='zh_CN')
     i=0
