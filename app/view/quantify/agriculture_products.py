@@ -66,7 +66,7 @@ def agriculture_facts():
         for country_id in args.get("country_ids"):
             for index_id in args.get("index_ids"):
                 for kind_id in args.get('kind_ids'):
-                    facts = AgricultureFacts.find(table_id=table.id, index_ids=[index_id], kind_id=kind_id,
+                    facts = AgricultureFacts.find(table_id=table.id, index_ids=[index_id], kind_ids=[kind_id],
                                                   country_ids=[country_id], start_time=int(start_time),
                                                   end_time=int(end_time), log_id=log_id)
                     index = AgricultureIndexes.query.filter_by(id=index_id).first()
@@ -214,7 +214,7 @@ def agriculture_facts_batch():
 
         old_log = table.cur_log
         new_log = ArgLog(note=note, user_id=current_user.id,
-                         table_id=table_id, timestamp=datetime.now())
+                         table_id=table_id, timestamp=datetime.now(),pre_log_id=old_log.id)
         db.session.add(new_log)
         db.session.commit()
 
@@ -406,7 +406,7 @@ def agriculture_facts_graph():
         log_id = args.get("log_id")
 
         if log_id is None:
-            old_log = table.get_newest_log()
+            old_log = table.cur_log
             log_id = old_log.id
 
         start_time = args.get("start_time")
@@ -423,7 +423,7 @@ def agriculture_facts_graph():
                     index = AgricultureIndexes.query.filter_by(id=index_id).first()
                     kind = AgricultureKind.query.filter_by(id=kind_id).first()
                     country = Country.query.filter_by(id=country_id).first()
-                    facts = AgricultureFacts.find(table_id=args.get("table_id"), index_ids=[index_id], kind_id=kind_id,
+                    facts = AgricultureFacts.find(table_id=args.get("table_id"), index_ids=[index_id], kind_ids=[kind_id],
                                                   country_ids=[country_id], start_time=int(start_time),
                                                   end_time=int(end_time), log_id=log_id)
                     fact_series = []
@@ -431,8 +431,8 @@ def agriculture_facts_graph():
                         fact_serie = {'x': fact.time, 'y': fact.value}
                         fact_series.append(fact_serie)
                     data = {
-                        'index': index.to_json(),
-                        'kind': kind.to_json(),
+                        'index': index.to_json_by_fact(),
+                        'kind': kind.to_json_by_fact(),
                         'country': country.to_json(),
                         'series': fact_series
                     }

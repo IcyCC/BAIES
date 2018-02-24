@@ -113,8 +113,8 @@ class ArgLog(db.Model):
 
     @property
     def table(self):
-        from app.model.quantify.agriculture_products import AgricultureFacts
-        t = AgricultureFacts.query.filter(AgricultureFacts.id == self.table_id).first()
+        from app.model.quantify.agriculture_products import AgricultureTable
+        t = AgricultureTable.query.filter(AgricultureTable.id == self.table_id).first()
         return t
 
     @property
