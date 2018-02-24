@@ -6,9 +6,11 @@ from app.model.quantify.socioeconomic import SocioeconomicFacts,SocioeconomicInd
 from app.model.user import Permission
 from flask_login import current_user
 from app.model.comm.log import SocLog
+from sqlalchemy.exc import IntegrityError
 import json
 from datetime import datetime
 import sqlalchemy
+import pandas
 
 ALLOW_ARGS = (
     "tablename",
@@ -427,3 +429,98 @@ def socioeconomic_facts_graph():
             'reason': '',
             'data': datas
         })
+
+
+@quantify_blueprint.route('/socioeconomic_excel', methods=['POST'])
+def socioeconomic_excel():
+    if 'filename' in request.json:
+        filename = current_app.config['UPLOAD_FOLDER'] + '/' + request.json['filename']
+        df = pandas.read_excel(filename)
+    else:
+        return jsonify({
+            'status':'fail',
+            'reason':'there is no filename'
+        })
+
+    if 'table_id' in request.json:
+        table_id = request.json['table_id']
+        table = SocioeconomicTable.query.filter_by(id=table_id).first()
+        if table is None:
+            return jsonify({
+                'status':'fail',
+                'reason':'the table does not exist'
+            })
+    else:
+        return jsonify({
+            'status':'fail',
+            'reason':'there is no table id'
+        })
+
+    if 'field' in request.json:
+        field = request.json['field']
+    else:
+        return jsonify({
+            'status':'fail',
+            'reason':'there is no field'
+        })
+
+    table_id = request.json['table_id']
+    years = []
+
+    note = request.json['note']
+    old_log = table.cur_log
+    new_log = SocLog(note=note, user_id=current_user.id,
+                     table_id=table_id, pre_log_id=old_log.id, timestamp=datetime.now())
+    db.session.add(new_log)
+    try:
+
+        db.session.commit()
+    except IntegrityError:
+        print("EXCEPETION")
+        print(1)
+        db.session.rollback()
+    table.cur_log_id = new_log.id
+    db.session.add(table)
+    try:
+        db.session.commit()
+    except IntegrityError:
+        print("EXCEPETION")
+        db.session.rollback()
+    log_id = table.cur_log_id
+    for item in df.head(0):
+        if item not in ['Country', 'Indicator']:
+            years.append(item)
+    print(years)
+    for i in range(0, (int)(df.size / len(df.columns))):
+        print(i)
+        country_l = getattr(Country, field.strip())
+        country_name = df.iloc[i]['Country']
+        country = Country.query.filter(country_l==country_name).first()
+        country_id = country.id
+        index_l = getattr(SocioeconomicIndexes, field.strip())
+        index_name = df.iloc[i]['Indicator']
+        index = SocioeconomicIndexes.query.filter(SocioeconomicIndexes.table_id==table_id).filter(index_l==index_name).first()
+        index_id = index.id
+        for year in years:
+            value = df.iloc[i][year]
+            print(value)
+            if value != 'undefined':
+                fact = SocioeconomicFacts(time=int(year), index_id=index_id, country_id=country_id, value=int(value), log_id=log_id)
+                db.session.add(fact)
+                try:
+                    db.session.commit()
+                except IntegrityError:
+                    print("EXCEPETION")
+                    db.session.rollback()
+
+        db.session.commit()
+    return jsonify({
+        'status':'success',
+        'reason':''
+    })
+
+
+
+
+
+
