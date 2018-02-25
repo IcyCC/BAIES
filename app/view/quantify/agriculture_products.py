@@ -11,6 +11,8 @@ from app import std_json
 import json
 import sqlalchemy
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
+import pandas
 
 ALLOW_ARGS = (
     "tablename",
@@ -442,3 +444,94 @@ def agriculture_facts_graph():
             'reason': '',
             'data': datas
         })
+
+@quantify_blueprint.route('/agriculture_excel', methods=['POST'])
+def agriculture_excel():
+    if 'filename' in request.json:
+        filename = current_app.config['UPLOAD_FOLDER']+'/'+request.json['filename']
+        df = pandas.read_excel(filename)
+    else:
+        return jsonify({
+            'status':'fail',
+            'reason':'there is no filename'
+        })
+
+    if 'table_id' in request.json:
+        table_id = request.json['table_id']
+        table = AgricultureTable.query.filter_by(id=table_id).first()
+        if table is None:
+            return jsonify({
+                'status':'fail',
+                'reason':'the table does not exist'
+            })
+    else:
+        return jsonify({
+            'status':'fail',
+            'reason':'there is no table id'
+        })
+
+    if 'field' in request.json:
+        field = request.json['field']
+    else:
+        return jsonify({
+            'status':'fail',
+            'reason':'there is no field'
+        })
+
+    table_id = request.json['table_id']
+    years = []
+
+    note = request.json['note']
+    old_log = table.cur_log
+    new_log = ArgLog(note=note, user_id=current_user.id,
+                     table_id=table_id, pre_log_id=old_log.id, timestamp=datetime.now())
+    db.session.add(new_log)
+    try:
+
+        db.session.commit()
+    except IntegrityError:
+        print("EXCEPETION")
+        print(1)
+        db.session.rollback()
+    table.cur_log_id = new_log.id
+    db.session.add(table)
+    try:
+        db.session.commit()
+    except IntegrityError:
+        print("EXCEPETION")
+        db.session.rollback()
+    log_id = table.cur_log_id
+    for item in df.head(0):
+        if item not in ['Country', 'Indicator', 'Product']:
+            years.append(item)
+    print(years)
+    for i in range(0, (int)(df.size / len(df.columns))):
+        country_l = getattr(Country, field.strip())
+        country_name = df.iloc[i]['Country']
+        country = Country.query.filter(country_l==country_name).first()
+        country_id = country.id
+        index_l = getattr(AgricultureIndexes, field.strip())
+        index_name = df.iloc[i]['Indicator']
+        index = AgricultureIndexes.query.filter(AgricultureIndexes.table_id==table_id).filter(index_l==index_name).first()
+        index_id = index.id
+        kind_l = getattr(AgricultureKind, field.strip())
+        kind_name = df.iloc[i]['Product']
+        kind = AgricultureKind.query.filter(kind_l==kind_name).first()
+        kind_id = kind.id
+        for year in years:
+            value = df.iloc[i][year]
+            print(year)
+            if value != 'undefined':
+                fact = AgricultureFacts(time=int(year), index_id=index_id, country_id=country_id, value=int(value), log_id=log_id, kind_id=kind_id)
+                db.session.add(fact)
+                try:
+                    db.session.commit()
+                except IntegrityError:
+                    print("EXCEPETION")
+                    db.session.rollback()
+
+            db.session.commit()
+    return jsonify({
+        'status':'success',
+        'reason':''
+    })
