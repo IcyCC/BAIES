@@ -7,6 +7,8 @@ from app.model.user import Permission
 from flask_login import current_user
 import sqlalchemy
 
+
+
 @qualitative_blueprint.route("/Post" , methods=['GET', 'POST'])
 def post():
 
