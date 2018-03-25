@@ -406,24 +406,23 @@ def socioeconomic_facts_graph():
         # if end_time is not None:
         #     end_time = datetime.strptime(str(end_time), "%Y")
         datas = []
-        for index_id in args.get('index_ids'):
-            index = SocioeconomicIndexes.query.filter_by(id=index_id).first()
-            data = {'index':index.to_json()}
-            series = []
-            for country_id in args.get('country_ids'):
-                facts=SocioeconomicFacts.find(table_id=args.get("table_id"), index_ids=[index_id],
-                                        country_ids=[country_id], start_time=int(start_time),
-                                        end_time=int(end_time), log_id=log_id)
-                country = Country.query.filter_by(id=country_id).first()
-                serie = {'country':country.to_json()}
-                fact_series = []
-                for fact in facts:
-                    fact_serie = {'x':fact.time, 'y':fact.value}
-                    fact_series.append(fact_serie)
-                serie['series'] = fact_series
-                series.append(serie)
-            data['series'] = series
-            datas.append(data)
+        for index_id in args.get("index_ids"):
+            for country_id in args.get("country_ids"):
+                    index = SocioeconomicIndexes.query.filter_by(id=index_id).first()
+                    country = Country.query.filter_by(id=country_id).first()
+                    facts = SocioeconomicFacts.find(table_id=args.get("table_id"), index_ids=[index_id],
+                                                  country_ids=[country_id], start_time=int(start_time),
+                                                  end_time=int(end_time), log_id=log_id)
+                    fact_series = []
+                    for fact in facts:
+                        fact_serie = {'x': fact.time, 'y': fact.value}
+                        fact_series.append(fact_serie)
+                    data = {
+                        'index': index.to_json_by_fact(),
+                        'country': country.to_json(),
+                        'series': fact_series
+                    }
+                    datas.append(data)
         return jsonify({
             'status': 'success',
             'reason': '',
@@ -433,6 +432,7 @@ def socioeconomic_facts_graph():
 
 @quantify_blueprint.route('/socioeconomic_excel', methods=['POST'])
 def socioeconomic_excel():
+
     if 'filename' in request.json:
         filename = current_app.config['UPLOAD_FOLDER'] + '/' + request.json['filename']
         df = pandas.read_excel(filename)
@@ -518,9 +518,5 @@ def socioeconomic_excel():
         'status':'success',
         'reason':''
     })
-
-
-
-
 
 
