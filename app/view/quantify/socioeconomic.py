@@ -413,6 +413,8 @@ def socioeconomic_facts_graph():
                     facts = SocioeconomicFacts.find(table_id=args.get("table_id"), index_ids=[index_id],
                                                   country_ids=[country_id], start_time=int(start_time),
                                                   end_time=int(end_time), log_id=log_id)
+                    if index is None or country is None or facts is None:
+                        break
                     fact_series = []
                     for fact in facts:
                         fact_serie = {'x': fact.time, 'y': fact.value}
