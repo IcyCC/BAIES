@@ -54,6 +54,8 @@ class Post(db.Model):
 
     user_id = db.Column(db.Integer, nullable=False, index=True)
 
+    img_url = db.Column(db.String(255), default='/')
+
     @property
     def kind(self):
         t = Kind.query.filter(Kind.id == self.kind_id).first()
@@ -74,15 +76,18 @@ class Post(db.Model):
             'timestamp':self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'user_id':self.user_id,
             'show': self.show,
-            'user': self.user.to_json() if self.user is not None else AnonymousUser.to_json()
+            'user': self.user.to_json() if self.user is not None else AnonymousUser.to_json(),
+            'img_url': self.img_url
         }
 
     def to_json_simple(self):
         return {
             'id': self.id,
             'title': self.title,
+            'show': self.show,
             'kind_id': self.kind_id,
             'kind': self.kind.to_json_simple(),
             'timestamp': self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'user_id': self.user_id,
+            'img_url': self.img_url
         }

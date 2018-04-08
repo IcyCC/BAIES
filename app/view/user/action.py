@@ -1,6 +1,7 @@
 import os
 from flask import request, jsonify, current_app,url_for
 from . import user_blueprint
+import time
 from app.model.user import *
 from flask_login import current_user,login_user, logout_user,login_required
 from werkzeug.utils import secure_filename
@@ -49,7 +50,8 @@ def upload():
     if request.method == 'POST':
         file = request.files['file']
         if file:
-            filename = secure_filename(file.filename)
+            file_type = os.path.splitext(file.filename)[1]
+            filename = secure_filename(str(int(time.time()))+file_type)
             file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
             return jsonify(status="success", reason="", data=url_for("static",filename="upload/"+filename))
         return jsonify(status="fail", reason="Unknow", data="")
