@@ -435,7 +435,9 @@ def socioeconomic_facts_graph():
 def socioeconomic_excel():
     if 'filename' in request.json:
         filename = current_app.config['UPLOAD_FOLDER'] + '/' + request.json['filename']
-        df = pandas.read_excel(filename)
+        #filename = request.json['filename']
+        print(filename)
+        df = pandas.read_csv(filename)
     else:
         return jsonify({
             'status':'fail',
@@ -487,18 +489,18 @@ def socioeconomic_excel():
         print("EXCEPETION")
         db.session.rollback()
     log_id = table.cur_log_id
-    for item in df.head(0):
+    for item in df.columns.tolist():
         if item not in ['Country', 'Indicator']:
             years.append(item)
     print(years)
-    for i in range(0, (int)(df.size / len(df.columns))):
+    for i in range(0, df.shape[0]):
         print(i)
         country_l = getattr(Country, field.strip())
+        index_name = df.iloc[i]['Indicator']
         country_name = df.iloc[i]['Country']
         country = Country.query.filter(country_l==country_name).first()
         country_id = country.id
         index_l = getattr(SocioeconomicIndexes, field.strip())
-        index_name = df.iloc[i]['Indicator']
         index = SocioeconomicIndexes.query.filter(SocioeconomicIndexes.table_id==table_id).filter(index_l==index_name).first()
         index_id = index.id
         for year in years:
