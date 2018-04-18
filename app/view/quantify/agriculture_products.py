@@ -449,7 +449,8 @@ def agriculture_facts_graph():
 def agriculture_excel():
     if 'filename' in request.json:
         filename = current_app.config['UPLOAD_FOLDER']+'/'+request.json['filename']
-        df = pandas.read_excel(filename)
+        #filename = request.json['filename']
+        df = pandas.read_csv(filename)
     else:
         return jsonify({
             'status':'fail',
@@ -501,11 +502,11 @@ def agriculture_excel():
         print("EXCEPETION")
         db.session.rollback()
     log_id = table.cur_log_id
-    for item in df.head(0):
+    for item in df.columns.tolist():
         if item not in ['Country', 'Indicator', 'Product']:
             years.append(item)
     print(years)
-    for i in range(0, (int)(df.size / len(df.columns))):
+    for i in range(0, df.shape[0]):
         country_l = getattr(Country, field.strip())
         country_name = df.iloc[i]['Country']
         country = Country.query.filter(country_l==country_name).first()
