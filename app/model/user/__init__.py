@@ -53,12 +53,6 @@ class User(db.Model, UserMixin):
         return t
 
     @property
-    def logs(self):
-        from app.model.comm.log import Log
-        t = Log.query.join(User, User.id == Log.user_id).filter(self.id == Log.user_id).all()
-        return t
-
-    @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
 

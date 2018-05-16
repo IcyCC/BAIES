@@ -395,8 +395,7 @@ def socioeconomic_facts_graph():
         log_id = args.get("log_id")
 
         if log_id is None:
-            old_log = table.get_newest_log()
-            log_id = old_log.id
+            log_id = table.cur_log_id
 
         start_time = args.get("start_time")
         # if start_time is not None:
@@ -520,5 +519,3 @@ def socioeconomic_excel():
         'status':'success',
         'reason':''
     })
-
-
