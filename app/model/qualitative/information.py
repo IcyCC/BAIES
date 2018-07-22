@@ -2,6 +2,7 @@ from app import db
 from app.model.comm import ActionMixin
 from datetime import datetime
 from app.model.user import User,AnonymousUser
+from app.model.quantify import Country
 from sqlalchemy.sql.expression import and_
 from sqlalchemy.orm import foreign, remote
 
@@ -46,6 +47,8 @@ class Post(db.Model):
     title = db.Column(db.String(255))
     body = db.Column(db.Text)
 
+    country_id = db.Column(db.Integer, default=1, nullable=False)
+
     kind_id = db.Column(db.Integer, index=True)
 
     show = db.Column(db.Boolean, default=False)
@@ -64,6 +67,11 @@ class Post(db.Model):
     @property
     def user(self):
         t = User.query.filter(User.id == self.user_id).first()
+        return t
+
+    @property
+    def country(self):
+        t = User.query.filter(Country.id == self.country_id).first()
         return t
 
     def to_json(self):
@@ -90,4 +98,20 @@ class Post(db.Model):
             'timestamp': self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'user_id': self.user_id,
             'img_url': self.img_url
+        }
+
+
+class Image(db.Model):
+
+    id = db.Column(db.Integer,primary_key=True,autoincrement=True,index=True)
+    img_url = db.Column(db.String(128), default='/', nullable=False)
+    to_url = db.Column(db.String(128),  default='/', nullable=False)
+    status = db.Column(db.Integer, default=0, nullable=False)
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "img_url": self.img_url,
+            "to_url": self.to_url,
+            "status": self.status
         }

@@ -7,39 +7,49 @@ from sqlalchemy.orm import foreign, remote
 from . import Country
 from app.model.comm.log import SocLog
 
+
 class SocioeconomicTable(db.Model):
     __tablename__ = "socioeconomic_tables"
 
-    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+        index=True,
+        autoincrement=True)
     name = db.Column(db.String(255), index=True, nullable=False)
     cn_alis = db.Column(db.String(255))
     en_alis = db.Column(db.String(255))
     cur_log_id = db.Column(db.Integer, index=True, default=0)
-
+  
     @property
     def indexes(self):
-        t = SocioeconomicIndexes.query.join(SocioeconomicTable, SocioeconomicTable.id == SocioeconomicIndexes.table_id).filter(SocioeconomicIndexes.table_id == self.id).all()
+        t = SocioeconomicIndexes.query.join(
+            SocioeconomicTable,
+            SocioeconomicTable.id == SocioeconomicIndexes.table_id).filter(
+            SocioeconomicIndexes.table_id == self.id).all()
         return t
 
     @property
     def logs(self):
         from app.model.comm.log import SocLog
-        t = SocLog.query.join(SocioeconomicTable, SocLog.table_id == SocioeconomicTable.id).\
-            filter(SocLog.table_id == self.id).all()
+        t = SocLog.query.join(
+            SocioeconomicTable,
+            SocLog.table_id == SocioeconomicTable.id). filter(
+            SocLog.table_id == self.id).all()
         return t
 
-    def get_newest_log(self, offset = 0):
-        log = SocLog.query.join(SocioeconomicTable, SocLog.table_id == SocioeconomicTable.id). \
-            filter(SocLog.table_id == self.id).order_by(SocLog.timestamp.desc()).offset(offset).first()
+    def get_newest_log(self, offset=0):
+        log = SocLog.query.join(
+            SocioeconomicTable,
+            SocLog.table_id == SocioeconomicTable.id). filter(
+            SocLog.table_id == self.id).order_by(
+            SocLog.timestamp.desc()).offset(offset).first()
         return log
 
     @property
     def cur_log(self):
         log = SocLog.query.filter(SocLog.id == self.cur_log_id).first()
         return log
-
-
-
 
     def to_json(self):
         return {
@@ -63,7 +73,11 @@ class SocioeconomicTable(db.Model):
 class SocioeconomicIndexes(db.Model):
     __tablename__ = "socioeconomic_indexes"
 
-    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+        index=True,
+        autoincrement=True)
     name = db.Column(db.String(255), index=True, nullable=False)
     unit = db.Column(db.String(255), default="no")
 
@@ -76,15 +90,17 @@ class SocioeconomicIndexes(db.Model):
 
     @property
     def table(self):
-        t = SocioeconomicTable.query.filter(self.table_id == SocioeconomicTable.id).first()
+        t = SocioeconomicTable.query.filter(
+            self.table_id == SocioeconomicTable.id).first()
         return t
 
     @property
     def facts(self):
-        t = SocioeconomicIndexes.query.join(SocioeconomicFacts, SocioeconomicFacts.index_id == SocioeconomicIndexes.id).\
-            filter(self.id == SocioeconomicFacts.index_id).all()
+        t = SocioeconomicIndexes.query.join(
+            SocioeconomicFacts,
+            SocioeconomicFacts.index_id == SocioeconomicIndexes.id). filter(
+            self.id == SocioeconomicFacts.index_id).all()
         return t
-
 
     def to_json(self):
         return {
@@ -109,14 +125,16 @@ class SocioeconomicIndexes(db.Model):
         }
 
 
-
-
 class SocioeconomicFacts(db.Model):
 
     __tablename__ = "socioeconomic_facts"
 
-    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
-    country_id = db.Column(db.Integer,index=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+        index=True,
+        autoincrement=True)
+    country_id = db.Column(db.Integer, index=True)
     time = db.Column(db.Integer, index=True, default=1119)
 
     time_stamp = db.Column(db.DateTime, index=True, default=datetime.now())
@@ -127,9 +145,9 @@ class SocioeconomicFacts(db.Model):
 
     @property
     def index(self):
-        t = SocioeconomicIndexes.query.filter(SocioeconomicIndexes.id == self.index_id).first()
+        t = SocioeconomicIndexes.query.filter(
+            SocioeconomicIndexes.id == self.index_id).first()
         return t
-
 
     @property
     def country(self):
@@ -146,7 +164,7 @@ class SocioeconomicFacts(db.Model):
         return {
             "id": self.id,
             "country_id": self.country_id,
-            "time": self.time ,
+            "time": self.time,
             "value": self.value,
             "index_id": self.index_id,
             "log_id": self.log_id,
@@ -154,14 +172,21 @@ class SocioeconomicFacts(db.Model):
         }
 
     @staticmethod
-    def insert_data(tablename=None, country_name=None, time=None, index_name=None, value=None):
+    def insert_data(
+            tablename=None,
+            country_name=None,
+            time=None,
+            index_name=None,
+            value=None):
 
         if tablename is None or country_name is None or index_name is None:
             return None, "some filed is empty"
-        index = SocioeconomicIndexes.query.join(SocioeconomicTable, SocioeconomicTable.id == SocioeconomicIndexes.table_id).\
-            filter(and_(
-                        SocioeconomicIndexes.name == index_name,
-                        SocioeconomicTable.name == tablename)).first()
+        index = SocioeconomicIndexes.query.join(
+            SocioeconomicTable,
+            SocioeconomicTable.id == SocioeconomicIndexes.table_id). filter(
+            and_(
+                SocioeconomicIndexes.name == index_name,
+                SocioeconomicTable.name == tablename)).first()
 
         country = Country.query.filter_by(name=country_name).first()
 
@@ -177,16 +202,22 @@ class SocioeconomicFacts(db.Model):
         db.session.add(s)
         db.session.commit()
 
-        return s,""
+        return s, ""
 
     @staticmethod
-    def insert_data_with_id(table_id=None, country_id=None, time=None, index_id=None, value=None):
+    def insert_data_with_id(
+            table_id=None,
+            country_id=None,
+            time=None,
+            index_id=None,
+            value=None):
         if table_id is None or country_id is None or index_id is None:
-            return None,"some filed is empty"
+            return None, "some filed is empty"
         table = SocioeconomicTable.query.filter_by(id=table_id).first()
         if table is None:
             return None, "no such id table"
-        index = SocioeconomicIndexes.query.query.filter(SocioeconomicIndexes.table_id == table_id).first()
+        index = SocioeconomicIndexes.query.query.filter(
+            SocioeconomicIndexes.table_id == table_id).first()
         country = Country.query.filter_by(id=index_id).first()
 
         if index is None:
@@ -204,7 +235,12 @@ class SocioeconomicFacts(db.Model):
         return s, ""
 
     @staticmethod
-    def update(id=None,country_name=None, time=None, index_name=None, value=None ):
+    def update(
+            id=None,
+            country_name=None,
+            time=None,
+            index_name=None,
+            value=None):
 
         if id is None or country_name is None or index_name is None:
             return None, "some filed is empty"
@@ -224,9 +260,14 @@ class SocioeconomicFacts(db.Model):
         return fact, ""
 
     @staticmethod
-    def update_with_id(id=None, country_id=None, time=None, index_id=None, value=None):
+    def update_with_id(
+            id=None,
+            country_id=None,
+            time=None,
+            index_id=None,
+            value=None):
 
-        if id is None or country_id is None or index_id is None  or value is None:
+        if id is None or country_id is None or index_id is None or value is None:
             return None, "some filed is empty"
 
         fact = SocioeconomicFacts.query.filter_by(id=id).fisrt()
@@ -244,22 +285,32 @@ class SocioeconomicFacts(db.Model):
         db.session.commit()
         return fact, ""
 
-
     @classmethod
-    def find(cls, table_id=None, index_ids=None,country_ids=None, start_time=None, end_time=None, log_id=None):
+    def find(
+            cls,
+            table_id=None,
+            index_ids=None,
+            country_ids=None,
+            start_time=None,
+            end_time=None,
+            log_id=None):
         query = cls.query
 
         if table_id is not None:
             table = SocioeconomicTable.query.filter_by(id=table_id).first()
             if table is None:
                 return []
-            query = query.join(SocioeconomicIndexes, SocioeconomicIndexes.id == cls.index_id).filter(SocioeconomicIndexes.table_id == table.id)
+            query = query.join(
+                SocioeconomicIndexes,
+                SocioeconomicIndexes.id == cls.index_id).filter(
+                SocioeconomicIndexes.table_id == table.id)
 
         if log_id is not None:
             query = query.filter(SocioeconomicFacts.log_id == log_id)
 
         if country_ids is False or country_ids is not None:
-            query = query.filter(SocioeconomicFacts.country_id.in_(country_ids))
+            query = query.filter(
+                SocioeconomicFacts.country_id.in_(country_ids))
 
         if index_ids is False or index_ids is not None:
             query = query.filter(SocioeconomicFacts.index_id.in_(index_ids))
@@ -273,20 +324,31 @@ class SocioeconomicFacts(db.Model):
         return query
 
     @classmethod
-    def find_one(cls, table_id=None, index_id=None,country_id=None, time=None, log_id=None):
+    def find_one(
+            cls,
+            table_id=None,
+            index_id=None,
+            country_id=None,
+            time=None,
+            log_id=None):
         query = cls.query
 
         if table_id is not None:
             table = SocioeconomicTable.query.filter_by(id=table_id).first()
             if table is None:
                 return []
-            query = query.join(SocioeconomicIndexes, SocioeconomicIndexes.id == cls.index_id).filter(SocioeconomicIndexes.table_id == table.id)
+            query = query.join(
+                SocioeconomicIndexes,
+                SocioeconomicIndexes.id == cls.index_id).filter(
+                SocioeconomicIndexes.table_id == table.id)
 
         if log_id is not None:
             query = query.filter(SocioeconomicFacts.log_id == log_id)
 
         if country_id is not None:
-            query = query.join(Country, Country.id == cls.country_id).filter(Country.id == country_id)
+            query = query.join(
+                Country, Country.id == cls.country_id).filter(
+                Country.id == country_id)
 
         if index_id is not None:
             query = query.filter(SocioeconomicIndexes.id == index_id)
@@ -295,6 +357,3 @@ class SocioeconomicFacts(db.Model):
             query = query.filter(SocioeconomicFacts.time == time)
 
         return query.first()
-
-
-
