@@ -86,6 +86,7 @@ class Post(db.Model):
             'show': self.show,
             'user': self.user.to_json() if self.user is not None else AnonymousUser.to_json(),
             'img_url': self.img_url,
+            'country_id': self.country_id,
             'country': self.country.to_json()
         }
 
@@ -99,6 +100,7 @@ class Post(db.Model):
             'timestamp': self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'user_id': self.user_id,
             'img_url': self.img_url,
+            'country_id': self.country_id,
             'country': self.country.to_json()
         }
 
