@@ -117,7 +117,7 @@ class SocioeconomicIndexes(db.Model):
             "id": self.id,
             "name": self.name,
             "unit": self.unit,
-            "table": self.table.to_json_by_index(),
+            "table": self.table.to_json_by_index() if self.table else {},
             "table_id": self.table_id,
             "cn_alis": self.cn_alis,
             "en_alis": self.en_alis,

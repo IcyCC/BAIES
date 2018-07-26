@@ -94,6 +94,7 @@ class AnonymousUser(AnonymousUserMixin):
                 'permissions': cls.permissions,
         },
             "country":{
+                "id": -1,
                 "name":"NU",
                 "cn_alis": "世界",
                 "en_alis": "NU"
