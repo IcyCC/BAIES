@@ -79,6 +79,7 @@ class AnonymousUser(AnonymousUserMixin):
 
     id = -1
     permissions = Permission.QUALITATIVE_R
+    username = "Anonymous"
 
     def can(self, permissions):
         return permissions & self.permissions  == permissions

@@ -141,8 +141,8 @@ def post_simple():
         query = Post.query
         args = std_json(request.args)
 
-        if current_user.role.name != "Administrator":
-            if current_user.name != 'Anonymous':
+        if current_user.username != "Anonymous":
+            if current_user.role.name != "Administrator":
                 pass
             else:
                 args['country_id'] = current_user.country.id
