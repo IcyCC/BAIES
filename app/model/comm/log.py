@@ -22,6 +22,10 @@ class SocLog(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.now())
 
     @property
+    def r_query(self):
+        return SocLog.query
+
+    @property
     def user(self):
         t = User.query.filter(User.id == self.user_id).first()
         return t
@@ -98,6 +102,10 @@ class ArgLog(db.Model):
     table_id = db.Column(db.Integer, index=True)
     pre_log_id = db.Column(db.Integer, index=True, default=0)
     timestamp = db.Column(db.DateTime, default=datetime.now())
+
+    @property
+    def r_query(self):
+        return ArgLog.query
 
     @property
     def user(self):

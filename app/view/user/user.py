@@ -27,7 +27,7 @@ def users():
 
         page = int(page)
 
-        query = User.query
+        query = User.r_query
 
         args = std_json(request.args)
 
@@ -69,7 +69,7 @@ def users():
 @user_blueprint.route("/User/<q_id>", methods=['GET', 'PUT', 'DELETE'])
 def users_r(q_id):
 
-    c = User.query.filter_by(id=q_id).first()
+    c = User.r_query.filter_by(id=q_id).first()
     fields = [i for i in User.__table__.c._data]
 
 
@@ -140,7 +140,7 @@ def roles():
 
         page = int(page)
 
-        query = Role.query
+        query = Role.r_query
 
         args = std_json(request.args)
 
@@ -180,7 +180,7 @@ def roles():
 @user_blueprint.route("/Role/<q_id>", methods=['GET', 'PUT', 'DELETE'])
 def roles_r(q_id):
 
-    c = Role.query.filter_by(id=q_id).first()
+    c = Role.r_query.filter_by(id=q_id).first()
     fields = [i for i in Role.__table__.c._data]
 
 

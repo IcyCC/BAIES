@@ -28,7 +28,7 @@ def post():
 
         page = int(page)
 
-        query = Post.query
+        query = Post.r_query
         args = std_json(request.args)
         for k, v in args.items():
             if k in fields:
@@ -70,7 +70,7 @@ def post():
 @qualitative_blueprint.route("/Post/<q_id>", methods=['GET', 'PUT', 'DELETE'])
 def post_r(q_id):
 
-    c = Post.query.filter_by(id=q_id).first()
+    c = Post.r_query.filter_by(id=q_id).first()
     fields = [i for i in Post.__table__.c._data]
 
 
@@ -138,7 +138,7 @@ def post_simple():
 
         page = int(page)
 
-        query = Post.query
+        query = Post.r_query
         args = std_json(request.args)
 
         if current_user.username != "Anonymous":
@@ -178,7 +178,7 @@ def kind():
 
         page = int(page)
 
-        query = Kind.query
+        query = Kind.r_query
 
         for k, v in request.args.items():
             if k in fields:
@@ -233,7 +233,7 @@ def images():
 
         page = int(page)
 
-        query = Image.query
+        query = Image.r_query
         args = std_json(request.args)
         for k, v in args.items():
             if k in fields:
@@ -275,7 +275,7 @@ def images():
 @qualitative_blueprint.route("/Images/<q_id>", methods=['GET', 'PUT', 'DELETE'])
 def images_r(q_id):
 
-    c = Image.query.filter_by(id=q_id).first()
+    c = Image.r_query.filter_by(id=q_id).first()
     fields = [i for i in Image.__table__.c._data]
 
 

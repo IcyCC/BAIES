@@ -26,7 +26,7 @@ def put_logs():
 
         page = int(page)
         args = std_json(request.args)
-        query = SocLog.query
+        query = SocLog.r_query
 
         for k, v in args.items():
             if k in fields:
@@ -67,7 +67,7 @@ def put_logs():
 @user_blueprint.route("/SocLog/<q_id>", methods=['GET', 'PUT', 'DELETE'])
 def put_logs_r(q_id):
 
-    c = SocLog.query.filter_by(id=q_id).first()
+    c = SocLog.r_query.filter_by(id=q_id).first()
     fields = [i for i in SocLog.__table__.c._data]
 
 
@@ -136,7 +136,7 @@ def put_logs_arg():
 
         page = int(page)
         args = std_json(request.args)
-        query = ArgLog.query
+        query = ArgLog.r_query
 
         for k, v in args.items():
             if k in fields:
@@ -177,7 +177,7 @@ def put_logs_arg():
 @user_blueprint.route("/ArgLog/<q_id>", methods=['GET', 'PUT', 'DELETE'])
 def put_logs_r_arg(q_id):
 
-    c = ArgLog.query.filter_by(id=q_id).first()
+    c = ArgLog.r_query.filter_by(id=q_id).first()
     fields = [i for i in ArgLog.__table__.c._data]
 
 
