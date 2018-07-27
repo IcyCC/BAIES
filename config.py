@@ -16,7 +16,7 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = \
-        "mysql://root:root@127.0.0.1:3306/baies?charset=utf8mb4"
+        "mysql+pymysql://root:root@127.0.0.1:3306/baies?charset=utf8mb4"
     FLASKY_POSTS_PER_PAGE = 2000
     CONFIG_NAME = "dev"
     SQLALCHEMY_ECHO = True
@@ -27,7 +27,7 @@ class DevelopmentConfig(Config):
 class RunConfig(Config):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = \
-        'mysql://root:root@'+'localhost/'+'baies'
+        'mysql+pymysql://root:root@'+'localhost/'+'baies'
     CONFIG_NAME = "run"
     SECRET_KEY = 'hard to guess string'
     FLASKY_POSTS_PER_PAGE = 2000

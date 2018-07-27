@@ -2,6 +2,7 @@ from app import db
 from app.model.comm import ActionMixin
 from datetime import datetime
 from app.model.user import User,AnonymousUser
+from app.model.quantify import Country
 from sqlalchemy.sql.expression import and_
 from sqlalchemy.orm import foreign, remote
 
@@ -46,6 +47,8 @@ class Post(db.Model):
     title = db.Column(db.String(255))
     body = db.Column(db.Text)
 
+    country_id = db.Column(db.Integer, default=1, nullable=False)
+
     kind_id = db.Column(db.Integer, index=True)
 
     show = db.Column(db.Boolean, default=False)
@@ -53,6 +56,8 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.now())
 
     user_id = db.Column(db.Integer, nullable=False, index=True)
+
+    img_url = db.Column(db.String(255), default='/')
 
     @property
     def kind(self):
@@ -64,25 +69,51 @@ class Post(db.Model):
         t = User.query.filter(User.id == self.user_id).first()
         return t
 
+    @property
+    def country(self):
+        t = User.query.filter(Country.id == self.country_id).first()
+        return t
+
     def to_json(self):
         return {
             'id':self.id,
             'title':self.title,
             'body':self.body,
             'kind_id':self.kind_id,
-            'kind': self.kind.to_json_simple(),
+            'kind': self.kind.to_json_simple() if self.kind else {},
             'timestamp':self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'user_id':self.user_id,
             'show': self.show,
-            'user': self.user.to_json() if self.user is not None else AnonymousUser.to_json()
+            'user': self.user.to_json() if self.user is not None else AnonymousUser.to_json(),
+            'img_url': self.img_url,
+            'country_id': self.country_id,
         }
 
     def to_json_simple(self):
         return {
             'id': self.id,
             'title': self.title,
+            'show': self.show,
             'kind_id': self.kind_id,
             'kind': self.kind.to_json_simple(),
             'timestamp': self.timestamp if self.timestamp is None else self.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             'user_id': self.user_id,
+            'img_url': self.img_url,
+            'country_id': self.country_id,
+        }
+
+
+class Image(db.Model):
+
+    id = db.Column(db.Integer,primary_key=True,autoincrement=True,index=True)
+    img_url = db.Column(db.String(128), default='/', nullable=False)
+    to_url = db.Column(db.String(128),  default='/', nullable=False)
+    status = db.Column(db.Integer, default=0, nullable=False)
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "img_url": self.img_url,
+            "to_url": self.to_url,
+            "status": self.status
         }

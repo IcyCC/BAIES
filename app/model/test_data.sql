@@ -75,4 +75,6 @@ SELECT * FROM agriculture_facts;
 SELECT * FROM arg_logs;
 SHOW TABLES ;
 
-Drop TABLE arg_logs;
+SELECT * FROM users;
+
+Drop TABLE users;

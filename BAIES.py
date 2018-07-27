@@ -5,7 +5,7 @@ import pymysql
 
 
 
-app = create_app('development')
+app = create_app('run')
 
 manager = Manager(app)
 migrate = Migrate(app, db)
@@ -21,4 +21,4 @@ manager.add_command("shell", Shell(make_context=make_shell_context, use_ipython=
 manager.add_command('db', MigrateCommand)
 
 if __name__ == '__main__':
-    app.run()
+    manager.run()
