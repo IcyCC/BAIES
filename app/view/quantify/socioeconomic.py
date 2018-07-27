@@ -557,13 +557,14 @@ def socioeconomic_excel():
         print("EXCEPETION")
         db.session.rollback()
     log_id = table.cur_log_id
-    for item in df.head(0):
+    for item in df.columns.tolist():
         if item not in ['Country', 'Indicator']:
             years.append(item)
     print(years)
-    for i in range(0, (int)(df.size / len(df.columns))):
+    for i in range(0, df.shape[0]):
         print(i)
         country_l = getattr(Country, field.strip())
+        index_name = df.iloc[i]['Indicator']
         country_name = df.iloc[i]['Country']
         country = Country.query.filter(country_l == country_name).first()
         country_id = country.id
