@@ -18,6 +18,10 @@ class Kind(db.Model):
     en_alis = db.Column(db.String(255))
 
     @property
+    def r_query(self):
+        return Kind.query
+
+    @property
     def posts(self):
         t = Post.query.join(Kind, Kind.id == Post.kind_id).filter(Kind.id == Post.kind_id).all()
         return t
@@ -58,6 +62,14 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, nullable=False, index=True)
 
     img_url = db.Column(db.String(255), default='/')
+
+    @property
+    def r_query(self):
+        return Post.query.join(User,
+                               User.id == Post.user_id).join(
+            Kind,
+            Kind.id == Post.kind_id
+        )
 
     @property
     def kind(self):
@@ -109,6 +121,10 @@ class Image(db.Model):
     img_url = db.Column(db.String(128), default='/', nullable=False)
     to_url = db.Column(db.String(128),  default='/', nullable=False)
     status = db.Column(db.Integer, default=0, nullable=False)
+
+    @property
+    def r_query(self):
+        return Image.query
 
     def to_json(self):
         return {

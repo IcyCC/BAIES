@@ -36,7 +36,7 @@ if __name__ == '__main__':
     print("建立管理员")
 
     u = User(email="admin@admin.com", username="admin", role_id=Role.query.filter_by(name='Administrator').first().id,
-              country_id=Country.query.filter_by(name="China").first().id)
+             country_id=Country.query.filter_by(name="China").first().id)
 
     u.password = "admin1010"
 

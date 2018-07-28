@@ -65,7 +65,7 @@ def socioeconomic_facts():
         # if end_time is not None:
         #     end_time = datetime.strptime(str(end_time), "%Y")
 
-        table = SocioeconomicTable.query.filter_by(
+        table = SocioeconomicTable.r_query.filter_by(
             id=args.get("table_id")).first()
         if table is None:
             return jsonify(status="fail", data=[], reason="no such table")
@@ -86,9 +86,9 @@ def socioeconomic_facts():
                     start_time=int(start_time),
                     end_time=int(end_time),
                     log_id=log_id)
-                index = SocioeconomicIndexes.query.filter_by(
+                index = SocioeconomicIndexes.r_query.filter_by(
                     id=index_id).first()
-                country = Country.query.filter_by(id=country_id).first()
+                country = Country.r_query.filter_by(id=country_id).first()
                 result.append(
                     {"country": country.to_json(),
                      "index": index.to_json(),
@@ -234,7 +234,7 @@ def socioeconomic_facts_batch():
         note = body.get("note")
         table_id = body.get("table_id")
 
-        table = SocioeconomicTable.query.filter_by(id=table_id).first()
+        table = SocioeconomicTable.r_query.filter_by(id=table_id).first()
         if table is None:
             return jsonify(status="fail", reason="no id table", data=[])
 
@@ -250,7 +250,7 @@ def socioeconomic_facts_batch():
         db.session.add(new_log)
         db.session.commit()
 
-        old_facts = SocioeconomicFacts.query.filter(
+        old_facts = SocioeconomicFacts.r_query.filter(
             SocioeconomicFacts.log_id == old_log.id).all()
         fields = [i for i in SocioeconomicFacts.__table__.c._data]
 
@@ -321,7 +321,7 @@ def socioeconomic_facts_batch():
         'DELETE'])
 def socioeconomic_facts_indexes(id):
     if request.method == "GET":
-        table = SocioeconomicTable.query.filter_by(id=id).first()
+        table = SocioeconomicTable.r_query.filter_by(id=id).first()
 
         if table is None:
             return jsonify(status="fail", reason="no such id table", data=[])
@@ -340,7 +340,7 @@ def socioeconomic_facts_indexes(id):
 def socioeconomic_table():
 
     if request.method == "GET":
-        tables = SocioeconomicTable.query.all()
+        tables = SocioeconomicTable.r_query.all()
         return jsonify(
             status="success", reason="", data=[
                 t.to_json() for t in tables])
@@ -364,7 +364,7 @@ def socioeconomic_table():
 
     if request.method == "DELETE":
 
-        table = SocioeconomicTable.query.filter_by(
+        table = SocioeconomicTable.r_query.filter_by(
             id=request.form.get("id")).first()
         db.session.delete(table)
         db.session.commit()
@@ -372,7 +372,7 @@ def socioeconomic_table():
 
     if request.method == "PUT":
 
-        table = SocioeconomicTable.query.filter_by(
+        table = SocioeconomicTable.r_query.filter_by(
             id=request.form.get("id")).first()
         for k, v in request.form.items():
             if hasattr(table, k):
@@ -391,7 +391,7 @@ def socioeconomic_table():
         'DELETE'])
 def socioeconomic_index():
     if request.method == "GET":
-        indexes = SocioeconomicIndexes.query.all()
+        indexes = SocioeconomicIndexes.r_query.all()
         return jsonify(
             status="success", reason="", data=[
                 t.to_json() for t in indexes])
@@ -408,7 +408,7 @@ def socioeconomic_index():
         return jsonify(status="success", reason="", data=[index.to_json()])
 
     if request.method == "PUT":
-        index = SocioeconomicIndexes.query.filter_by(
+        index = SocioeconomicIndexes.r_query.filter_by(
             id=request.form.get("id")).first()
         index.name = request.form.get("name")
         index.cn_alis = request.form.get("cn_alis")
@@ -421,7 +421,7 @@ def socioeconomic_index():
 
     if request.method == "DELETE":
 
-        index = SocioeconomicIndexes.query.filter_by(
+        index = SocioeconomicIndexes.r_query.filter_by(
             id=request.form.get("id")).first()
         db.session.delete(index)
         db.session.commit()
@@ -446,7 +446,7 @@ def socioeconomic_facts_graph():
         if not check_args(ALLOW_ARGS, args.keys()):
             return jsonify(status="fail", reason="error args", data=[])
 
-        table = SocioeconomicTable.query.filter_by(
+        table = SocioeconomicTable.r_query.filter_by(
             id=args.get("table_id")).first()
         if table is None:
             return jsonify(status="fail", data=[], reason="no such table")
@@ -466,9 +466,9 @@ def socioeconomic_facts_graph():
         datas = []
         for index_id in args.get("index_ids"):
             for country_id in args.get("country_ids"):
-                index = SocioeconomicIndexes.query.filter_by(
+                index = SocioeconomicIndexes.r_query.filter_by(
                     id=index_id).first()
-                country = Country.query.filter_by(id=country_id).first()
+                country = Country.r_query.filter_by(id=country_id).first()
                 facts = SocioeconomicFacts.find(
                     table_id=args.get("table_id"),
                     index_ids=[index_id],
@@ -510,7 +510,7 @@ def socioeconomic_excel():
 
     if 'table_id' in request.json:
         table_id = request.json['table_id']
-        table = SocioeconomicTable.query.filter_by(id=table_id).first()
+        table = SocioeconomicTable.r_query.filter_by(id=table_id).first()
         if table is None:
             return jsonify({
                 'status': 'fail',
@@ -566,11 +566,11 @@ def socioeconomic_excel():
         country_l = getattr(Country, field.strip())
         index_name = df.iloc[i]['Indicator']
         country_name = df.iloc[i]['Country']
-        country = Country.query.filter(country_l == country_name).first()
+        country = Country.r_query.filter(country_l == country_name).first()
         country_id = country.id
         index_l = getattr(SocioeconomicIndexes, field.strip())
         index_name = df.iloc[i]['Indicator']
-        index = SocioeconomicIndexes.query.filter(
+        index = SocioeconomicIndexes.r_query.filter(
             SocioeconomicIndexes.table_id == table_id).filter(
             index_l == index_name).first()
         index_id = index.id
