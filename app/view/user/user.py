@@ -33,7 +33,7 @@ def users():
 
         for k, v in args.items():
             if k in fields:
-                query = query.filter_by(**{k: v})
+                query = query.filter(getattr(User, k)==v)
 
         pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
                                                     error_out=False)
@@ -146,7 +146,7 @@ def roles():
 
         for k, v in args.items():
             if k in fields:
-                query = query.filter_by(**{k: v})
+                query = query.filter(getattr(Role, k)==v)
 
         pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
                                                     error_out=False)
