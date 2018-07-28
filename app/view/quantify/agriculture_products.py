@@ -56,7 +56,7 @@ def agriculture_facts():
         start_time = args.get('start_time')
         end_time = args.get('end_time')
 
-        table = AgricultureTable.query.filter_by(id=args.get('table_id')).first()
+        table = AgricultureTable.r_query().filter(AgricultureTable.id==args.get('table_id')).first()
         if table is None:
             return jsonify(status="fail", data=[], reason="no such table")
 
@@ -71,9 +71,9 @@ def agriculture_facts():
                     facts = AgricultureFacts.find(table_id=table.id, index_ids=[index_id], kind_ids=[kind_id],
                                                   country_ids=[country_id], start_time=int(start_time),
                                                   end_time=int(end_time), log_id=log_id)
-                    index = AgricultureIndexes.query.filter_by(id=index_id).first()
-                    country = Country.query.filter_by(id=country_id).first()
-                    kind = AgricultureKind.query.filter_by(id=kind_id).first()
+                    index = AgricultureIndexes.r_query().filter(AgricultureIndexes.id==index_id).first()
+                    country = Country.r_query().filter(Country.id==country_id).first()
+                    kind = AgricultureKind.r_query().filter(AgricultureKind.id==kind_id).first()
                     result.append(
                         {"country": country.to_json(),
                          "index": index.to_json(),
@@ -145,7 +145,7 @@ def agriculture_facts():
     #
     #         # body:
     #         # {table_id:"", data:[], note: ""}
-    #         pre_fact = AgricultureFacts.query.filter_by(id=item.get("id")).first()
+    #         pre_fact = AgricultureFacts.query.filter(id=item.get("id")).first()
     #
     #         fact, detail = AgricultureFacts.update_with_id(id=item.get("id"),
     #                                                        country_id=item.get("country_id"),
@@ -172,7 +172,7 @@ def agriculture_facts():
     #     deleted_facts = list()
     #
     #     for id in fact_ids:
-    #         fact = AgricultureFacts.query.filter_by(id=id).first()
+    #         fact = AgricultureFacts.query.filter(id=id).first()
     #         if fact is None:
     #             return jsonify(status="fail", reason="no id :{} fact".format(str(id)), data=[])
     #         deleted_facts.append(fact)
@@ -208,7 +208,7 @@ def agriculture_facts_batch():
         note = body.get("note")
         table_id = body.get("table_id")
 
-        table = AgricultureTable.query.filter_by(id=table_id).first()
+        table = AgricultureTable.r_query().filter(AgricultureTable.id==table_id).first()
         if table is None:
             return jsonify(status="fail", reason="no id table", data=[])
 
@@ -220,7 +220,7 @@ def agriculture_facts_batch():
         db.session.add(new_log)
         db.session.commit()
 
-        old_facts = AgricultureFacts.query.filter(AgricultureFacts.log_id == old_log.id).all()
+        old_facts = AgricultureFacts.r_query().filter(AgricultureFacts.log_id == old_log.id).all()
         fields = [i for i in AgricultureFacts.__table__.c._data]
 
         for fact in old_facts:
@@ -278,7 +278,7 @@ def agriculture_facts_batch():
 @quantify_blueprint.route("/agriculture_table/<id>/indexes", methods=['GET', 'POST', 'PUT', 'DELETE'])
 def agriculture_facts_indexes(id):
     if request.method == "GET":
-        table = AgricultureTable.query.filter_by(id=id).first()
+        table = AgricultureTable.r_query().filter(AgricultureTable==id).first()
 
         if table is None:
             return jsonify(status="fail", reason="no such id table", data=[])
@@ -289,7 +289,7 @@ def agriculture_facts_indexes(id):
 @quantify_blueprint.route("/agriculture_table", methods=['GET', 'POST', 'PUT', 'DELETE'])
 def agriculture_table():
     if request.method == "GET":
-        tables = AgricultureTable.query.all()
+        tables = AgricultureTable.r_query().all()
         return jsonify(status="success", reason="", data=[t.to_json() for t in tables])
 
     if request.method == "POST":
@@ -310,13 +310,13 @@ def agriculture_table():
         return jsonify(status="success", reason="", data=[table.to_json()])
 
     if request.method == "DELETE":
-        table = AgricultureTable.query.filter_by(id=request.form.get("id")).first()
+        table = AgricultureTable.r_query().filter(AgricultureTable.id==request.form.get("id")).first()
         db.session.delete(table)
         db.session.commit()
         return jsonify(status="success", reason="", data=[table.to_json()])
 
     if request.method == "PUT":
-        table = AgricultureTable.query.filter_by(id=request.form.get("id")).first()
+        table = AgricultureTable.r_query().filter(AgricultureTable.id==request.form.get("id")).first()
         for k, v in request.form.items():
             if hasattr(table, k):
                 setattr(table, k, v)
@@ -328,7 +328,7 @@ def agriculture_table():
 @quantify_blueprint.route("/agriculture_index", methods=['GET', 'POST', 'PUT', 'DELETE'])
 def agriculture_index():
     if request.method == "GET":
-        indexes = AgricultureIndexes.query.all()
+        indexes = AgricultureIndexes.r_query().all()
         return jsonify(status="success", reason="", data=[t.to_json() for t in indexes])
 
     if request.method == "POST":
@@ -343,7 +343,7 @@ def agriculture_index():
         return jsonify(status="success", reason="", data=[index.to_json()])
 
     if request.method == "PUT":
-        index = AgricultureIndexes.query.filter_by(id=request.form.get("id")).first()
+        index = AgricultureIndexes.r_query().filter(AgricultureIndexes.id==request.form.get("id")).first()
         for k, v in request.form.items():
             if hasattr(index, k):
                 setattr(index, k, v)
@@ -353,7 +353,7 @@ def agriculture_index():
         return jsonify(status="success", reason="", data=[index.to_json()])
 
     if request.method == "DELETE":
-        index = AgricultureIndexes.query.filter_by(id=request.form.get("id")).first()
+        index = AgricultureIndexes.r_query().filter(AgricultureIndexes.id==request.form.get("id")).first()
         db.session.delete(index)
         db.session.commit()
         return jsonify(status="success", reason="", data=[index.to_json()])
@@ -362,7 +362,7 @@ def agriculture_index():
 @quantify_blueprint.route("/agriculture_kinds", methods=['GET', 'POST', 'DELETE'])
 def agriculture_kinds():
     if request.method == "GET":
-        kinds = AgricultureKind.query.all()
+        kinds = AgricultureKind.r_query().all()
         return jsonify(status="success", reason="", data=[t.to_json_by_fact() for t in kinds])
 
     if request.method == "POST":
@@ -374,13 +374,13 @@ def agriculture_kinds():
         return jsonify(status="success", reason="", data=[kind.to_json_by_fact()])
 
     if request.method == "DELETE":
-        kind = AgricultureKind.filter_by(id=request.args.get("id")).first()
+        kind = AgricultureKind.filter(AgricultureKind.id==request.args.get("id")).first()
         db.session.delete(kind)
         db.session.commit()
         return jsonify(status="success", reason="", data=[kind.to_json_by_fact()])
 
     if request.method == "PUT":
-        kind = AgricultureKind.query.filter_by(id=request.form.get("id")).first()
+        kind = AgricultureKind.r_query().filter(AgricultureKind.id==request.form.get("id")).first()
         for k, v in request.form.items():
             if hasattr(kind, k):
                 setattr(kind, k, v)
@@ -401,7 +401,7 @@ def agriculture_facts_graph():
         if not check_args(ALLOW_ARGS, args.keys()):
             return jsonify(status="fail", reason="error args", data=[])
 
-        table = AgricultureTable.query.filter_by(id=args.get("table_id")).first()
+        table = AgricultureTable.r_query().filter(AgricultureTable.id==args.get("table_id")).first()
         if table is None:
             return jsonify(status="fail", data=[], reason="no such table")
 
@@ -422,9 +422,9 @@ def agriculture_facts_graph():
         for index_id in args.get("index_ids"):
             for country_id in args.get("country_ids"):
                 for kind_id in args.get("kind_ids"):
-                    index = AgricultureIndexes.query.filter_by(id=index_id).first()
-                    kind = AgricultureKind.query.filter_by(id=kind_id).first()
-                    country = Country.query.filter_by(id=country_id).first()
+                    index = AgricultureIndexes.r_query().filter(AgricultureIndexes.id==index_id).first()
+                    kind = AgricultureKind.r_query().filter(AgricultureKind.id==kind_id).first()
+                    country = Country.r_query().filter(Country.id==country_id).first()
                     facts = AgricultureFacts.find(table_id=args.get("table_id"), index_ids=[index_id], kind_ids=[kind_id],
                                                   country_ids=[country_id], start_time=int(start_time),
                                                   end_time=int(end_time), log_id=log_id)
@@ -461,7 +461,7 @@ def agriculture_excel():
 
     if 'table_id' in request.json:
         table_id = request.json['table_id']
-        table = AgricultureTable.query.filter_by(id=table_id).first()
+        table = AgricultureTable.r_query().filter(id=table_id).first()
         if table is None:
             return jsonify({
                 'status':'fail',
@@ -511,15 +511,15 @@ def agriculture_excel():
     for i in range(0, df.shape[0]):
         country_l = getattr(Country, field.strip())
         country_name = df.iloc[i]['Country']
-        country = Country.query.filter(country_l==country_name).first()
+        country = Country.r_query().filter(country_l==country_name).first()
         country_id = country.id
         index_l = getattr(AgricultureIndexes, field.strip())
         index_name = df.iloc[i]['Indicator']
-        index = AgricultureIndexes.query.filter(AgricultureIndexes.table_id==table_id).filter(index_l==index_name).first()
+        index = AgricultureIndexes.r_query().filter(AgricultureIndexes.table_id==table_id).filter(index_l==index_name).first()
         index_id = index.id
         kind_l = getattr(AgricultureKind, field.strip())
         kind_name = df.iloc[i]['Product']
-        kind = AgricultureKind.query.filter(kind_l==kind_name).first()
+        kind = AgricultureKind.r_query().filter(kind_l==kind_name).first()
         kind_id = kind.id
         for year in years:
             value = df.iloc[i][year]
