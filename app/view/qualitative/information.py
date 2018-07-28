@@ -32,7 +32,7 @@ def post():
         args = std_json(request.args)
         for k, v in args.items():
             if k in fields:
-                query = query.filter_by(**{k: v})
+                query = query.filter(getattr(Post, k)==v)
         query = query.order_by(Post.timestamp.desc())
 
         # pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
@@ -149,7 +149,7 @@ def post_simple():
 
         for k, v in args.items():
             if k in fields:
-                query = query.filter_by(**{k: v})
+                query = query.filter(getattr(Post, k)==v)
 
         query = query.order_by(Post.timestamp.desc()).limit(40)
 
@@ -182,7 +182,7 @@ def kind():
 
         for k, v in request.args.items():
             if k in fields:
-                query = query.filter_by(**{k: v})
+                query = query.filter(getattr(Kind, k)==v)
 
         # pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         #                                             error_out=False)
@@ -237,7 +237,7 @@ def images():
         args = std_json(request.args)
         for k, v in args.items():
             if k in fields:
-                query = query.filter_by(**{k: v})
+                query = query.filter(getattr(Image, k)==v)
         query = query.order_by(Image.id.desc())
 
         # pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],

@@ -30,7 +30,7 @@ def put_logs():
 
         for k, v in args.items():
             if k in fields:
-                query = query.filter_by(**{k: v})
+                query = query.filter(getattr(SocLog, k)==v)
 
         query = query.order_by(SocLog.id.desc())
 
