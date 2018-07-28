@@ -21,8 +21,8 @@ class SocioeconomicTable(db.Model):
     en_alis = db.Column(db.String(255))
     cur_log_id = db.Column(db.Integer, index=True, default=0)
 
-    @property
-    def r_query(self):
+    @staticmethod
+    def r_query():
         return SocioeconomicTable.query
 
     @property
@@ -92,8 +92,8 @@ class SocioeconomicIndexes(db.Model):
     cn_alis = db.Column(db.String(255))
     en_alis = db.Column(db.String(255))
 
-    @property
-    def r_query(self):
+    @staticmethod
+    def r_query():
         return SocioeconomicIndexes.query.join(SocioeconomicTable, SocioeconomicIndexes.table_id==SocioeconomicTable.id)
 
     @property
@@ -151,8 +151,8 @@ class SocioeconomicFacts(db.Model):
     log_id = db.Column(db.Integer, index=True)
     value = db.Column(db.Float)
 
-    @property
-    def r_query(self):
+    @staticmethod
+    def r_query():
         return SocioeconomicIndexes.query.\
             join(SocioeconomicIndexes,
                  SocioeconomicFacts.index_id == SocioeconomicIndexes.id)

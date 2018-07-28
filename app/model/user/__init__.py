@@ -37,8 +37,8 @@ class User(db.Model, UserMixin):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), index=True)
     country_id = db.Column(db.Integer, index=True)
 
-    @property
-    def r_query(self):
+    @staticmethod
+    def r_query():
         return User.query.join(Role,
                                Role.id == User.role_id).join(
             Country,
@@ -124,8 +124,8 @@ class Role(db.Model):
     permissions = db.Column(db.Integer)
 
 
-    @property
-    def r_query(self):
+    @staticmethod
+    def r_query():
         return Role.query
 
     @property
