@@ -28,11 +28,11 @@ def post():
 
         page = int(page)
 
-        query = Post.query
+        query = Post.r_query()
         args = std_json(request.args)
         for k, v in args.items():
             if k in fields:
-                query = query.filter_by(**{k: v})
+                query = query.filter(getattr(Post, k)==v)
         query = query.order_by(Post.timestamp.desc())
 
         # pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
@@ -70,7 +70,7 @@ def post():
 @qualitative_blueprint.route("/Post/<q_id>", methods=['GET', 'PUT', 'DELETE'])
 def post_r(q_id):
 
-    c = Post.query.filter_by(id=q_id).first()
+    c = Post.r_query().filter_by(id=q_id).first()
     fields = [i for i in Post.__table__.c._data]
 
 
@@ -138,18 +138,18 @@ def post_simple():
 
         page = int(page)
 
-        query = Post.query
+        query = Post.r_query()
         args = std_json(request.args)
 
-        if current_user.role.name != "Administrator":
-            if current_user.name != 'Anonymous':
+        if current_user.username != "Anonymous":
+            if current_user.role.name != "Administrator":
                 pass
             else:
                 args['country_id'] = current_user.country.id
 
         for k, v in args.items():
             if k in fields:
-                query = query.filter_by(**{k: v})
+                query = query.filter(getattr(Post, k)==v)
 
         query = query.order_by(Post.timestamp.desc()).limit(40)
 
@@ -178,11 +178,11 @@ def kind():
 
         page = int(page)
 
-        query = Kind.query
+        query = Kind.r_query()
 
         for k, v in request.args.items():
             if k in fields:
-                query = query.filter_by(**{k: v})
+                query = query.filter(getattr(Kind, k)==v)
 
         # pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         #                                             error_out=False)
@@ -233,11 +233,11 @@ def images():
 
         page = int(page)
 
-        query = Image.query
+        query = Image.r_query()
         args = std_json(request.args)
         for k, v in args.items():
             if k in fields:
-                query = query.filter_by(**{k: v})
+                query = query.filter(getattr(Image, k)==v)
         query = query.order_by(Image.id.desc())
 
         # pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
@@ -275,7 +275,7 @@ def images():
 @qualitative_blueprint.route("/Images/<q_id>", methods=['GET', 'PUT', 'DELETE'])
 def images_r(q_id):
 
-    c = Image.query.filter_by(id=q_id).first()
+    c = Image.r_query().filter_by(id=q_id).first()
     fields = [i for i in Image.__table__.c._data]
 
 

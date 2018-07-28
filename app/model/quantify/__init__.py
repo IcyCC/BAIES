@@ -5,7 +5,6 @@ from sqlalchemy.sql.expression import and_
 from sqlalchemy.orm import foreign, remote
 
 
-
 class Country(db.Model):
     __tablename__ = "countrys"
 
@@ -13,6 +12,10 @@ class Country(db.Model):
     name = db.Column(db.String(255), index=True, nullable=False)
     en_alis = db.Column(db.String(255), index=True)
     cn_alis = db.Column(db.String(255), index=True)
+
+    @staticmethod
+    def r_query():
+        return Country.query
 
     @property
     def socioeconomic_facts(self):

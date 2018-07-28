@@ -8,6 +8,7 @@ from flask import current_app
 from app import db, create_app
 from app.model.user import User,Role
 from app.model.quantify import Country
+from app.model.qualitative.information import Kind
 
 if __name__ == '__main__':
     app = create_app('development')
@@ -30,13 +31,24 @@ if __name__ == '__main__':
     db.session.add(sa)
     db.session.commit()
 
+    print("新增类别")
+    adp = Kind(id=1, name="adp", en_alis="Agricultural Development Policies", cn_alis="农业发展政策")
+    db.session.add(adp)
+    atp = Kind(id=2, name="atp", en_alis="Agricultural Trade Policies", cn_alis="农业贸易政策")
+    db.session.add(atp)
+    ast = Kind(id=3, name="ast", en_alis="Agricultural Science and Technology", cn_alis="农业科学与技术")
+    db.session.add(ast)
+    fap = Kind(id=4, name="fap", en_alis="Fishery & Aquaculture Policies", cn_alis="渔业水产政策")
+    db.session.add(fap)
+    db.session.commit()
+
     print("插入角色")
     Role.insert_roles()
 
     print("建立管理员")
 
     u = User(email="admin@admin.com", username="admin", role_id=Role.query.filter_by(name='Administrator').first().id,
-              country_id=Country.query.filter_by(name="China").first().id)
+             country_id=Country.query.filter_by(name="China").first().id)
 
     u.password = "admin1010"
 

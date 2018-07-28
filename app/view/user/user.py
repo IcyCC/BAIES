@@ -27,13 +27,13 @@ def users():
 
         page = int(page)
 
-        query = User.query
+        query = User.r_query()
 
         args = std_json(request.args)
 
         for k, v in args.items():
             if k in fields:
-                query = query.filter_by(**{k: v})
+                query = query.filter(getattr(User, k)==v)
 
         pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
                                                     error_out=False)
@@ -69,7 +69,7 @@ def users():
 @user_blueprint.route("/User/<q_id>", methods=['GET', 'PUT', 'DELETE'])
 def users_r(q_id):
 
-    c = User.query.filter_by(id=q_id).first()
+    c = User.r_query().filter_by(id=q_id).first()
     fields = [i for i in User.__table__.c._data]
 
 
@@ -140,13 +140,13 @@ def roles():
 
         page = int(page)
 
-        query = Role.query
+        query = Role.r_query()
 
         args = std_json(request.args)
 
         for k, v in args.items():
             if k in fields:
-                query = query.filter_by(**{k: v})
+                query = query.filter(getattr(Role, k)==v)
 
         pagenation = query.paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
                                                     error_out=False)
@@ -180,7 +180,7 @@ def roles():
 @user_blueprint.route("/Role/<q_id>", methods=['GET', 'PUT', 'DELETE'])
 def roles_r(q_id):
 
-    c = Role.query.filter_by(id=q_id).first()
+    c = Role.r_query().filter_by(id=q_id).first()
     fields = [i for i in Role.__table__.c._data]
 
 

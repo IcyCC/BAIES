@@ -4,6 +4,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import abort,jsonify
 from functools import wraps
 
+from app.model.quantify import Country
+
 class Permission:
 
     # PERMISSION 0b0000000000
@@ -34,6 +36,14 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), index=True)
     country_id = db.Column(db.Integer, index=True)
+
+    @staticmethod
+    def r_query():
+        return User.query.join(Role,
+                               Role.id == User.role_id).join(
+            Country,
+            Country.id == User.country_id
+        )
 
     @property
     def country(self):
@@ -79,6 +89,7 @@ class AnonymousUser(AnonymousUserMixin):
 
     id = -1
     permissions = Permission.QUALITATIVE_R
+    username = "Anonymous"
 
     def can(self, permissions):
         return permissions & self.permissions  == permissions
@@ -112,6 +123,10 @@ class Role(db.Model):
     name = db.Column(db.String(64), unique=True)
     permissions = db.Column(db.Integer)
 
+
+    @staticmethod
+    def r_query():
+        return Role.query
 
     @property
     def users(self):

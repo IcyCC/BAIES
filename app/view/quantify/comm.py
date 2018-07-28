@@ -11,7 +11,7 @@ import sqlalchemy
 def route_country():
 
     if request.method == "GET":
-        country = Country.query.all()
+        country = Country.r_query().all()
         return jsonify(status="success", reason="", data=[t.to_json() for t in country])
 
     if request.method == "POST":
@@ -23,7 +23,7 @@ def route_country():
         return jsonify(status="success", reason="", data=[country.to_json()])
 
     if request.method == "DELETE":
-        country = Country.filter_by(id=request.args.get("id")).first()
+        country = Country.query.filter_by(id=request.args.get("id")).first()
         db.session.delete(country)
         db.session.commit()
         return jsonify(status="success", reason="", data=[country.to_json()])
