@@ -21,8 +21,8 @@ class SocLog(db.Model):
     pre_log_id = db.Column(db.Integer,index=True,default=0)
     timestamp = db.Column(db.DateTime, default=datetime.now())
 
-    @property
-    def r_query(self):
+    @staticmethod
+    def r_query():
         return SocLog.query
 
     @property
@@ -103,8 +103,8 @@ class ArgLog(db.Model):
     pre_log_id = db.Column(db.Integer, index=True, default=0)
     timestamp = db.Column(db.DateTime, default=datetime.now())
 
-    @property
-    def r_query(self):
+    @staticmethod
+    def r_query():
         return ArgLog.query
 
     @property

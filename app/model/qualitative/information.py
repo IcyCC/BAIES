@@ -17,8 +17,8 @@ class Kind(db.Model):
     cn_alis = db.Column(db.String(255))
     en_alis = db.Column(db.String(255))
 
-    @property
-    def r_query(self):
+    @staticmethod
+    def r_query():
         return Kind.query
 
     @property
@@ -63,8 +63,8 @@ class Post(db.Model):
 
     img_url = db.Column(db.String(255), default='/')
 
-    @property
-    def r_query(self):
+    @staticmethod
+    def r_query():
         return Post.query.join(User,
                                User.id == Post.user_id).join(
             Kind,
@@ -122,8 +122,8 @@ class Image(db.Model):
     to_url = db.Column(db.String(128),  default='/', nullable=False)
     status = db.Column(db.Integer, default=0, nullable=False)
 
-    @property
-    def r_query(self):
+    @staticmethod
+    def r_query():
         return Image.query
 
     def to_json(self):

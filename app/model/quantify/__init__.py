@@ -13,8 +13,8 @@ class Country(db.Model):
     en_alis = db.Column(db.String(255), index=True)
     cn_alis = db.Column(db.String(255), index=True)
 
-    @property
-    def r_query(self):
+    @staticmethod
+    def r_query():
         return Country.query
 
     @property

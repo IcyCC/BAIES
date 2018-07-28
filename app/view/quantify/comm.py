@@ -11,7 +11,7 @@ import sqlalchemy
 def route_country():
 
     if request.method == "GET":
-        country = Country.r_query.all()
+        country = Country.r_query().all()
         return jsonify(status="success", reason="", data=[t.to_json() for t in country])
 
     if request.method == "POST":
